@@ -5,7 +5,6 @@
 <description>
 Chemistry-related application codes
 apbs http://www.poissonboltzmann.org/apbs
-amber http://ambermd.org/
 gamess http://www.msg.ameslab.gov/GAMESS
 lammps http://lammps.sandia.gov
 namd http://www.ks.uiuc.edu/Research/namd
@@ -21,7 +20,6 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 </changelog>
 
 <package>apbs</package>
-<package>amber</package>
 <package>gamess</package>
 <package>lammps</package>
 <package>namd</package>
@@ -31,10 +29,6 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 
 <file name="/etc/profile.d/abps.csh" perms="0644">
 set path = ( /opt/abps/bin $path )
-</file>
-
-<file name="/etc/profile.d/amber.csh" perms="0644">
-set path = ( /opt/amber/bin $path )
 </file>
 
 <file name="/etc/profile.d/gamess.csh" perms="0644">
