@@ -1,0 +1,82 @@
+<?xml version="1.0" standalone="no"?>
+
+<kickstart>
+
+<description>
+Chemistry-related application codes
+apbs http://www.poissonboltzmann.org/apbs
+amber http://ambermd.org/
+gamess http://www.msg.ameslab.gov/GAMESS
+lammps http://lammps.sandia.gov
+namd http://www.ks.uiuc.edu/Research/namd
+nwchem http://www.emsl.pnl.gov/capabilities/computing/nwchem
+</description>
+
+<copyright>
+Copyright (c) 2000 - 2009 The Regents of the University of California.
+All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
+</copyright>
+
+<changelog>
+</changelog>
+
+<package>apbs</package>
+<package>amber</package>
+<package>gamess</package>
+<package>lammps</package>
+<package>namd</package>
+<package>nwchem</package>
+
+<post>
+
+<file name="/etc/profile.d/abps.csh" perms="0644">
+set path = ( /opt/abps/bin $path )
+</file>
+
+<file name="/etc/profile.d/amber.csh" perms="0644">
+set path = ( /opt/amber/bin $path )
+</file>
+
+<file name="/etc/profile.d/gamess.csh" perms="0644">
+set path = ( /opt/gamess/bin $path )
+</file>
+
+<file name="/etc/profile.d/lammps.csh" perms="0644">
+set path = ( /opt/lammps/bin $path )
+</file>
+
+<file name="/etc/profile.d/namd.csh" perms="0644">
+set path = ( /opt/namd/bin $path )
+</file>
+
+<file name="/etc/profile.d/nwchem.csh" perms="0644">
+set path = ( /opt/nwchem/bin $path )
+</file>
+
+<file name="/etc/profile.d/abps.sh" perms="0644">
+export PATH=/opt/abps/bin:$PATH
+</file>
+
+<file name="/etc/profile.d/amber.sh" perms="0644">
+export PATH=/opt/amber/bin:$PATH
+</file>
+
+<file name="/etc/profile.d/gamess.sh" perms="0644">
+export PATH=/opt/gamess/bin:$PATH
+</file>
+
+<file name="/etc/profile.d/lammps.sh" perms="0644">
+export PATH=/opt/lammps/bin:$PATH
+</file>
+
+<file name="/etc/profile.d/namd.sh" perms="0644">
+export PATH=/opt/namd/bin:$PATH
+</file>
+
+<file name="/etc/profile.d/nwchem.sh" perms="0644">
+export PATH=/opt/nwchem/bin:$PATH
+</file>
+
+</post>
+
+</kickstart>

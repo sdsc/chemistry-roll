@@ -1,0 +1,3 @@
+NAME    = namd
+VERSION = 2.7b1
+RELEASE = 1

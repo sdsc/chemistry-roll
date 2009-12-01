@@ -1,0 +1,27 @@
+<?xml version="1.0" standalone="no"?>
+
+<graph>
+
+<description>
+Chemistry-related application codes
+apbs http://www.poissonboltzmann.org/apbs
+amber http://ambermd.org/
+gamess http://www.msg.ameslab.gov/GAMESS
+lammps http://lammps.sandia.gov
+namd http://www.ks.uiuc.edu/Research/namd
+nwchem http://www.emsl.pnl.gov/capabilities/computing/nwchem
+</description>
+
+<copyright>
+Copyright (c) 2000 - 2009 The Regents of the University of California.
+All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
+</copyright>
+
+<changelog>
+</changelog>
+
+<edge from="compute">
+  <to>chemistry-install</to>
+</edge>
+
+</graph>

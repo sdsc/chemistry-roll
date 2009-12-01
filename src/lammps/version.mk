@@ -1,0 +1,3 @@
+NAME    = lammps
+VERSION = 28Nov09
+RELEASE = 1
