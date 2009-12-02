@@ -5,10 +5,8 @@
 <description>
 Chemistry-related application codes
 apbs http://www.poissonboltzmann.org/apbs
-gamess http://www.msg.ameslab.gov/GAMESS
 lammps http://lammps.sandia.gov
 namd http://www.ks.uiuc.edu/Research/namd
-nwchem http://www.emsl.pnl.gov/capabilities/computing/nwchem
 </description>
 
 <copyright>

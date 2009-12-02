@@ -1,3 +1,0 @@
-NAME    = gamess
-VERSION = 1.2009
-RELEASE = 1
