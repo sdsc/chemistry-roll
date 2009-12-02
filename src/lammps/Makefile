@@ -73,8 +73,8 @@ build:
 	)
 
 install::
-	mkdir -p $(ROOT)/$(PKGROOT)
-	cp $(NAME)-$(VERSION)/src/lmp_rocks $(ROOT)/$(PKGROOT)/lammps
+	mkdir -p $(ROOT)/$(PKGROOT)/bin
+	cp $(NAME)-$(VERSION)/src/lmp_rocks $(ROOT)/$(PKGROOT)/bin/lammps
 
 clean::
 	rm -rf $(NAME)-$(VERSION)
