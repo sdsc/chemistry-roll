@@ -21,4 +21,12 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
   <to>chemistry-install</to>
 </edge>
 
+<edge from="envmodules-common">
+  <to>chemistry-modules-common</to>
+</edge>
+
+<order head="chemistry-install">
+  <tail>chemistry-modules-common</tail>
+</order>
+
 </graph>
