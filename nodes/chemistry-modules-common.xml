@@ -73,7 +73,7 @@ set ModulesVersion "28Nov09"
 fi
 
 <!-- NAMD -->
-if test -f /etc/profile.d/lammps.sh; then
+if test -f /etc/profile.d/namd.sh; then
 
   /bin/rm -f /etc/profile.d/namd.*
   /bin/mkdir -m 0755 -p /opt/modulefiles/applications/namd
