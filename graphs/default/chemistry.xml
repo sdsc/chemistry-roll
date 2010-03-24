@@ -20,16 +20,18 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 <edge from="compute">
   <to>chemistry-install</to>
 </edge>
+<order head="compute">
+  <tail>chemistry-install</tail>
+</order>
 
 <edge from="envmodules-common">
   <to>chemistry-modules-common</to>
 </edge>
-
-<order head="chemistry-install">
+<order head="envmodules-common">
   <tail>chemistry-modules-common</tail>
 </order>
 
-<order head="envmodules-common">
+<order head="chemistry-install">
   <tail>chemistry-modules-common</tail>
 </order>
 
