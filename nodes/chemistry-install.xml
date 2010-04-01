@@ -20,6 +20,7 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 <package>apbs</package>
 <package>lammps</package>
 <package>namd</package>
+<package>roll-chemistry-usersguide</package>
 
 <post>
 
