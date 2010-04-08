@@ -10,13 +10,9 @@ The chemistry Roll provides the following software packages:
 <listitem>
 <para>apbs</para>
 </listitem><listitem>
-<para>gamess</para>
-</listitem><listitem>
 <para>lammps</para>
 </listitem><listitem>
 <para>namd</para>
-</listitem><listitem>
-<para>nwchem</para>
 </listitem>
 </itemizedlist>
 

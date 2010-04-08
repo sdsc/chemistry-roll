@@ -5,6 +5,12 @@ $Id$
 @Copyright@
 
 $Log$
+Revision 1.3  2010/04/08 22:09:16  jhayes
+Clean up doc.
+
+Revision 1.2  2010/04/08 22:07:59  jhayes
+Clean up doc.
+
 Revision 1.2  2009/12/02 22:09:09  jhayes
 Remove reference copied from Nagios.
 

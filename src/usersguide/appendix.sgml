@@ -7,6 +7,12 @@ Appendix for Copyright and License notices
 @Copyright@
 
 $Log$
+Revision 1.2  2010/04/08 22:09:16  jhayes
+Clean up doc.
+
+Revision 1.2  2010/04/08 22:07:59  jhayes
+Clean up doc.
+
 Revision 1.1  2009/12/01 22:41:42  jhayes
 Add usersguide.
 
@@ -73,24 +79,6 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-]]>
-</screen>
-
-</para></section>
-
-</section>
-
-<section>
-	<title>gamess License and Copyright</title>
-
-<section>
-	<title>Copyright</title>
-
-<para><screen>
-</screen></para>
-
-<para><screen>
-<![CDATA[
 ]]>
 </screen>
 
@@ -627,68 +615,6 @@ namd@ks.uiuc.edu or send correspondence to:
                              405 North Mathews MC-251
                              Urbana, Illinois 61801 USA
                              FAX: (217) 244-6078
-]]>
-</screen>
-
-</para></section>
-
-</section>
-
-<section>
-	<title>nwchem License and Copyright</title>
-
-<section>
-	<title>Copyright</title>
-
-<para><screen>
-nwchem is COPYRIGHT (C) 1994, 1995, 1996, 1997, 1998, 1999,
-                        2000, 2001, 2002, 200, 2004, 2005, 2006, 2007
-                        Pacific Northwest National Laboratory,
-                        Battelle Memorial Institute.
-All Rights Reserved
-</screen></para>
-
-<para><screen>
-<![CDATA[
---------------------------------------------------------------------
-                             DISCLAIMER
---------------------------------------------------------------------
- This material was prepared as an account of work sponsored by an
- agency of the United States Government.  Neither the United States
- Government nor the United States Department of Energy, nor
- Battelle, nor any of their employees, MAKES ANY WARRANTY, EXPRESS
- OR IMPLIED, OR ASSUMES ANY LEGAL LIABILITY OR RESPONSIBILITY FOR
- THE ACCURACY, COMPLETENESS, OR USEFULNESS OF ANY INFORMATION,
- APPARATUS, PRODUCT, SOFTWARE, OR PROCESS DISCLOSED, OR REPRESENTS
- THAT ITS USE WOULD NOT INFRINGE PRIVATELY OWNED RIGHTS.
---------------------------------------------------------------------
---------------------------------------------------------------------
-                            LIMITED USE
---------------------------------------------------------------------
- This software (including any documentation) is being made
- available to you for your internal use only, solely for use in
- performance of work directly for the U.S. Federal Government or
- work under contracts with the U.S. Department of Energy or other
- U.S. Federal Government agencies.  This software is a version
- which has not yet been evaluated and cleared for commercialization.
- Adherence to this notice may be necessary for the author, Battelle
- Memorial Institute, to successfully assert copyright in and
- commercialize this software.  This software is not intended for
- duplication or distribution to third parties without the
- permission of the Manager of Software Products at Pacific
- Northwest National Laboratory, Richland, Washington, 99352.
---------------------------------------------------------------------
---------------------------------------------------------------------
-                            ACKNOWLEDGMENT
---------------------------------------------------------------------
- This software and its documentation were produced with Government
- support under Contract Number DE-AC06-76RLO-1830 awarded by the
- United States Department of Energy.  The Government retains a
- paid-up non-exclusive, irrevocable worldwide license to reproduce,
- prepare derivative works, perform publicly and display publicly by
- or for the Government, including the right to distribute to other
- Government contractors.
---------------------------------------------------------------------
 ]]>
 </screen>
 
