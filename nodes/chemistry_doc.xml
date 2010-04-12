@@ -1,0 +1,25 @@
+<?xml version="1.0" standalone="no"?>
+
+<kickstart>
+
+<description>
+Chemistry-related application codes roll doc
+apbs http://www.poissonboltzmann.org/apbs
+lammps http://lammps.sandia.gov
+namd http://www.ks.uiuc.edu/Research/namd
+</description>
+
+<copyright>
+Copyright (c) 2000 - 2009 The Regents of the University of California.
+All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
+</copyright>
+
+<changelog>
+</changelog>
+
+<package>roll-chemistry-usersguide</package>
+
+<post>
+</post>
+
+</kickstart>
