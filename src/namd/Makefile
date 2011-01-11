@@ -66,15 +66,21 @@ build:
 	( \
 	  cd $(NAME)-$(VERSION); \
 	  tar xvf charm-6.2.2.tar; \
-	  tar zxvf $(REDHAT.ROOT)/src/fftw-linux-x86_64.tar.gz; \
-	  mv linux-x86_64 fftw; \
-	  tar zxvf $(REDHAT.ROOT)/src/tcl-linux-x86_64.tar.gz; \
-	  mv linux-x86_64 tcl \
+	  tar zxvf ../fftw-linux-x86_64.tar.gz; \
+	  tar zxvf ../tcl-linux-x86_64.tar.gz; \
 	  cd charm-6.2.2; \
 	  ./build charm++ mpi-linux-x86_64 -no-build-shared -DCMK_OPTIMIZE; \
 	  cd ..; \
           cp ../patch-files/$(NAME)-$(VERSION)/Linux-x86_64-MPI-g++.arch arch; \
 	  ./config Linux-x86_64-MPI-g++ --charm-arch mpi-linux-x86_64; \
+          cp ../patch-files/$(NAME)-$(VERSION)/Linux-x86_64.fftw arch; \
+          export cwd=`pwd`;export cwd=`echo $$cwd | sed 's/\//\\\\\//g'`; \
+          cat arch/Linux-x86_64.fftw|sed -e s/ROOTDIR/$$cwd/ > arch/tmp.$$$$; \
+          mv arch/tmp.$$$$ arch/Linux-x86_64.fftw; \
+          cp ../patch-files/$(NAME)-$(VERSION)/Linux-x86_64.tcl arch; \
+          export cwd=`pwd`;export cwd=`echo $$cwd | sed 's/\//\\\\\//g'`; \
+          cat arch/Linux-x86_64.tcl|sed -e s/ROOTDIR/$$cwd/ > arch/tmp.$$$$; \
+          mv arch/tmp.$$$$ arch/Linux-x86_64.tcl; \
 	  cd Linux-x86_64-MPI-g++; \
 	  make;\
 	)
