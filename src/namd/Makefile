@@ -66,7 +66,7 @@ build:
 	( \
 	  cd $(NAME)-$(VERSION); \
 	  tar xvf charm-6.2.2.tar; \
-	  tar zxvf ../fftw-linux-x86_64.tar.gz; \
+          tar zxvf  $(REDHAT.ROOT)/src/fftw-linux-x86_64.tar.gz; \
 	  tar zxvf ../tcl-linux-x86_64.tar.gz; \
 	  cd charm-6.2.2; \
 	  ./build charm++ mpi-linux-x86_64 -no-build-shared -DCMK_OPTIMIZE; \
