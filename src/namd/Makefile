@@ -65,7 +65,7 @@ build:
 	tar zxvf $(NAME)-$(VERSION).tgz
 	( \
 	  cd $(NAME)-$(VERSION); \
-	  tar xvf charm-6.1.3.tar; \
+	  tar xvf charm-6.2.2.tar; \
 	  tar zxvf $(REDHAT.ROOT)/src/fftw-linux-x86_64.tar.gz; \
 	  mv linux-x86_64 fftw; \
 	  tar zxvf ../tcl-linux-x86_64.tar.gz; \
@@ -73,7 +73,7 @@ build:
 	)
 	cd patch-files && find . -type f | grep -v CVS | cpio -pduv ../
 	( \
-	  cd $(NAME)-$(VERSION)/charm-6.1.3; \
+	  cd $(NAME)-$(VERSION)/charm-6.2.2; \
 	  ./build charm++ mpi-linux-x86_64 -no-build-shared -DCMK_OPTIMIZE; \
 	  cd ..; \
 	  ./config Linux-x86_64-MPI-pathcc --charm-arch mpi-linux-x86_64; \
