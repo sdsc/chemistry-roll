@@ -53,28 +53,65 @@
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # @Copyright@
-#
 
 PKGROOT = /opt/apbs
+SOURCE = apbs-$(VERSION)
 REDHAT.ROOT = $(PWD)/../../
+
 -include $(ROCKSROOT)/etc/Rules.mk
 
+ifeq ("$(ROLLCOMPILER)", "intel")
+  COMPILERSETUP = export ICCPATH=`which icc 2>/dev/null || true`; \
+                  if test -z "$${ICCPATH}" -a \
+                          -e /etc/profile.d/modules.sh; then \
+                  . /etc/profile.d/modules.sh; \
+                  module load intel; \
+                  fi
+  CC = icc
+  FCC = ifort
+  MPISUBDIR = intel
+else ifeq ("$(ROLLCOMPILER)", "gnu")
+  COMPILERSETUP = echo noop > /dev/null
+  CC = gcc
+  FCC = f77
+  MPISUBDIR = gnu
+else
+  COMPILERSETUP = echo noop > /dev/null
+  CC = gcc
+  FCC = f77
+  MPISUBDIR = .
+endif
+
+# TODO assumes mpi roll convention /opt/openmpi/(compiler)/(network)
+ifeq ("$(ROLLNETWORK)", "ib")
+  MPI_PATH = /opt/openmpi/$(MPISUBDIR)/ib
+else ifeq ("$(ROLLNETWORK)", "mx")
+  MPI_PATH = /opt/openmpi/$(MPISUBDIR)/mx
+else
+  MPI_PATH = /opt/openmpi
+endif
+
 build:
-	tar zxvf $(NAME)-$(VERSION).tgz
-	cp patch-files/apbs-1.2/PrintInfo.f $(NAME)-$(VERSION)/contrib/aqua/;\
+	tar zxvf $(SOURCE).tgz
 	( \
-	  cd $(NAME)-$(VERSION); \
-          ./configure CC=gcc F77=f77 --prefix=$(ROOT)/$(PKGROOT) \
-	    --with-openmpi=/opt/openmpi; \
+	  $(COMPILERSETUP); \
+	  export LD_LIBRARY_PATH=$(MPI_PATH)/lib:$$LD_LIBRARY_PATH; \
+	  export PATH=$(MPI_PATH)/bin:$$PATH; \
+	  cd $(SOURCE); \
+          ./configure CC=$(CC) F77=$(FCC) --prefix=$(ROOT)/$(PKGROOT) \
+	    --with-openmpi=$(MPI_PATH); \
 	  make \
 	)
 
 install::
 	mkdir -p $(ROOT)/$(PKGROOT)/bin
 	( \
-	  cd $(NAME)-$(VERSION); \
+	  $(COMPILERSETUP); \
+	  export LD_LIBRARY_PATH=$(MPI_PATH)/lib:$$LD_LIBRARY_PATH; \
+	  export PATH=$(MPI_PATH)/bin:$$PATH; \
+	  cd $(SOURCE); \
 	  make install \
 	)
 
 clean::
-	rm -rf $(NAME)-$(VERSION)
+	rm -rf $(SOURCE)

@@ -56,15 +56,15 @@
 #
 
 PKGROOT = /opt/namd
+SOURCE = namd-$(VERSION)
 REDHAT.ROOT = $(PWD)/../../
-NAMDDIR = $(PWD)
 
 -include $(ROCKSROOT)/etc/Rules.mk
 
 build:
-	tar zxvf $(NAME)-$(VERSION).tgz
+	tar zxvf $(SOURCE).tgz
 	( \
-	  cd $(NAME)-$(VERSION); \
+	  cd $(SOURCE); \
 	  tar xvf charm-6.2.2.tar; \
           tar zxvf  $(REDHAT.ROOT)/src/fftw-linux-x86_64.tar.gz; \
 	  tar zxvf ../tcl-linux-x86_64.tar.gz; \

@@ -6,11 +6,11 @@ SHELL = /bin/sh
 # compiler/linker settings
 # specify flags and libraries needed for your compiler
 
-CC =		mpic++
+CC =		ROLL_MPICC
 CCFLAGS =	-O2 \
 		-funroll-loops -fstrict-aliasing -Wall -W -Wno-uninitialized
 DEPFLAGS =	-M
-LINK =		mpic++
+LINK =		ROLL_MPICC
 LINKFLAGS =	-O
 LIB =           -lstdc++
 ARCHIVE =	ar

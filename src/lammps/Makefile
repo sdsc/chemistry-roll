@@ -55,16 +55,44 @@
 # @Copyright@
 #
 
-PKGROOT = /opt/$(NAME)
+PKGROOT = /opt/lammps
+SOURCE = lammps-$(VERSION)
 REDHAT.ROOT = $(PWD)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 
+ifeq ("$(ROLLCOMPILER)", "intel")
+  COMPILERSETUP = export ICCPATH=`which icc 2>/dev/null || true`; \
+                  if test -z "$${ICCPATH}" -a \
+                          -e /etc/profile.d/modules.sh; then \
+                  . /etc/profile.d/modules.sh; \
+                  module load intel; \
+                  fi
+  MPICC = mpic++
+  MPISUBDIR = intel
+else
+  COMPILERSETUP = echo noop > /dev/null
+  MPICC = mpicxx
+  MPISUBDIR = gnu
+endif
+
+ifeq ("$(ROLLNETWORK)", "ib")
+  MPI_PATH = /opt/openmpi/$(MPISUBDIR)/ib
+else ifeq ("$(ROLLNETWORK)", "mx")
+  MPI_PATH = /opt/openmpi/$(MPISUBDIR)/mx
+else
+  MPI_PATH = /opt/openmpi
+endif
+
 build:
-	tar zxvf $(NAME)-$(VERSION).tgz
-	cd patch-files && find . -type f | grep -v CVS | cpio -pduv ../
+	tar zxvf $(SOURCE).tgz
+	cp patch-files/Makefile.rocks $(SOURCE)/src/MAKE/
+	perl -pi -e 's!ROLL_MPICC!$(MPICC)!' $(SOURCE)/src/MAKE/Makefile.rocks
 	( \
-	  cd $(NAME)-$(VERSION)/src; \
+	  $(COMPILERSETUP); \
+	  export LD_LIBRARY_PATH=$(MPI_PATH)/lib:$$LD_LIBRARY_PATH; \
+	  export PATH=$(MPI_PATH)/bin:$$PATH; \
+	  cd $(SOURCE)/src; \
 	  tar zxvf $(REDHAT.ROOT)/src/fftw-linux-x86_64.tar.gz; \
 	  mv linux-x86_64 fftw; \
 	  mv fftw/include/sfftw.h fftw/include/fftw.h; \
@@ -74,7 +102,7 @@ build:
 
 install::
 	mkdir -p $(ROOT)/$(PKGROOT)/bin
-	cp $(NAME)-$(VERSION)/src/lmp_rocks $(ROOT)/$(PKGROOT)/bin/lammps
+	cp $(SOURCE)/src/lmp_rocks $(ROOT)/$(PKGROOT)/bin/lammps
 
 clean::
-	rm -rf $(NAME)-$(VERSION)
+	rm -rf $(SOURCE)
