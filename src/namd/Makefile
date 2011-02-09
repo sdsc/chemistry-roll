@@ -61,36 +61,72 @@ REDHAT.ROOT = $(PWD)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 
+ifeq ("$(ROLLCOMPILER)", "intel")
+  COMPILERSETUP = export ICCPATH=`which icc 2>/dev/null || true`; \
+                  if test -z "$${ICCPATH}" -a \
+                          -e /etc/profile.d/modules.sh; then \
+                  . /etc/profile.d/modules.sh; \
+                  module load intel; \
+                  fi
+  CHARMARCH = mpi-linux-x86_64-ifort-mpicxx
+  CHARMBUILDOPTS = mpicxx ifort -j16 -O2
+  CXX = icc        
+  FCC = ifort
+  MPISUBDIR = intel
+else ifeq ("$(ROLLCOMPILER)", "gnu")
+  COMPILERSETUP = echo noop > /dev/null
+  CHARMARCH = mpi-linux-x86_64
+  CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
+  CXX = g++
+  FCC = f77
+  MPISUBDIR = gnu
+else
+  COMPILERSETUP = echo noop > /dev/null
+  CHARMARCH = mpi-linux-x86_64
+  CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
+  CXX = g++
+  FCC = f77
+  MPISUBDIR = .
+endif
+
+# TODO assumes mpi roll convention /opt/openmpi/(compiler)/(network)
+ifeq ("$(ROLLNETWORK)", "ib")
+  MPI_PATH = /opt/openmpi/$(MPISUBDIR)/ib
+else ifeq ("$(ROLLNETWORK)", "mx")
+  MPI_PATH = /opt/openmpi/$(MPISUBDIR)/mx
+else
+  MPI_PATH = /opt/openmpi
+endif
+
 build:
 	tar zxvf $(SOURCE).tgz
+	cp patch-files/Linux-x86_64-MPI*.arch $(SOURCE)/arch
+	cp patch-files/Linux-x86_64.fftw $(SOURCE)/arch
+	cp patch-files/Linux-x86_64.tcl $(SOURCE)/arch
+	perl -pi -e "s!ROOTDIR!`pwd`/$(SOURCE)!g" \
+	  $(SOURCE)/arch/Linux-x86_64-MPI*.arch \
+	  $(SOURCE)/arch/Linux-x86_64.fftw \
+	  $(SOURCE)/arch/Linux-x86_64.tcl
 	( \
+	  $(COMPILERSETUP); \
+	  export PATH=$(MPI_PATH)/bin:$${PATH}; \
+	  export LD_LIBRARY_PATH=$(MPI_PATH)/lib:$${LD_LIBRARY_PATH}; \
 	  cd $(SOURCE); \
 	  tar xvf charm-6.2.2.tar; \
-          tar zxvf  $(REDHAT.ROOT)/src/fftw-linux-x86_64.tar.gz; \
+	  tar zxvf $(REDHAT.ROOT)/src/fftw-linux-x86_64.tar.gz; \
 	  tar zxvf ../tcl-linux-x86_64.tar.gz; \
 	  cd charm-6.2.2; \
-	  ./build charm++ mpi-linux-x86_64 -no-build-shared -DCMK_OPTIMIZE; \
+	  ./build charm++ mpi-linux-x86_64 $(CHARMBUILDOPTS); \
 	  cd ..; \
-          cp ../patch-files/$(NAME)-$(VERSION)/Linux-x86_64-MPI-g++.arch arch; \
-	  ./config Linux-x86_64-MPI-g++ --charm-arch mpi-linux-x86_64; \
-          cp ../patch-files/$(NAME)-$(VERSION)/Linux-x86_64.fftw arch; \
-          export cwd=`pwd`;export cwd=`echo $$cwd | sed 's/\//\\\\\//g'`; \
-          cat arch/Linux-x86_64.fftw|sed -e s/ROOTDIR/$$cwd/ > arch/tmp.$$$$; \
-          mv arch/tmp.$$$$ arch/Linux-x86_64.fftw; \
-          cp ../patch-files/$(NAME)-$(VERSION)/Linux-x86_64.tcl arch; \
-          export cwd=`pwd`;export cwd=`echo $$cwd | sed 's/\//\\\\\//g'`; \
-          cat arch/Linux-x86_64.tcl|sed -e s/ROOTDIR/$$cwd/ > arch/tmp.$$$$; \
-          mv arch/tmp.$$$$ arch/Linux-x86_64.tcl; \
-	  cd Linux-x86_64-MPI-g++; \
-	  make;\
+	  ./config Linux-x86_64-MPI-$(CXX) --charm-arch $(CHARMARCH); \
+	  cd Linux-x86_64-MPI-$(CXX); \
+	  make \
 	)
 
 install::
 	mkdir -p $(ROOT)/$(PKGROOT)/bin
-	( \
-	  cd $(NAME)-$(VERSION)/Linux-x86_64-MPI-pathcc; \
-	  cp charmrun flipbinpdb flipdcd namd2 psfgen $(ROOT)/$(PKGROOT)/bin \
-	)
+	cp $(SOURCE)/*/{charmrun,flipbinpdb,flipdcd,namd2,psfgen} \
+	   $(ROOT)/$(PKGROOT)/bin
 
 clean::
 	rm -rf $(NAME)-$(VERSION)
