@@ -57,7 +57,22 @@
 
 -include $(ROLLSROOT)/etc/Rolls.mk
 
-default: roll
+# Change the package/roll names to indicate compiler/network settings
+ifneq ("", "$(ROLLCOMPILER)$(ROLLNETWORK)")
+  ifndef ROLLCOMPILER
+    ROLLSUFFIX = -$(ROLLNETWORK)
+  else ifndef ROLLNETWORK
+    ROLLSUFFIX = -$(ROLLCOMPILER)
+  else
+    ROLLSUFFIX = -$(ROLLCOMPILER)-$(ROLLNETWORK)
+  endif
+endif
+
+default:
+	perl -pi -e 's!(NAME\s*=\s*\S+)!$$1$(ROLLSUFFIX)!' version.mk src/*/version.mk
+	perl -pi -e 's!(\s*</package>)!$(ROLLSUFFIX)$$1!' nodes/*.xml
+	$(MAKE) roll
+	perl -pi -e 's!$(ROLLSUFFIX)!!' version.mk src/*/version.mk nodes/*.xml
 
 clean::
 	rm -f _arch bootstrap.py
