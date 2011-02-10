@@ -60,46 +60,49 @@ REDHAT.ROOT = $(PWD)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 
-ifeq ("$(ROLLCOMPILER)", "intel")
-  COMPILERSETUP = export ICCPATH=`which icc 2>/dev/null || true`; \
-                  if test -z "$${ICCPATH}" -a \
-                          -e /etc/profile.d/modules.sh; then \
-                  . /etc/profile.d/modules.sh; \
-                  module load intel; \
-                  fi
-  CC = icc
-  FCC = ifort
-  MPISUBDIR = intel
-else ifeq ("$(ROLLCOMPILER)", "gnu")
-  COMPILERSETUP = echo noop > /dev/null
-  CC = gcc
-  FCC = f77
-  MPISUBDIR = gnu
+CC = gcc
+FCC = f77
+ifdef ROLLCOMPILER
+  COMPILERSETUP = \
+    if test -e /etc/profile.d/modules.sh; then \
+      . /etc/profile.d/modules.sh; \
+      module load $(ROLLCOMPILER); \
+    fi
+  ifeq ("$(ROLLCOMPILER)", "intel")
+    CC = icc
+    FCC = ifort
+  endif
 else
   COMPILERSETUP = echo noop > /dev/null
-  CC = gcc
-  FCC = f77
-  MPISUBDIR = .
 endif
 
-# TODO assumes mpi roll convention /opt/openmpi/(compiler)/(network)
-ifeq ("$(ROLLNETWORK)", "ib")
-  MPI_PATH = /opt/openmpi/$(MPISUBDIR)/ib
-else ifeq ("$(ROLLNETWORK)", "mx")
-  MPI_PATH = /opt/openmpi/$(MPISUBDIR)/mx
+ifdef ROLLNETWORK
+  OPENMPISUFFIX = _$(ROLLNETWORK)
 else
-  MPI_PATH = /opt/openmpi
+  OPENMPISUFFIX =
 endif
+
+MPISETUP = \
+  if test -e /etc/profile.d/modules.sh; then \
+    . /etc/profile.d/modules.sh; \
+    module load openmpi$(OPENMPISUFFIX); \
+  fi; \
+  export MPI_HOME=`which mpicxx | perl -pe 's!/bin/mpicxx!!'`; \
+  if test -z "$MPI_HOME"; then \
+    export MPI_HOME=/opt/openmpi; \
+  fi; \
+  echo Using MPI from $${MPI_HOME}; \
+  export PATH=$${PATH}:$${MPI_HOME}/bin; \
+  export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
 
 build:
 	tar zxvf $(SOURCE).tgz
 	( \
 	  $(COMPILERSETUP); \
-	  export LD_LIBRARY_PATH=$(MPI_PATH)/lib:$$LD_LIBRARY_PATH; \
-	  export PATH=$(MPI_PATH)/bin:$$PATH; \
+	  $(MPISETUP); \
 	  cd $(SOURCE); \
           ./configure CC=$(CC) F77=$(FCC) --prefix=$(ROOT)/$(PKGROOT) \
-	    --with-openmpi=$(MPI_PATH); \
+	    --with-openmpi=$${MPI_HOME}; \
 	  make \
 	)
 
@@ -107,8 +110,7 @@ install::
 	mkdir -p $(ROOT)/$(PKGROOT)/bin
 	( \
 	  $(COMPILERSETUP); \
-	  export LD_LIBRARY_PATH=$(MPI_PATH)/lib:$$LD_LIBRARY_PATH; \
-	  export PATH=$(MPI_PATH)/bin:$$PATH; \
+	  $(MPISETUP); \
 	  cd $(SOURCE); \
 	  make install \
 	)
