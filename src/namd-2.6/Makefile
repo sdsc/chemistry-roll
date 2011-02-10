@@ -53,9 +53,8 @@
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # @Copyright@
-#
 
-PKGROOT = /opt/namd
+PKGROOT = /opt/namd_$(VERSION)
 SOURCE = namd-$(VERSION)
 REDHAT.ROOT = $(PWD)/../../
 
@@ -69,7 +68,7 @@ ifeq ("$(ROLLCOMPILER)", "intel")
                   module load intel; \
                   fi
   CHARMARCH = mpi-linux-x86_64-ifort-mpicxx
-  CHARMBUILDOPTS = mpicxx ifort -j16 -O2
+  CHARMBUILDOPTS = mpicxx ifort -O2 -g -fPIC
   CXX = icc        
   FCC = ifort
   MPISUBDIR = intel
@@ -100,11 +99,16 @@ endif
 
 build:
 	tar zxvf $(SOURCE).tgz
-	cd $(SOURCE) && tar xvf charm-6.2.2.tar
+	cd $(SOURCE) && tar xvf charm-6.1.3.tar
 	cp patch-files/Linux-x86_64-MPI*.arch $(SOURCE)/arch
 	cp patch-files/Linux-x86_64.* $(SOURCE)/arch
+	cp patch-files/Make.charm $(SOURCE)
+	cp patch-files/conv-mach.sh \
+	  $(SOURCE)/charm-6.1.3/src/arch/mpi-linux-x86_64
 	perl -pi -e "s!ROOTDIR!`pwd`/$(SOURCE)!g" \
-	  $(SOURCE)/arch/Linux-x86_64-MPI*.arch $(SOURCE)/arch/Linux-x86_64.*
+	  $(SOURCE)/arch/Linux-x86_64-MPI*.arch $(SOURCE)/arch/Linux-x86_64.* \
+	  $(SOURCE)/Make.charm \
+	  $(SOURCE)/charm-6.1.3/src/arch/mpi-linux-x86_64
 	( \
 	  $(COMPILERSETUP); \
 	  export PATH=$(MPI_PATH)/bin:$${PATH}; \
@@ -112,10 +116,10 @@ build:
 	  cd $(SOURCE); \
 	  tar zxvf $(REDHAT.ROOT)/src/fftw-linux-x86_64.tar.gz; \
 	  tar zxvf $(REDHAT.ROOT)/src/tcl-linux-x86_64.tar.gz; \
-	  cd charm-6.2.2; \
+	  cd charm-6.1.3; \
 	  ./build charm++ mpi-linux-x86_64 $(CHARMBUILDOPTS); \
 	  cd ..; \
-	  ./config Linux-x86_64-MPI-$(CXX) --charm-arch $(CHARMARCH); \
+	  ./config fftw Linux-x86_64-MPI-$(CXX); \
 	  cd Linux-x86_64-MPI-$(CXX); \
 	  make \
 	)
