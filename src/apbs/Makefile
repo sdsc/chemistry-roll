@@ -62,6 +62,7 @@ REDHAT.ROOT = $(PWD)/../../
 
 CC = gcc
 FCC = f77
+MPICC = mpicxx
 ifdef ROLLCOMPILER
   COMPILERSETUP = \
     if test -e /etc/profile.d/modules.sh; then \
@@ -71,6 +72,7 @@ ifdef ROLLCOMPILER
   ifeq ("$(ROLLCOMPILER)", "intel")
     CC = icc
     FCC = ifort
+    MPICC = mpic++
   endif
 else
   COMPILERSETUP = echo noop > /dev/null
@@ -87,7 +89,7 @@ MPISETUP = \
     . /etc/profile.d/modules.sh; \
     module load openmpi$(OPENMPISUFFIX); \
   fi; \
-  export MPI_HOME=`which mpicxx | perl -pe 's!/bin/mpicxx!!'`; \
+  export MPI_HOME=`which $(MPICC) | perl -pe 's!/bin/.*!!'`; \
   if test -z "$MPI_HOME"; then \
     export MPI_HOME=/opt/openmpi; \
   fi; \
