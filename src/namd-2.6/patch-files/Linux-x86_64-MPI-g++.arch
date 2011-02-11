@@ -1,5 +1,5 @@
 NAMD_ARCH = Linux-x86_64
-CHARMARCH = mpi-linux-x86_64-pathcc
+CHARMARCH = mpi-linux-x86_64
 
 FLOATOPTS= -O2
 CXX = mpicxx -fPIC -DSOCKLEN_T=socklen_t -I$(CHARM_LOC)/include 
