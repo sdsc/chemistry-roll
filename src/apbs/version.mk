@@ -1,3 +1,3 @@
-NAME	= apbs
+NAME	= apbs$(ROLLSUFFIX)
 VERSION	= 1.2.1
 RELEASE	= 1

@@ -78,17 +78,27 @@ if test -f /etc/profile.d/namd.sh; then
   /bin/rm -f /etc/profile.d/namd.*
   /bin/mkdir -m 0755 -p /opt/modulefiles/applications/namd
 
-<file name="/opt/modulefiles/applications/namd/2.7b1" perms="0644">
+<file name="/opt/modulefiles/applications/namd/2.6" perms="0644">
 #%Module1.0
-prepend-path PATH /opt/namd/bin
+prepend-path PATH /opt/namd/2.6/bin
 </file>
 
-<file name="/opt/modulefiles/applications/namd/.version.2.7b1">
+<file name="/opt/modulefiles/applications/namd/.version.2.6">
 #%Module1.0
-set ModulesVersion "2.7b1"
+set ModulesVersion "2.6"
 </file>
 
-  /bin/ln -s /opt/modulefiles/applications/namd/.version.2.7b1 \
+<file name="/opt/modulefiles/applications/namd/2.7b4" perms="0644">
+#%Module1.0
+prepend-path PATH /opt/namd/2.7b4/bin
+</file>
+
+<file name="/opt/modulefiles/applications/namd/.version.2.7b4">
+#%Module1.0
+set ModulesVersion "2.7b4"
+</file>
+
+  /bin/ln -s /opt/modulefiles/applications/namd/.version.2.7b4 \
              /opt/modulefiles/applications/namd/.version
 
 fi

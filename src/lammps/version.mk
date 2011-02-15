@@ -1,3 +1,3 @@
-NAME    = lammps
+NAME    = lammps$(ROLLSUFFIX)
 VERSION = 28Nov09
 RELEASE = 1

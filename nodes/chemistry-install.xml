@@ -17,9 +17,10 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 <changelog>
 </changelog>
 
-<package>apbs</package>
-<package>lammps</package>
-<package>namd</package>
+<package>apbs$(ROLLCOMPILER)</package>
+<package>lammps$(ROLLCOMPILER)</package>
+<package>namd$(ROLLCOMPILER)</package>
+<package>namd_2.6$(ROLLCOMPILER)</package>
 
 <post>
 
@@ -27,24 +28,24 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 set path = ( /opt/apbs/bin $path )
 </file>
 
-<file name="/etc/profile.d/lammps.csh" perms="0644">
-set path = ( /opt/lammps/bin $path )
-</file>
-
-<file name="/etc/profile.d/namd.csh" perms="0644">
-set path = ( /opt/namd/bin $path )
-</file>
-
 <file name="/etc/profile.d/apbs.sh" perms="0644">
 export PATH=/opt/apbs/bin:$PATH
+</file>
+
+<file name="/etc/profile.d/lammps.csh" perms="0644">
+set path = ( /opt/lammps/bin $path )
 </file>
 
 <file name="/etc/profile.d/lammps.sh" perms="0644">
 export PATH=/opt/lammps/bin:$PATH
 </file>
 
+<file name="/etc/profile.d/namd.csh" perms="0644">
+set path = ( /opt/namd/2.7b4/bin $path )
+</file>
+
 <file name="/etc/profile.d/namd.sh" perms="0644">
-export PATH=/opt/namd/bin:$PATH
+export PATH=/opt/namd/2.7b4/bin:$PATH
 </file>
 
 </post>

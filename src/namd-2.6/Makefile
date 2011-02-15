@@ -54,7 +54,7 @@
 #
 # @Copyright@
 
-PKGROOT = /opt/namd_$(VERSION)
+PKGROOT = /opt/namd/$(VERSION)
 SOURCE = namd-$(VERSION)
 REDHAT.ROOT = $(PWD)/../../
 

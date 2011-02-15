@@ -1,3 +1,3 @@
-NAME    = namd_mx_2.6
+NAME    = namd_2.6$(ROLLSUFFIX)
 VERSION = 2.6
 RELEASE = 1
