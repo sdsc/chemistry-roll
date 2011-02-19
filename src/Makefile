@@ -53,6 +53,8 @@
 # 
 # @Copyright@
 #
+#
+#
 
 -include $(shell ${ROCKSROOT}/bin/arch).mk
 -include $(shell ${ROCKSROOT}/bin/os).mk
@@ -62,5 +64,15 @@ default:
 
 copyright rpm pkg clean::
 	for i in $(SRCDIRS) ; do \
-		(cd $$i; $(MAKE) $@) ; \
+	  grep -q ROLLCOMPILER $$i/version.mk; \
+	  if test $$? == 0; then \
+	    for c in $(ROLLCOMPILER); do \
+	      for n in $(ROLLNETWORK); do \
+	        echo make $@ in $$i with ROLLCOMPILER=$$c ROLLNETWORK=$$n; \
+	        (cd $$i; $(MAKE) ROLLCOMPILER=$$c ROLLNETWORK=$$n $@); \
+	      done; \
+	    done; \
+	  else \
+	    (cd $$i; $(MAKE) $@) ; \
+	  fi; \
 	done
