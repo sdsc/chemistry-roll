@@ -54,43 +54,54 @@
 #
 # @Copyright@
 
+ifndef ROLLCOMPILER
+  ROLLCOMPILER = gnu
+endif
+ifndef ROLLNETWORK
+  ROLLNETWORK = eth
+endif
+
 PKGROOT = /opt/namd/$(VERSION)
 SOURCE = namd-$(VERSION)
 REDHAT.ROOT = $(PWD)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 
-CHARMARCH = mpi-linux-x86_64
-CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
-CXX = g++
-FCC = f77
-ifdef ROLLCOMPILER
-  COMPILERSETUP = \
-    if test -e /etc/profile.d/modules.sh; then \
-      . /etc/profile.d/modules.sh; \
-      module load $(ROLLCOMPILER); \
-    fi
-  ifeq ("$(ROLLCOMPILER)", "intel")
-    CHARMARCH = mpi-linux-x86_64-ifort-mpicxx
-    CHARMBUILDOPTS = mpicxx ifort -O2 -g -fPIC
-    CXX = icc        
-    FCC = ifort
-  endif
-else
-  COMPILERSETUP = echo noop > /dev/null
-endif
+COMPILERSETUP = \
+  if test -e /etc/profile.d/modules.sh; then \
+    . /etc/profile.d/modules.sh; \
+    module load $(ROLLCOMPILER); \
+  fi
 
-ifdef ROLLNETWORK
-  OPENMPISUFFIX = _$(ROLLNETWORK)
-else
+ifeq ("$(ROLLNETWORK)", "eth")
   OPENMPISUFFIX =
+else
+  OPENMPISUFFIX = _$(ROLLNETWORK)
 endif
 
 MPISETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
     module load openmpi$(OPENMPISUFFIX); \
-  fi
+  fi; \
+  export MPI_HOME=`which mpicxx | perl -pe 's!/bin/.*!!'`; \
+  if test -z "$${MPI_HOME}"; then \
+    export MPI_HOME=/opt/openmpi; \
+  fi; \
+  echo Using MPI from $${MPI_HOME}; \
+  export PATH=$${PATH}:$${MPI_HOME}/bin; \
+  export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
+
+CHARMARCH = mpi-linux-x86_64
+CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
+CXX = g++
+FCC = f77
+ifeq ("$(ROLLCOMPILER)", "intel")
+  CHARMARCH = mpi-linux-x86_64-ifort-mpicxx
+  CHARMBUILDOPTS = mpicxx ifort -O2 -g -fPIC
+  CXX = icc        
+  FCC = ifort
+endif
 
 build:
 	tar zxvf $(SOURCE).tgz

@@ -54,34 +54,29 @@
 #
 # @Copyright@
 
+ifndef ROLLCOMPILER
+  ROLLCOMPILER = gnu
+endif
+ifndef ROLLNETWORK
+  ROLLNETWORK = eth
+endif
+
 PKGROOT = /opt/apbs
 SOURCE = apbs-$(VERSION)
 REDHAT.ROOT = $(PWD)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 
-CC = gcc
-FCC = f77
-MPICC = mpicxx
-ifdef ROLLCOMPILER
-  COMPILERSETUP = \
-    if test -e /etc/profile.d/modules.sh; then \
-      . /etc/profile.d/modules.sh; \
-      module load $(ROLLCOMPILER); \
-    fi
-  ifeq ("$(ROLLCOMPILER)", "intel")
-    CC = icc
-    FCC = ifort
-    MPICC = mpic++
-  endif
-else
-  COMPILERSETUP = echo noop > /dev/null
-endif
+COMPILERSETUP = \
+  if test -e /etc/profile.d/modules.sh; then \
+    . /etc/profile.d/modules.sh; \
+    module load $(ROLLCOMPILER); \
+  fi
 
-ifdef ROLLNETWORK
-  OPENMPISUFFIX = _$(ROLLNETWORK)
-else
+ifeq ("$(ROLLNETWORK)", "eth")
   OPENMPISUFFIX =
+else
+  OPENMPISUFFIX = _$(ROLLNETWORK)
 endif
 
 MPISETUP = \
@@ -89,13 +84,23 @@ MPISETUP = \
     . /etc/profile.d/modules.sh; \
     module load openmpi$(OPENMPISUFFIX); \
   fi; \
-  export MPI_HOME=`which $(MPICC) | perl -pe 's!/bin/.*!!'`; \
-  if test -z "$MPI_HOME"; then \
+  export MPI_HOME=`which mpicxx | perl -pe 's!/bin/.*!!'`; \
+  if test -z "$${MPI_HOME}"; then \
     export MPI_HOME=/opt/openmpi; \
   fi; \
   echo Using MPI from $${MPI_HOME}; \
   export PATH=$${PATH}:$${MPI_HOME}/bin; \
   export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
+
+CC = gcc
+FCC = f77
+ifeq ("$(ROLLCOMPILER)", "intel")
+  CC = icc
+  FCC = ifort
+else ifeq ("$(ROLLCOMPILER)", "pgi")
+  CC = pgcc
+  FCC = pgf77
+endif
 
 build:
 	tar zxvf $(SOURCE).tgz

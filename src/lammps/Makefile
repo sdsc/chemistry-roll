@@ -55,42 +55,47 @@
 # @Copyright@
 #
 
+ifndef ROLLCOMPILER
+  ROLLCOMPILER = gnu
+endif
+ifndef ROLLNETWORK
+  ROLLNETWORK = eth
+endif
+
 PKGROOT = /opt/lammps
 SOURCE = lammps-$(VERSION)
 REDHAT.ROOT = $(PWD)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 
-MPICC = mpicxx
-ifdef ROLLCOMPILER
-  COMPILERSETUP = \
-    if test -e /etc/profile.d/modules.sh; then \
-      . /etc/profile.d/modules.sh; \
-      module load $(ROLLCOMPILER); \
-    fi
-  ifeq ("$(ROLLCOMPILER)", "intel")
-    MPICC = mpic++
-  endif
-else
-  COMPILERSETUP = echo noop > /dev/null
-endif
+COMPILERSETUP = \
+  if test -e /etc/profile.d/modules.sh; then \
+    . /etc/profile.d/modules.sh; \
+    module load $(ROLLCOMPILER); \
+  fi
 
-ifdef ROLLNETWORK
-  OPENMPISUFFIX = _$(ROLLNETWORK)
-else
+ifeq ("$(ROLLNETWORK)", "eth")
   OPENMPISUFFIX =
+else
+  OPENMPISUFFIX = _$(ROLLNETWORK)
 endif
 
 MPISETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
     module load openmpi$(OPENMPISUFFIX); \
-  fi
+  fi; \
+  export MPI_HOME=`which mpicxx | perl -pe 's!/bin/.*!!'`; \
+  if test -z "$${MPI_HOME}"; then \
+    export MPI_HOME=/opt/openmpi; \
+  fi; \
+  echo Using MPI from $${MPI_HOME}; \
+  export PATH=$${PATH}:$${MPI_HOME}/bin; \
+  export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
 
 build:
 	tar zxvf $(SOURCE).tgz
 	cp patch-files/Makefile.rocks $(SOURCE)/src/MAKE/
-	perl -pi -e 's!ROLL_MPICC!$(MPICC)!' $(SOURCE)/src/MAKE/Makefile.rocks
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
