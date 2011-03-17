@@ -120,6 +120,7 @@ install::
 	  $(MPISETUP); \
 	  cd $(SOURCE); \
 	  make install \
+          cp -r examples  $(ROOT)/$(PKGROOT)
 	)
 
 clean::
