@@ -119,8 +119,8 @@ install::
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE); \
-	  make install \
-          cp -r examples  $(ROOT)/$(PKGROOT)
+	  make install; \
+          cp -r examples  $(ROOT)/$(PKGROOT) \
 	)
 
 clean::
