@@ -104,7 +104,7 @@ build:
 	  mv linux-x86_64 fftw; \
 	  mv fftw/include/sfftw.h fftw/include/fftw.h; \
 	  mv fftw/lib/libsfftw.a fftw/lib/libfftw.a; \
-	  make ROOT=lmp rocks \
+	  make ROOT=lmp rocks yes-all \
 	)
 
 install::
