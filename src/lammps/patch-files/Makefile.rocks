@@ -58,7 +58,7 @@ user-atc_SYSLIB =   -Wl,--start-group $(MKLROOT)/lib/em64t/libmkl_intel_lp64.a $
 gpu_SYSPATH =      -L/usr/local/cuda/lib64
 meam_SYSPATH =     -L/opt/intel/fce/10.0.023/lib
 reax_SYSPATH =     -L/opt/intel/fce/10.0.023/lib
-user-atc_SYSPATH =   -Wl,--start-group $(MKLROOT)/lib/intel64/libmkl_intel_lp64.a $(MKLROOT)/lib/intel64/libmkl_sequential.a $(MKLROOT)/lib/intel64/libmkl_core.a -Wl,--end-group -lpthread
+user-atc_SYSPATH =   -Wl,--start-group $(MKLROOT)/lib/em64t/libmkl_intel_lp64.a $(MKLROOT)/lib/em64t/libmkl_sequential.a $(MKLROOT)/lib/em64t/libmkl_core.a -Wl,--end-group -lpthread
 
 # ---------------------------------------------------------------------
 # build rules and dependencies
