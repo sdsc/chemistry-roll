@@ -107,6 +107,8 @@ build:
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
+          cp patch-files/test.sh $(SOURCE)/examples/actin-dimer; \
+          cp patch-files/inputgen.py $(SOURCE)/examples/actin-dimer; \
 	  cd $(SOURCE); \
           ./configure CC=$(CC) F77=$(FCC) --prefix=$(ROOT)/$(PKGROOT) \
 	    --with-openmpi=$${MPI_HOME}; \

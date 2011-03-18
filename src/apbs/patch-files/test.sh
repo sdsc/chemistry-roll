@@ -32,7 +32,7 @@ do
       echo "inputgen.py utility..."
       echo ""
 
-      python $2 --split ${input[i]}.in
+      python inputgen.py  --split ${input[i]}.in
       
       j=0
       answer=0
