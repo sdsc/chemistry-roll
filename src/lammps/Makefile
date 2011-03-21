@@ -102,35 +102,35 @@ build:
 	cp patch-files/Makefile.poems.icc $(SOURCE)/lib/poems/Makefile.icc
 	cp patch-files/Makefile.reax.icc $(SOURCE)/lib/reax/Makefile.icc
 	( \
- 	  $(COMPILERSETUP); \
- 	  $(MPISETUP); \
+	  $(COMPILERSETUP); \
+	  $(MPISETUP); \
 	  cd $(SOURCE)/src; \
- 	  tar zxvf $(REDHAT.ROOT)/src/fftw-linux-x86_64.tar.gz; \
- 	  mv linux-x86_64 fftw; \
- 	  mv fftw/include/sfftw.h fftw/include/fftw.h; \
- 	  mv fftw/lib/libsfftw.a fftw/lib/libfftw.a; \
- 	  make ROOT=lmp rocks yes-all; \
- 	  cp ../../patch-files/Makefile.package .; \
-          cd GPU;\
-          files=`ls *`;\
-          cd ..;\
-          for file in $${files}; do \
-          rm -f $${file};  \
-          done;  \
-          cd ../lib/atc; \
-          make -f Makefile.icc; \
-          cp libatc.a ../../src; \
-          cd ../meam; \
-          make -f Makefile.ifort;\
-          cp libmeam.a ../../src;\
-          cd ../poems; \
-          make -f Makefile.icc;\
-          cp libpoems.a ../../src;\
-          cd ../reax; \
-          make -f Makefile.icc;\
-          cp libreax.a ../../src;\
-          cd ../../src;\
-          make rocks \
+	  tar zxvf $(REDHAT.ROOT)/src/fftw-linux-x86_64.tar.gz; \
+	  mv linux-x86_64 fftw; \
+	  mv fftw/include/sfftw.h fftw/include/fftw.h; \
+	  mv fftw/lib/libsfftw.a fftw/lib/libfftw.a; \
+	  $(MAKE) ROOT=lmp rocks yes-all; \
+	  cp ../../patch-files/Makefile.package .; \
+	  cd GPU; \
+	  files=`ls *`;\
+	  cd ..; \
+	  for file in $${files}; do \
+	    rm -f $${file};  \
+	  done;  \
+	  cd ../lib/atc; \
+	  $(MAKE) ROOT=lmp -f Makefile.icc; \
+	  cp libatc.a ../../src; \
+	  cd ../meam; \
+	  $(MAKE) ROOT=lmp -f Makefile.ifort; \
+	  cp libmeam.a ../../src; \
+	  cd ../poems; \
+	  $(MAKE) ROOT=lmp -f Makefile.icc; \
+	  cp libpoems.a ../../src; \
+	  cd ../reax; \
+	  $(MAKE) ROOT=lmp -f Makefile.icc; \
+	  cp libreax.a ../../src; \
+	  cd ../../src; \
+	  $(MAKE) ROOT=lmp rocks \
 	)
 
 install::
