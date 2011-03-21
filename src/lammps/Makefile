@@ -136,6 +136,7 @@ build:
 install::
 	mkdir -p $(ROOT)/$(PKGROOT)/bin
 	cp $(SOURCE)/src/lmp_rocks $(ROOT)/$(PKGROOT)/bin/lammps
+	cp -r $(SOURCE)/examples $(ROOT)/$(PKGROOT)/examples
 
 clean::
 	rm -rf $(SOURCE)
