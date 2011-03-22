@@ -122,7 +122,8 @@ install::
 	  $(MPISETUP); \
 	  cd $(SOURCE); \
 	  make install; \
-          cp -r examples  $(ROOT)/$(PKGROOT) \
+	  cp -r examples $(ROOT)/$(PKGROOT); \
+	  cp tools/manip/psize.py $(ROOT)/$(PKGROOT)/actin-dimer/ \
 	)
 
 clean::
