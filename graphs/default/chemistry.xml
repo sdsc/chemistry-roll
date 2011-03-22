@@ -42,4 +42,11 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
   <tail>chemistry-modules-common</tail>
 </order>
 
+<edge from="base">
+  <to>chemistry-roll-test</to>
+</edge>
+<order head="base">
+  <tail>chemistry-roll-test</tail>
+</order>
+
 </graph>
