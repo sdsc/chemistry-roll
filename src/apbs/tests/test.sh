@@ -59,7 +59,7 @@ do
   echo "Global net energy: $answer"
   sync
 
-  ../scripts/checkresults.sh $answer ${results[i]} ${input[i]}.in $logfile $ocd
+  ./checkresults.sh $answer ${results[i]} ${input[i]}.in $logfile $ocd
   
   endtime=`date +%s`
   let elapsed=$endtime-$starttime
