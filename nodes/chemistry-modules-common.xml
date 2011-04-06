@@ -41,12 +41,12 @@ if test -f /etc/profile.d/apbs.sh; then
 prepend-path PATH /opt/apbs/bin
 </file>
 
-<file name="/opt/modulefiles/applications/apbs/.version.1.2.1">
+<file name="/opt/modulefiles/applications/apbs/.version.1.3">
 #%Module1.0
 set ModulesVersion "1.2.1"
 </file>
 
-  /bin/ln -s /opt/modulefiles/applications/apbs/.version.1.2.1 \
+  /bin/ln -s /opt/modulefiles/applications/apbs/.version.1.3 \
              /opt/modulefiles/applications/apbs/.version
 
 fi
@@ -57,17 +57,17 @@ if test -f /etc/profile.d/lammps.sh; then
   /bin/rm -f /etc/profile.d/lammps.*
   /bin/mkdir -m 0755 -p /opt/modulefiles/applications/lammps
 
-<file name="/opt/modulefiles/applications/lammps/28Nov09" perms="0644">
+<file name="/opt/modulefiles/applications/lammps/18Feb11" perms="0644">
 #%Module1.0
 prepend-path PATH /opt/lammps/bin
 </file>
 
-<file name="/opt/modulefiles/applications/lammps/.version.28Nov09">
+<file name="/opt/modulefiles/applications/lammps/.version.18Feb11">
 #%Module1.0
-set ModulesVersion "28Nov09"
+set ModulesVersion "18Feb11"
 </file>
 
-  /bin/ln -s /opt/modulefiles/applications/lammps/.version.28Nov09 \
+  /bin/ln -s /opt/modulefiles/applications/lammps/.version.18Feb11 \
              /opt/modulefiles/applications/lammps/.version
 
 fi
