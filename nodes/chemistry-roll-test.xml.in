@@ -32,7 +32,11 @@ my $output;
 my $TESTFILE = 'tmpchemistry';
 
 # apbs
-ok($isCompute == -d '/opt/apbs', 'apbs is/is not installed');
+if($isCompute) {
+  ok(-d '/opt/apbs', 'apbs is installed');
+} else {
+  ok(! -d '/opt/apbs', 'apbs is not installed');
+}
 SKIP: {
 
   skip 'apbs not installed', 1 if ! -d '/opt/apbs';
@@ -51,7 +55,11 @@ END
 }
 
 # lammps
-ok($isCompute == -d '/opt/lammps', 'lammps is/is not installed');
+if($isCompute) {
+  ok(-d '/opt/lammps', 'lammps is installed');
+} else {
+  ok(! -d '/opt/lammps', 'lammps is not installed');
+}
 SKIP: {
 
   skip 'lammps not installed', 1 if ! -d '/opt/lammps';
