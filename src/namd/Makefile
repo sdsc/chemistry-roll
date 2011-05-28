@@ -106,6 +106,7 @@ endif
 
 build:
 	tar zxvf $(SOURCE).tgz
+	tar zxvf tiny.tar.gz
 	cd $(SOURCE) && tar xvf charm-6.2.2.tar
 	cp patch-files/Linux-x86_64-MPI*.arch $(SOURCE)/arch
 	cp patch-files/Linux-x86_64.* $(SOURCE)/arch
@@ -129,6 +130,7 @@ install::
 	mkdir -p $(ROOT)/$(PKGROOT)/bin
 	cp $(SOURCE)/*/{charmrun,flipbinpdb,flipdcd,namd2,psfgen} \
 	   $(ROOT)/$(PKGROOT)/bin
+	cp -r tiny $(ROOT)/$(PKGROOT)
 
 clean::
-	rm -rf $(SOURCE)
+	rm -rf $(SOURCE) tiny

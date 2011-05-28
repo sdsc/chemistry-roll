@@ -20,33 +20,49 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 
 <file name="/root/rolltests/chemistry.t" perms="0755">
 <![CDATA[#!/usr/bin/perl -w
+# chemistry roll installation test.  Usage:
+# chemistry.t [nodetype]
+#   where nodetype is one of "Compute", "Dbnode", "Frontend" or "Login"
+#   if not specified, the test assumes either Compute or Frontend
 
 use Test::More qw(no_plan);
 
 my $appliance = $#ARGV >= 0 ? $ARGV[0] :
                 -d '/export/rocks/install' ? 'Frontend' : 'Compute';
-my $isCompute = $appliance eq 'Compute';
-my $isFe = $appliance eq 'Frontend';
-my $isLogin = $appliance eq 'Login';
+my $installedOnAppliancesPattern = 'Compute';
+my @packages = ('apbs', 'lammps', 'namd/2.6', 'namd/2.7b4');
 my $output;
 my $TESTFILE = 'tmpchemistry';
 
-# apbs
-if($isCompute) {
-  ok(-d '/opt/apbs', 'apbs is installed');
+# chemistry_doc.xml
+if ($appliance eq 'Frontend') {
+  ok(-d '/var/www/html/roll-documentation/chemistry', 'doc installed');
 } else {
-  ok(! -d '/opt/apbs', 'apbs is not installed');
+  ok(! -d '/var/www/html/roll-documentation/chemistry', 'doc not installed');
 }
+
+# chemistry-install.xml
+foreach my $package(@packages) {
+  if($appliance =~ /$installedOnAppliancesPattern/) {
+    ok(-d "/opt/$package", "$package installed");
+  } else {
+    ok(! -d "/opt/$package", "$package not installed");
+  }
+}
+
+# apbs
+my $packageHome = '/opt/apbs';
+my $testDir = "$packageHome/examples/actin-dimer";
 SKIP: {
 
-  skip 'apbs not installed', 1 if ! -d '/opt/apbs';
-  skip 'apbs test not installed', 1 if ! -d '/opt/apbs/examples/actin-dimer';
+  skip 'apbs not installed', 1 if ! -d $packageHome;
+  skip 'apbs test not installed', 1 if ! -d $testDir;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
 . /etc/profile.d/modules.sh
 module load ROLLCOMPILER apbs
-cd /opt/apbs/examples/actin-dimer
-/opt/apbs/bin/apbs apbs-smol-auto.in
+cd $packageHome/examples/actin-dimer
+$packageHome/bin/apbs apbs-smol-auto.in
 END
   close(OUT);
   $output = `/bin/bash $TESTFILE.sh`;
@@ -55,22 +71,19 @@ END
 }
 
 # lammps
-if($isCompute) {
-  ok(-d '/opt/lammps', 'lammps is installed');
-} else {
-  ok(! -d '/opt/lammps', 'lammps is not installed');
-}
+$packageHome = '/opt/lammps';
+$testDir = "$packageHome/examples/colloid";
 SKIP: {
 
-  skip 'lammps not installed', 1 if ! -d '/opt/lammps';
-  skip 'lammps test not installed', 1 if ! -d '/opt/lammps/examples/colloid';
+  skip 'lammps not installed', 1 if ! -d $packageHome;
+  skip 'lammps test not installed', 1 if ! -d $testDir;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
 . /etc/profile.d/modules.sh
 module load ROLLCOMPILER openmpi_ROLLNETWORK lammps
-cd /opt/lammps/examples/colloid
+cd $packageHome/examples/colloid
 hostname > nodes
-mpirun -np 1 -machinefile nodes /opt/lammps/bin/lammps < in.colloid
+mpirun -np 1 -machinefile nodes $packageHome/bin/lammps < in.colloid
 /bin/rm -f nodes
 END
   close(OUT);
@@ -79,6 +92,69 @@ END
 
 }
 
+# namd/2.6
+$packageHome = '/opt/namd/2.6';
+$testDir = '/opt/namd/2.7b4/example';
+SKIP: {
+
+  skip 'namd/2.6 not installed', 1 if ! -d $packageHome;
+  skip 'namd test not installed', 1 if ! -d $testDir;
+  my $output = `cd $testDir; $packageHome/bin/namd2 tiny.namd 2>&1`;
+  ok($output =~ /WRITING VELOCITIES/, 'namd 2.6 sample run');
+  `/bin/rm $testDir/FFTW*`;
+
+}
+
+# namd/2.7b4
+$packageHome = '/opt/namd/2.7b4';
+$testDir = '/opt/namd/2.7b4/example';
+SKIP: {
+
+  skip 'namd/2.7b4 not installed', 1 if ! -d $packageHome;
+  skip 'namd test not installed', 1 if ! -d $testDir;
+  my $output = `cd $testDir; $packageHome/bin/namd2 tiny.namd 2>&1`;
+  ok($output =~ /WRITING VELOCITIES/, 'namd 2.7b4 sample run');
+  `/bin/rm $testDir/FFTW*`;
+
+}
+
+# chemistry-modules-common
+SKIP: {
+
+  skip 'chemistry not installed', 1
+    if $appliance !~ /$installedOnAppliancesPattern/;
+  my $modulesInstalled = -f '/etc/profile.d/modules.sh';
+  if($modulesInstalled) {
+    ok(! -f '/etc/profile.d/biotools.csh' &&
+       ! -f '/etc/profile.d/biotools.sh', 'biotools profile.d removed');
+    like($ENV{MODULEPATH}, qr#/opt/modulefiles/applications#,
+         'MODULEPATH set for applications');
+    ok(defined(glob('/opt/modulefiles/applications/apbs/[0-9]*')),
+       'apbs module installed');
+    ok(defined(glob('/opt/modulefiles/applications/apbs/.version.[0-9]*')),
+       'apbs version module installed');
+    ok(-l '/opt/modulefiles/applications/apbs/.version',
+       'apbs version module link created');
+    ok(defined(glob('/opt/modulefiles/applications/lammps/[0-9]*')),
+       'lammps module installed');
+    ok(defined(glob('/opt/modulefiles/applications/lammps/.version.[0-9]*')),
+       'lammps version module installed');
+    ok(-l '/opt/modulefiles/applications/lammps/.version',
+       'lammps version module link created');
+    ok(defined(glob('/opt/modulefiles/applications/namd/[0-9]*')),
+       'namd module installed');
+    ok(defined(glob('/opt/modulefiles/applications/namd/.version.[0-9]*')),
+       'namd version module installed');
+    ok(-l '/opt/modulefiles/applications/namd/.version',
+       'namd version module link created');
+  } else {
+    ok(-f '/etc/profile.d/apbs.csh' && -f '/etc/profile.d/apbs.sh' &&
+       -f '/etc/profile.d/lammps.csh' && -f '/etc/profile.d/lammps.sh' &&
+       -f '/etc/profile.d/namd.csh' && -f '/etc/profile.d/namd.sh',
+       'biotools profile.d installed');
+  }
+
+}
 
 `rm -f $TESTFILE*`;
 ]]>
