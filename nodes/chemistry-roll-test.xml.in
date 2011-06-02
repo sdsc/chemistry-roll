@@ -129,7 +129,7 @@ SKIP: {
          'MODULEPATH set for applications');
   }
   foreach my $package(@packages) {
-    my ($noVersion) = $package =~ m#([^/]+)#
+    my ($noVersion) = $package =~ m#([^/]+)#;
     if($modulesInstalled) {
       ok(! -f "/etc/profile.d/$noVersion.csh" &&
          ! -f "/etc/profile.d/$noVersion.sh", "$package profile.d removed");
