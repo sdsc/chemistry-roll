@@ -88,17 +88,17 @@ prepend-path PATH /opt/namd/2.6/bin
 set ModulesVersion "2.6"
 </file>
 
-<file name="/opt/modulefiles/applications/namd/2.7b4" perms="0644">
+<file name="/opt/modulefiles/applications/namd/2.8" perms="0644">
 #%Module1.0
-prepend-path PATH /opt/namd/2.7b4/bin
+prepend-path PATH /opt/namd/2.8/bin
 </file>
 
-<file name="/opt/modulefiles/applications/namd/.version.2.7b4">
+<file name="/opt/modulefiles/applications/namd/.version.2.8">
 #%Module1.0
-set ModulesVersion "2.7b4"
+set ModulesVersion "2.8"
 </file>
 
-  /bin/ln -s /opt/modulefiles/applications/namd/.version.2.7b4 \
+  /bin/ln -s /opt/modulefiles/applications/namd/.version.2.8 \
              /opt/modulefiles/applications/namd/.version
 
 fi

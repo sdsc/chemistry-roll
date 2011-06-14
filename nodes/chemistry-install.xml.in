@@ -41,11 +41,11 @@ export PATH=/opt/lammps/bin:$PATH
 </file>
 
 <file name="/etc/profile.d/namd.csh" perms="0644">
-set path = ( /opt/namd/2.7b4/bin $path )
+set path = ( /opt/namd/2.8/bin $path )
 </file>
 
 <file name="/etc/profile.d/namd.sh" perms="0644">
-export PATH=/opt/namd/2.7b4/bin:$PATH
+export PATH=/opt/namd/2.8/bin:$PATH
 </file>
 
 </post>

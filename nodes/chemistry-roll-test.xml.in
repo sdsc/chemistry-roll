@@ -30,7 +30,7 @@ use Test::More qw(no_plan);
 my $appliance = $#ARGV >= 0 ? $ARGV[0] :
                 -d '/export/rocks/install' ? 'Frontend' : 'Compute';
 my $installedOnAppliancesPattern = 'Compute';
-my @packages = ('apbs', 'lammps', 'namd/2.6', 'namd/2.7b4');
+my @packages = ('apbs', 'lammps', 'namd/2.6', 'namd/2.8');
 my $output;
 my $TESTFILE = 'tmpchemistry';
 
@@ -94,7 +94,7 @@ END
 
 # namd/2.6
 $packageHome = '/opt/namd/2.6';
-$testDir = '/opt/namd/2.7b4/example';
+$testDir = '/opt/namd/2.8/example';
 SKIP: {
 
   skip 'namd/2.6 not installed', 1 if ! -d $packageHome;
@@ -105,15 +105,15 @@ SKIP: {
 
 }
 
-# namd/2.7b4
-$packageHome = '/opt/namd/2.7b4';
-$testDir = '/opt/namd/2.7b4/example';
+# namd/2.8
+$packageHome = '/opt/namd/2.8';
+$testDir = '/opt/namd/2.8/example';
 SKIP: {
 
-  skip 'namd/2.7b4 not installed', 1 if ! -d $packageHome;
+  skip 'namd/2.8 not installed', 1 if ! -d $packageHome;
   skip 'namd test not installed', 1 if ! -d $testDir;
   my $output = `cd $testDir; $packageHome/bin/namd2 tiny.namd 2>&1`;
-  ok($output =~ /WRITING VELOCITIES/, 'namd 2.7b4 sample run');
+  ok($output =~ /WRITING VELOCITIES/, 'namd 2.8 sample run');
   `/bin/rm $testDir/FFTW*`;
 
 }
