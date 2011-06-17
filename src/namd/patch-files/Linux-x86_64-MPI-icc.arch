@@ -3,10 +3,10 @@ CHARMARCH = mpi-linux-x86_64-ifort-mpicxx
 
 FLOATOPTS = -ip -fno-rtti
 
-CXX = mpicxx
+CXX = icpc
 CXXOPTS = -static-intel -O2 $(FLOATOPTS)
 CXXNOALIASOPTS = -O3 -fno-alias $(FLOATOPTS)
 
-CC = mpicc
+CC = icc
 COPTS = -static-intel -O2 $(FLOATOPTS)
 
