@@ -60,6 +60,9 @@ endif
 ifndef ROLLNETWORK
   ROLLNETWORK = eth
 endif
+ifndef ROLLMPI
+  ROLLMPI = openmpi
+endif
 
 PKGROOT = /opt/namd/$(VERSION)
 SOURCE = namd-$(VERSION)
@@ -74,19 +77,19 @@ COMPILERSETUP = \
   fi
 
 ifeq ("$(ROLLNETWORK)", "eth")
-  OPENMPISUFFIX =
+  MPI= $(ROLLMPI)
 else
-  OPENMPISUFFIX = _$(ROLLNETWORK)
+  MPI= $(ROLLMPI)_$(ROLLNETWORK)
 endif
 
 MPISETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
-    module load openmpi$(OPENMPISUFFIX); \
+    module load $(MPI); \
   fi; \
   export MPI_HOME=`which mpicxx | perl -pe 's!/bin/.*!!'`; \
   if test -z "$${MPI_HOME}"; then \
-    export MPI_HOME=/opt/openmpi; \
+    export MPI_HOME=/opt/$(ROLLMPI); \
   fi; \
   echo Using MPI from $${MPI_HOME}; \
   export PATH=$${PATH}:$${MPI_HOME}/bin; \
@@ -98,7 +101,7 @@ CXX = g++
 FCC = f77
 ifeq ("$(ROLLCOMPILER)", "intel")
   CHARMARCH = mpi-linux-x86_64-ifort-mpicxx
-  CHARMBUILDOPTS = mpicxx ifort -O2 -g -fPIC
+  CHARMBUILDOPTS = mpicxx ifort -O2 -fPIC
   CXX = icc        
   FCC = ifort
 endif
