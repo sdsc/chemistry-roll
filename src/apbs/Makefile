@@ -60,6 +60,9 @@ endif
 ifndef ROLLNETWORK
   ROLLNETWORK = eth
 endif
+ifndef ROLLMPI
+  ROLLMPI = openmpi
+endif
 
 PKGROOT = /opt/apbs
 SOURCE = apbs-$(VERSION)
@@ -74,19 +77,19 @@ COMPILERSETUP = \
   fi
 
 ifeq ("$(ROLLNETWORK)", "eth")
-  OPENMPISUFFIX =
+  MPI= $(ROLLMPI)
 else
-  OPENMPISUFFIX = _$(ROLLNETWORK)
+  MPI= $(ROLLMPI)_$(ROLLNETWORK)
 endif
 
 MPISETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
-    module load openmpi$(OPENMPISUFFIX); \
+    module load $(MPI); \
   fi; \
   export MPI_HOME=`which mpicxx | perl -pe 's!/bin/.*!!'`; \
   if test -z "$${MPI_HOME}"; then \
-    export MPI_HOME=/opt/openmpi; \
+    export MPI_HOME=/opt/$(ROLLMPI); \
   fi; \
   echo Using MPI from $${MPI_HOME}; \
   export PATH=$${PATH}:$${MPI_HOME}/bin; \
@@ -110,8 +113,16 @@ build:
           cp patch-files/test.sh $(SOURCE)/examples/actin-dimer; \
           cp patch-files/inputgen.py $(SOURCE)/examples/actin-dimer; \
 	  cd $(SOURCE); \
+	  if test $(ROLLMPI) = "openmpi"; then \
           ./configure CC=$(CC) F77=$(FCC) --prefix=$(ROOT)/$(PKGROOT) \
 	    --with-openmpi=$${MPI_HOME}; \
+          elif test $(ROLLMPI) = "mpich" -o $(ROLLMPI) = "mvapich"; then \
+          ./configure CC=$(CC) F77=$(FCC) --prefix=$(ROOT)/$(PKGROOT) \
+	    --with-mpich=$${MPI_HOME}; \
+          elif test $(ROLLMPI) = "mpich2" -o $(ROLLMPI) = "mvapich2"; then \
+          ./configure CC=$(CC) F77=$(FCC) --prefix=$(ROOT)/$(PKGROOT) \
+	    --with-mpich2=$${MPI_HOME}; \
+          fi; \
 	  make \
 	)
 
