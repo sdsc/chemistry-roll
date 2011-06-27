@@ -112,8 +112,13 @@ build:
 	cp patch-files/Linux-x86_64-MPI*.arch $(SOURCE)/arch
 	cp patch-files/Linux-x86_64.* $(SOURCE)/arch
 	cp patch-files/Make.charm $(SOURCE)
-	cp patch-files/conv-mach.sh \
-	  $(SOURCE)/charm-6.1.3/src/arch/mpi-linux-x86_64
+	if test $(ROLLMPI) != "openmpi"; then \
+	   cp patch-files/conv-mach-mpich.sh \
+	  $(SOURCE)/charm-6.1.3/src/arch/mpi-linux-x86_64/conv-mach.sh;  \
+        else \
+	   cp patch-files/conv-mach.sh \
+	  $(SOURCE)/charm-6.1.3/src/arch/mpi-linux-x86_64;  \
+        fi 
 	perl -pi -e "s!ROOTDIR!`pwd`/$(SOURCE)!g" \
 	  $(SOURCE)/arch/Linux-x86_64-MPI*.arch $(SOURCE)/arch/Linux-x86_64.* \
 	  $(SOURCE)/Make.charm \
