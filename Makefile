@@ -67,17 +67,17 @@ endif
 empty:=
 empty:=
 space:=$(empty) $(empty)
-ROLLSUFFIX = _$(subst $(space),+,$(ROLLCOMPILER)))_$(subst $(space),+,$(ROLLMPI))_$(subst $(space),+,$(ROLLNETWORK))
+ROLLSUFFIX = _$(subst $(space),+,$(ROLLCOMPILER))_$(subst $(space),+,$(ROLLMPI))_$(subst $(space),+,$(ROLLNETWORK))
 
 -include $(ROLLSROOT)/etc/Rolls.mk
 
 default:
 # Copy and substitute lines of nodes/*.in that reference ROLLCOMPILER and/or
-# ROLLNETWORK, making one copy for each ROLLCOMPILER/ROLLNETWORK value
+# ROLLNETWORK, making one copy for each ROLLCOMPILER/ROLLMPI/ROLLNETWORK value
 	for i in `ls nodes/*.in`; do \
 	  export o=`echo $$i | sed 's/\.in//'`; \
 	  cp $$i $$o; \
-	  fo c in $(ROLLCOMPILER); do \
+	  for c in $(ROLLCOMPILER); do \
 	    perl -pi -e 'print and s/ROLLCOMPILER/'$${c}'/g if m/ROLLCOMPILER/' $$o; \
 	  done; \
 	  for m in $(ROLLMPI); do \
