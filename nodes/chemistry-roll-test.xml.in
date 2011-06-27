@@ -80,7 +80,7 @@ SKIP: {
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
 . /etc/profile.d/modules.sh
-module load ROLLCOMPILER openmpi_ROLLNETWORK lammps
+module load ROLLCOMPILER ROLLMPI_ROLLNETWORK lammps
 cd $packageHome/examples/colloid
 hostname > nodes
 mpirun -np 1 -machinefile nodes $packageHome/bin/lammps < in.colloid

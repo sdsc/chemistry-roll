@@ -17,10 +17,10 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 <changelog>
 </changelog>
 
-<package>apbs_ROLLCOMPILER</package>
-<package>lammps_ROLLCOMPILER_ROLLNETWORK</package>
-<package>namd_ROLLCOMPILER_ROLLNETWORK</package>
-<package>namd_2.6_ROLLCOMPILER_ROLLNETWORK</package>
+<package>apbs_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
+<package>lammps_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
+<package>namd_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
+<package>namd_2.6_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
 
 <post>
 
