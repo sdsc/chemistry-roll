@@ -86,9 +86,9 @@ default:
 	  for n in $(ROLLNETWORK); do \
 	    perl -pi -e 'print and s/ROLLNETWORK/'$${n}'/g if m/ROLLNETWORK/' $$o; \
 	  done; \
-	  perl -pi -e '$$_ = "" if m/ROLL(COMPILER|NETWORK)/' $$o; \
+	  perl -pi -e '$$_ = "" if m/ROLL(COMPILER|NETWORK|MPI)/' $$o; \
 	done
-	$(MAKE) ROLLCOMPILER="$(ROLLCOMPILER)" ROLLMPI="$ROLLMPI" ROLLNETWORK="$(ROLLNETWORK)" roll
+	$(MAKE) ROLLCOMPILER="$(ROLLCOMPILER)" ROLLMPI="$(ROLLMPI)" ROLLNETWORK="$(ROLLNETWORK)" roll
 
 clean::
 	rm -f _arch bootstrap.py
