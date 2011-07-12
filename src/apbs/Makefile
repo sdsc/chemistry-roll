@@ -115,10 +115,10 @@ build:
 	  cd $(SOURCE); \
 	  if test $(ROLLMPI) = "openmpi"; then \
           ./configure CC=$(CC) F77=$(FCC) --prefix=$(ROOT)/$(PKGROOT) \
-	    --with-openmpi=${MPI_HOME}; \
+	    --with-openmpi=$${MPI_HOME}; \
           elif test $(ROLLMPI) = "mpich2" -o $(ROLLMPI) = "mvapich2"; then \
           ./configure CC=$(CC) F77=$(FCC) --prefix=$(ROOT)/$(PKGROOT) \
-	    --with-mpich2=${MPI_HOME}; \
+	    --with-mpich2=$${MPI_HOME}; \
           fi; \
 	  make \
 	)
