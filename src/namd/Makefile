@@ -99,12 +99,21 @@ MPISETUP = \
 CHARMARCH = mpi-linux-x86_64
 CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
 CXX = g++
+CC=gcc
 FCC = f77
 ifeq ("$(ROLLCOMPILER)", "intel")
-  CHARMARCH = mpi-linux-x86_64-ifort-mpicxx
-  CHARMBUILDOPTS = mpicxx ifort -j16 -O2 
-  CXX = icc        
+  CHARMARCH = mpi-linux-x86_64-$(FCC)-mpicxx
+  CHARMBUILDOPTS = mpicxx $(FCC) -j16 -O2 
+  CXX = icpc        
+  CC= icc
   FCC = ifort
+endif
+ifeq ("$(ROLLCOMPILER)", "pgi")
+  CHARMARCH = mpi-linux-x86_64-$(FCC)-mpicxx
+  CHARMBUILDOPTS = mpicxx $(FCC) -j16 -O2 
+  CC= pgcc
+  CXX = pgCC
+  FCC = pgf90
 endif
 
 build:
@@ -124,8 +133,8 @@ build:
 	  cd charm-6.3.2; \
 	  ./build charm++ mpi-linux-x86_64 $(CHARMBUILDOPTS); \
 	  cd ..; \
-	  ./config Linux-x86_64-MPI-$(CXX) --charm-arch $(CHARMARCH); \
-	  cd Linux-x86_64-MPI-$(CXX); \
+	  ./config Linux-x86_64-MPI-$(CC) --charm-arch $(CHARMARCH); \
+	  cd Linux-x86_64-MPI-$(CC); \
 	  make \
 	)
 
