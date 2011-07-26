@@ -30,7 +30,7 @@ use Test::More qw(no_plan);
 my $appliance = $#ARGV >= 0 ? $ARGV[0] :
                 -d '/export/rocks/install' ? 'Frontend' : 'Compute';
 my $installedOnAppliancesPattern = 'Compute';
-my @packages = ('apbs', 'lammps', 'namd/2.6', 'namd/2.8');
+my @packages = ('apbs', 'lammps', 'namd/2.6', 'namd/2.8', 'gromacs');
 my $output;
 my $TESTFILE = 'tmpchemistry';
 
@@ -91,6 +91,28 @@ END
   ok($output =~ /900 atoms/, 'lammps sample run');
 
 }
+# gromacs
+$packageHome = '/opt/gromacs';
+$testDir = "$packageHome/examples/colloid";
+SKIP: {
+
+  skip 'lammps not installed', 1 if ! -d $packageHome;
+  skip 'lammps test not installed', 1 if ! -d $testDir;
+  open(OUT, ">$TESTFILE.sh");
+  print OUT <<END;
+. /etc/profile.d/modules.sh
+module load ROLLCOMPILER ROLLMPI_ROLLNETWORK lammps
+cd $packageHome/examples/colloid
+hostname > nodes
+mpirun -np 1 -machinefile nodes $packageHome/bin/lammps < in.colloid
+/bin/rm -f nodes
+END
+  close(OUT);
+  $output = `/bin/bash $TESTFILE.sh`;
+  ok($output =~ /900 atoms/, 'lammps sample run');
+
+}
+
 
 # namd/2.6
 $packageHome = '/opt/namd/2.6';

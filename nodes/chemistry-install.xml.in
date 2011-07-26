@@ -7,6 +7,7 @@ Chemistry-related application codes
 apbs http://www.poissonboltzmann.org/apbs
 lammps http://lammps.sandia.gov
 namd http://www.ks.uiuc.edu/Research/namd
+gromacs http://www.gromacs.org
 </description>
 
 <copyright>
@@ -21,6 +22,7 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 <package>lammps_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
 <package>namd_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
 <package>namd_2.6_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
+<package>gromacs_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
 
 <post>
 
@@ -46,6 +48,14 @@ set path = ( /opt/namd/2.8/bin $path )
 
 <file name="/etc/profile.d/namd.sh" perms="0644">
 export PATH=/opt/namd/2.8/bin:$PATH
+</file>
+
+<file name="/etc/profile.d/gromacs.csh" perms="0644">
+set path = ( /opt/gromacs/bin $path )
+</file>
+
+<file name="/etc/profile.d/gromacs.sh" perms="0644">
+export PATH=/opt/gromacs/bin:$PATH
 </file>
 
 </post>
