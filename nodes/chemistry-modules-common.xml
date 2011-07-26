@@ -7,6 +7,7 @@ Chemistry-related application codes module files
 apbs http://www.poissonboltzmann.org/apbs
 lammps http://lammps.sandia.gov
 namd http://www.ks.uiuc.edu/Research/namd
+gromacs http://www.gromacs.org
 </description>
 
 <copyright>
@@ -102,6 +103,32 @@ set ModulesVersion "2.8"
              /opt/modulefiles/applications/namd/.version
 
 fi
+<!-- GROMACS -->
+if test -f /etc/profile.d/gromacs.sh; then
+
+  /bin/rm -f /etc/profile.d/gromacs.*
+  /bin/mkdir -m 0755 -p /opt/modulefiles/applications/gromacs
+
+<file name="/opt/modulefiles/applications/gromacs/4.5.4" perms="0644">
+#%Module1.0
+setenv GMXBIN /opt/gromacs/bin
+setenv GMXLDLIB=/opt/gromacs/lib
+setenv GMXMAN=/opt/gromacs/share/man
+setenv GMXDATA=/opt/gromacs/share
+prepend-path PATH $GMXBIN
+prepend-path LD_LIBRARY_PATH $GMXLDLIB
+</file>
+
+<file name="/opt/modulefiles/applications/namd/.version.4.5.4">
+#%Module1.0
+set ModulesVersion "4.5.4.8"
+</file>
+
+  /bin/ln -s /opt/modulefiles/applications/gromacs/.version.4.5.4 \
+             /opt/modulefiles/applications/gromacs/.version
+
+fi
+
 
 </post>
 

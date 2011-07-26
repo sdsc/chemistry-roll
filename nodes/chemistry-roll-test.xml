@@ -60,7 +60,7 @@ SKIP: {
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
 . /etc/profile.d/modules.sh
-module load ROLLCOMPILER apbs
+module load intel apbs
 cd $packageHome/examples/actin-dimer
 $packageHome/bin/apbs apbs-smol-auto.in
 END
@@ -80,7 +80,7 @@ SKIP: {
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
 . /etc/profile.d/modules.sh
-module load ROLLCOMPILER ROLLMPI_ROLLNETWORK lammps
+module load intel mpich2_mx lammps
 cd $packageHome/examples/colloid
 hostname > nodes
 mpirun -np 1 -machinefile nodes $packageHome/bin/lammps < in.colloid
@@ -93,24 +93,23 @@ END
 }
 # gromacs
 $packageHome = '/opt/gromacs';
-$testDir = "$packageHome/gmxtest/complex/acetoniltrilRF";
+$testDir = "$packageHome/examples/colloid";
 SKIP: {
 
-  skip 'gromacs not installed', 1 if ! -d $packageHome;
-  skip 'gromacs test not installed', 1 if ! -d $testDir;
+  skip 'lammps not installed', 1 if ! -d $packageHome;
+  skip 'lammps test not installed', 1 if ! -d $testDir;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
 . /etc/profile.d/modules.sh
-module load ROLLCOMPILER ROLLMPI_ROLLNETWORK gromacs
-cd $testDir
+module load intel mpich2_mx lammps
+cd $packageHome/examples/colloid
 hostname > nodes
-mpirun -np 1 -machinefile nodes $packageHome/bin/grompp 
-cat md.log
+mpirun -np 1 -machinefile nodes $packageHome/bin/lammps < in.colloid
 /bin/rm -f nodes
 END
   close(OUT);
   $output = `/bin/bash $TESTFILE.sh`;
-  ok($output =~ /Total Dipole/, 'gromacs sample run');
+  ok($output =~ /900 atoms/, 'lammps sample run');
 
 }
 
