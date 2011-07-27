@@ -111,27 +111,32 @@ ifeq ("$(ROLLCOMPILER)", "pgi")
 endif
 
 build:
-	tar zxvf $(SOURCE).tgz
+	tar zxvf $(SOURCE).tar.gz
 	tar zxvf gmxtest.tar.gz
-	tar zxvf fftw.3.2.2.tar.gz
-	cd fftw.3.2.2
-        ( \
-           ./configure --prefix=build --enable-openmp --enable-single CFLAGS=-fPIC FFLAGE=-fPIC CC=$CC CXX=$CXX f77=$FCC; \
+	tar zxvf fftw-3.2.2.tar.gz
+	( \
+	   cd fftw-3.2.2; \
+	  $(COMPILERSETUP); \
+           ./configure --prefix=$(REDHAT.ROOT)/src/gromacs/fftw-3.2.2/build --enable-openmp --enable-single CFLAGS=-fPIC FFLAGS=-fPIC CC=$(CC) CXX=$(CXX) f77=$(FCC); \
            make; \
            make install; \
         )
-	cd $(SOURCE)
 	( \
+	  cd $(SOURCE); \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
-	  cd $(SOURCE); \
-	  ./configure --prefix=$(ROOT)/$(PKGROOT) --enable-mpi --with-fftw=fftw3 CC=$CC F77=$FCC CXX=$CXX CFLAGS=-I../fftw.3.2.2//include LDFLAGS=../fftw.3.2.2/lib; \
+	  ./configure --prefix=$(ROOT)/$(PKGROOT) --enable-mpi --with-fft=fftw3 CC=$(CC) F77=$(FCC) CXX=$(CXX) CFLAGS=-I$(REDHAT.ROOT)/src/gromacs/fftw-3.2.2/build/include LDFLAGS=-L$(REDHAT.ROOT)/src/gromacs/fftw-3.2.2/build/lib; \
 	  make; \
 	)
 
 install::
-	make install; \
+	(\
+          cd $(SOURCE); \
+	  $(COMPILERSETUP); \
+	  $(MPISETUP); \
+          make install; \
+        )
 	cp -r gmxtest $(ROOT)/$(PKGROOT)
 
 clean::
-	rm -rf $(SOURCE) fftw.3.2.2 gmxtest
+	rm -rf $(SOURCE) fftw-3.2.2 gmxtest
