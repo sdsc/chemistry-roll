@@ -102,18 +102,18 @@ CXX = g++
 CC=gcc
 FCC = f77
 ifeq ("$(ROLLCOMPILER)", "intel")
+  FCC = ifort
   CHARMARCH = mpi-linux-x86_64-$(FCC)-mpicxx
   CHARMBUILDOPTS = mpicxx $(FCC) -j16 -O2 
   CXX = icpc        
   CC= icc
-  FCC = ifort
 endif
 ifeq ("$(ROLLCOMPILER)", "pgi")
+  FCC = pgf90
   CHARMARCH = mpi-linux-x86_64-$(FCC)-mpicxx
   CHARMBUILDOPTS = mpicxx $(FCC) -j16 -O2 
   CC= pgcc
   CXX = pgCC
-  FCC = pgf90
 endif
 
 build:
