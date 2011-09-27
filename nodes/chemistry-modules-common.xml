@@ -8,6 +8,7 @@ apbs http://www.poissonboltzmann.org/apbs
 lammps http://lammps.sandia.gov
 namd http://www.ks.uiuc.edu/Research/namd
 gromacs http://www.gromacs.org
+cp2k: http://cp2k.berlios.de
 </description>
 
 <copyright>
@@ -121,13 +122,32 @@ prepend-path LD_LIBRARY_PATH $GMXLDLIB
 
 <file name="/opt/modulefiles/applications/namd/.version.4.5.4">
 #%Module1.0
-set ModulesVersion "4.5.4.8"
+set ModulesVersion "4.5.4"
 </file>
 
   /bin/ln -s /opt/modulefiles/applications/gromacs/.version.4.5.4 \
              /opt/modulefiles/applications/gromacs/.version
 
 fi
+
+<!-- CP2K -->
+if test -f /etc/profile.d/cp2k.sh; then
+
+  /bin/rm -f /etc/profile.d/cp2k.*
+  /bin/mkdir -m 0755 -p /opt/modulefiles/applications/cp2k
+
+<file name="/opt/modulefiles/applications/cp2k/2.2.184" perms="0644">
+#%Module1.0
+prepend-path PATH /opt/cp2k/bin
+</file>
+
+<file name="/opt/modulefiles/applications/namd/.version.2.2.184">
+#%Module1.0
+set ModulesVersion "2.2.184"
+</file>
+
+  /bin/ln -s /opt/modulefiles/applications/gromacs/.version.2.2.184 \
+             /opt/modulefiles/applications/gromacs/.version
 
 
 </post>

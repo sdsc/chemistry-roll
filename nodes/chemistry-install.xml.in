@@ -8,6 +8,7 @@ apbs http://www.poissonboltzmann.org/apbs
 lammps http://lammps.sandia.gov
 namd http://www.ks.uiuc.edu/Research/namd
 gromacs http://www.gromacs.org
+http://cp2k.berlios.de
 </description>
 
 <copyright>
@@ -23,6 +24,7 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 <package>namd_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
 <package>namd_2.6_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
 <package>gromacs_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
+<package>cp2k_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
 
 <post>
 
@@ -58,6 +60,13 @@ set path = ( /opt/gromacs/bin $path )
 export PATH=/opt/gromacs/bin:$PATH
 </file>
 
+<file name="/etc/profile.d/cp2k.csh" perms="0644">
+set path = ( /opt/cp2k/bin $path )
+</file>
+
+<file name="/etc/profile.d/cp2k.sh" perms="0644">
+export PATH=/opt/cp2k/bin:$PATH
+</file>
 </post>
 
 </kickstart>
