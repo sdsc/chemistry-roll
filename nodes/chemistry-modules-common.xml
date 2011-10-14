@@ -137,8 +137,8 @@ prepend-path PATH /opt/cp2k/bin
 set ModulesVersion "2.2.184"
 </file>
 
-  /bin/ln -s /opt/modulefiles/applications/gromacs/.version.2.2.184 \
-             /opt/modulefiles/applications/gromacs/.version
+  /bin/ln -s /opt/modulefiles/applications/cp2k/.version.2.2.184 \
+             /opt/modulefiles/applications/cp2k/.version
 
 
 </post>
