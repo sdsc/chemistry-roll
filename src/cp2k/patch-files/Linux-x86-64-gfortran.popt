@@ -1,0 +1,14 @@
+CC       = mpicc
+CPP      = 
+FC       = mpif90 
+LD       = mpif90
+AR       = ar -r
+DFLAGS   = -D__GFORTRAN -D__FFTSG -D__parallel -D__BLACS -D__SCALAPACK -D__FFTW3 -D__LIBINT
+CPPFLAGS = 
+FFTW_INC = ROLLFFTW/include
+FCFLAGS  = $(DFLAGS)  -I/usr/include -funroll-loops -ffree-form -O2 -ffast-math -march=opteron -I$(FFTW_INC)
+LDFLAGS  = $(FCFLAGS)
+INTEL_LIB = ROLL_MATHPATH
+LIBS     = $(INTEL_LIB) -lmkl_scalapack_lp64  -Wl,--start-group -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lmkl_blacsROLLTYPEMKLlp64 -Wl,--end-group -lpthread  -LROLLFFTW/lib -lfftw3 ROLLWRAPPER/libint_cpp_wrapper.o  -LROLLLIBINT -lderiv -lint -lstdc++ $(G95_LIB)/libgoto.a $(G95_LIB)/libfftw3.a $(G95_LIB)/libderiv.a  $(G95_LIB)/libint.a -lstdc++
+
+OBJECTS_ARCHITECTURE = machine_gfortran.o
