@@ -72,6 +72,21 @@ else
 endif
 
 
+ROLLTYPEMKL=_openmpi_
+ifeq ("$(ROLLMPI)","mpich")
+    ROLLTYPEMKL=_
+endif
+ifeq ("$(ROLLMPI)","mvapich")
+    ROLLTYPEMKL=_
+endif
+ifeq ("$(ROLLMPI)","mpich2")
+    ROLLTYPEMKL=_intelmpi_
+endif
+ifeq ("$(ROLLMPI)","mvapich2")
+    ROLLTYPEMKL=_intelmpi_
+endif
+
+
 PKGROOT = /opt/cp2k
 SOURCE = cp2k.$(VERSION)
 REDHAT.ROOT = $(PWD)/../../
@@ -126,6 +141,7 @@ build:
 	tar zxvf $(SOURCE).tar.gz
 	cp patch-files/$(ROLLMAKEFILE).popt $(SOURCE)/arch
 	perl -pi -e "s!ROLL_MATHPATH!$${MKL_ROOT}/lib/em64t!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
+        perl -pi -e "s!ROLLTYPEMKL!$(ROLLTYPEMKL)!g" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
 	perl -pi -e "s!ROLLFFTW!$(ROLLFFTW)!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
 	perl -pi -e "s!ROLLLIBINT!$(PWD)/$(SOURCE)/libint/lib!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
 	perl -pi -e "s!ROLLWRAPPER!$(PWD)/$(SOURCE)/tools/hfx_tools/libint_tools!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt
