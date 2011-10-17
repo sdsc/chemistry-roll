@@ -8,6 +8,7 @@ apbs http://www.poissonboltzmann.org/apbs
 lammps http://lammps.sandia.gov
 namd http://www.ks.uiuc.edu/Research/namd
 gromacs http://www.gromacs.org
+cp2k http://cp2k.berlios.de
 </description>
 
 <copyright>
