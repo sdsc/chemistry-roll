@@ -35,7 +35,6 @@ fi
 <!-- APBS -->
 if test -f /etc/profile.d/apbs.sh; then
   /bin/rm -f /etc/profile.d/apbs.*
-fi
 /bin/mkdir -m 0755 -p /opt/modulefiles/applications/apbs
 <file name="/opt/modulefiles/applications/apbs/1.3" perms="0644">
 #%Module1.0
@@ -49,12 +48,11 @@ set ModulesVersion "1.3"
 
 /bin/ln -s /opt/modulefiles/applications/apbs/.version.1.3 \
              /opt/modulefiles/applications/apbs/.version
-
+fi
 
 <!-- LAMMPS -->
 if test -f /etc/profile.d/lammps.sh; then
   /bin/rm -f /etc/profile.d/lammps.*
-fi
 /bin/mkdir -m 0755 -p /opt/modulefiles/applications/lammps
 <file name="/opt/modulefiles/applications/lammps/18Feb11" perms="0644">
 #%Module1.0
@@ -68,11 +66,10 @@ set ModulesVersion "18Feb11"
 
   /bin/ln -s /opt/modulefiles/applications/lammps/.version.18Feb11 \
              /opt/modulefiles/applications/lammps/.version
-
+fi
 <!-- NAMD -->
 if test -f /etc/profile.d/namd.sh; then
   /bin/rm -f /etc/profile.d/namd.*
-fi
 /bin/mkdir -m 0755 -p /opt/modulefiles/applications/namd
 <file name="/opt/modulefiles/applications/namd/2.6" perms="0644">
 #%Module1.0
@@ -96,11 +93,10 @@ set ModulesVersion "2.8"
 
 /bin/ln -s /opt/modulefiles/applications/namd/.version.2.8 \
              /opt/modulefiles/applications/namd/.version
-
+fi
 <!-- GROMACS -->
 if test -f /etc/profile.d/gromacs.sh; then
   /bin/rm -f /etc/profile.d/gromacs.*
-fi
 /bin/mkdir -m 0755 -p /opt/modulefiles/applications/gromacs
 <file name="/opt/modulefiles/applications/gromacs/4.5.4" perms="0644">
 #%Module1.0
@@ -120,11 +116,10 @@ set ModulesVersion "4.5.4"
   /bin/ln -s /opt/modulefiles/applications/gromacs/.version.4.5.4 \
              /opt/modulefiles/applications/gromacs/.version
 
-
+fi
 <!-- CP2K -->
 if test -f /etc/profile.d/cp2k.sh; then
   /bin/rm -f /etc/profile.d/cp2k.*
-fi
 /bin/mkdir -m 0755 -p /opt/modulefiles/applications/cp2k
 
 <file name="/opt/modulefiles/applications/cp2k/2.2.184" perms="0644">
@@ -140,7 +135,7 @@ set ModulesVersion "2.2.184"
   /bin/ln -s /opt/modulefiles/applications/cp2k/.version.2.2.184 \
              /opt/modulefiles/applications/cp2k/.version
 
-
+fi
 </post>
 
 </kickstart>
