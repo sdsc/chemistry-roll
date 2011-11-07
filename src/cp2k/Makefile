@@ -116,7 +116,7 @@ else
 endif
 
 ifeq ("${MKL_ROOT}", "")
-   export MKL_ROOT=/opt/intel/Compiler/11.1/072/mkl
+   export MKL_ROOT=/opt/intel/composer_xe_2011_sp1.7.256/mkl
 endif
 
 MPISETUP = \
@@ -140,7 +140,7 @@ ROLLFFTW = /opt/fftw/3.2.1/$(ROLLCOMPILER)
 build:
 	tar zxvf $(SOURCE).tar.gz
 	cp patch-files/$(ROLLMAKEFILE).popt $(SOURCE)/arch
-	perl -pi -e "s!ROLL_MATHPATH!$${MKL_ROOT}/lib/em64t!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
+	perl -pi -e "s!ROLL_ROOT!$${MKL_ROOT}/lib/intel64!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
         perl -pi -e "s!ROLLTYPEMKL!$(ROLLTYPEMKL)!g" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
 	perl -pi -e "s!ROLLFFTW!$(ROLLFFTW)!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
 	perl -pi -e "s!ROLLLIBINT!$(PWD)/$(SOURCE)/libint/lib!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
