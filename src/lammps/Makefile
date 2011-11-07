@@ -65,6 +65,10 @@ ifndef ROLLMPI
   ROLLMPI = openmpi
 endif
 
+ifeq ("${MKL_ROOT}", "")
+   export MKL_ROOT=/opt/intel/composer_xe_2011_sp1.7.256/mkl
+endif
+
 PKGROOT = /opt/lammps
 SOURCE = lammps-$(VERSION)
 REDHAT.ROOT = $(PWD)/../../
@@ -97,6 +101,7 @@ MPISETUP = \
   export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
 
 
+
 build:
 	tar zxvf $(SOURCE).tgz
 	cp patch-files/Makefile.rocks $(SOURCE)/src/MAKE/
@@ -104,6 +109,7 @@ build:
 	cp patch-files/Makefile.meam.ifort $(SOURCE)/lib/meam/Makefile.ifort
 	cp patch-files/Makefile.poems.icc $(SOURCE)/lib/poems/Makefile.icc
 	cp patch-files/Makefile.reax.icc $(SOURCE)/lib/reax/Makefile.icc
+        perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" $(SOURCE)/src/MAKE/Makefile.rocks
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
