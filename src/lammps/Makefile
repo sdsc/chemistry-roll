@@ -109,7 +109,7 @@ build:
 	cp patch-files/Makefile.meam.ifort $(SOURCE)/lib/meam/Makefile.ifort
 	cp patch-files/Makefile.poems.icc $(SOURCE)/lib/poems/Makefile.icc
 	cp patch-files/Makefile.reax.icc $(SOURCE)/lib/reax/Makefile.icc
-        perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" $(SOURCE)/src/MAKE/Makefile.rocks
+	perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" $(SOURCE)/src/MAKE/Makefile.rocks
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
