@@ -140,7 +140,7 @@ ROLLFFTW = /opt/fftw/3.2.1/$(ROLLCOMPILER)
 build:
 	tar zxvf $(SOURCE).tar.gz
 	cp patch-files/$(ROLLMAKEFILE).popt $(SOURCE)/arch
-	perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}/lib/intel64!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
+	perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
         perl -pi -e "s!ROLLTYPEMKL!$(ROLLTYPEMKL)!g" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
 	perl -pi -e "s!ROLLFFTW!$(ROLLFFTW)!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
 	perl -pi -e "s!ROLLLIBINT!$(PWD)/$(SOURCE)/libint/lib!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
