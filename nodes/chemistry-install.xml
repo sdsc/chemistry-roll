@@ -19,12 +19,12 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 <changelog>
 </changelog>
 
-<package>apbs_ROLLCOMPILER_ROLLNETWORK_ROLLMPI</package>
-<package>lammps_ROLLCOMPILER_ROLLNETWORK_ROLLMPI</package>
-<package>namd_ROLLCOMPILER_ROLLNETWORK_ROLLMPI</package>
-<package>namd_2.6_ROLLCOMPILER_ROLLNETWORK_ROLLMPI</package>
-<package>gromacs_ROLLCOMPILER_ROLLNETWORK_ROLLMPI</package>
-<package>cp2k_ROLLCOMPILER_ROLLNETWORK_ROLLMPI</package>
+<package>apbs_intel_mvapich2_ofed</package>
+<package>lammps_intel_mvapich2_ofed</package>
+<package>namd_intel_mvapich2_ofed</package>
+<package>namd_2.6_intel_mvapich2_ofed</package>
+<package>gromacs_intel_mvapich2_ofed</package>
+<package>cp2k_intel_mvapich2_ofed</package>
 
 <post>
 
