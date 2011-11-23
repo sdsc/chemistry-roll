@@ -53,7 +53,6 @@
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # @Copyright@
-#
 
 ifndef ROLLCOMPILER
   ROLLCOMPILER = gnu
@@ -96,23 +95,23 @@ MPISETUP = \
   export PATH=$${PATH}:$${MPI_HOME}/bin; \
   export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
 
+FCC = f77
 CHARMARCH = mpi-linux-x86_64
 CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
 CXX = g++
 CC = gcc
-FCC = f77
 ifeq ("$(ROLLCOMPILER)", "intel")
+  FCC = ifort
   CHARMARCH = mpi-linux-x86_64-$(FCC)-mpicxx
   CHARMBUILDOPTS = mpicxx $(FCC) -j16 -O2 
   CXX = icpc        
   CC = icc
-  FCC = ifort
 else ifeq ("$(ROLLCOMPILER)", "pgi")
+  FCC = pgf90
   CHARMARCH = mpi-linux-x86_64-$(FCC)-mpicxx
   CHARMBUILDOPTS = mpicxx $(FCC) -j16 -O2 
   CXX = pgCC
   CC = pgcc
-  FCC = pgf90
 endif
 
 build:
