@@ -77,9 +77,9 @@ COMPILERSETUP = \
   fi
 
 ifeq ("$(ROLLNETWORK)", "eth")
-  MPI= $(ROLLMPI)
+  MPI = $(ROLLMPI)
 else
-  MPI= $(ROLLMPI)_$(ROLLNETWORK)
+  MPI = $(ROLLMPI)_$(ROLLNETWORK)
 endif
 
 MPISETUP = \
@@ -107,18 +107,17 @@ endif
 
 build:
 	tar zxvf $(SOURCE).tgz
+	cp patch-files/test.sh $(SOURCE)/examples/actin-dimer
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
-          cp patch-files/test.sh $(SOURCE)/examples/actin-dimer; \
-          cp patch-files/inputgen.py $(SOURCE)/examples/actin-dimer; \
 	  cd $(SOURCE); \
 	  if test $(ROLLMPI) = "openmpi"; then \
-          ./configure CC=$(CC) F77=$(FCC) --prefix=$(ROOT)/$(PKGROOT) \
-	    --with-openmpi=$${MPI_HOME}; \
-          elif test $(ROLLMPI) = "mpich2" -o $(ROLLMPI) = "mvapich2"; then \
-          ./configure CC=$(CC) F77=$(FCC) --prefix=$(ROOT)/$(PKGROOT) \
-	    --with-mpich2=$${MPI_HOME}; \
+	    ./configure CC=$(CC) F77=$(FCC) --prefix=$(ROOT)/$(PKGROOT) \
+	                --with-openmpi=$${MPI_HOME}; \
+	  else \
+	    ./configure CC=$(CC) F77=$(FCC) --prefix=$(ROOT)/$(PKGROOT) \
+	                --with-mpich2=$${MPI_HOME}; \
           fi; \
 	  make \
 	)
