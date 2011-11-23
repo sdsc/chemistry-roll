@@ -65,10 +65,6 @@ ifndef ROLLMPI
   ROLLMPI = openmpi
 endif
 
-ifeq ("${MKL_ROOT}", "")
-   export MKL_ROOT=/opt/intel/composer_xe_2011_sp1.7.256/mkl
-endif
-
 PKGROOT = /opt/lammps
 SOURCE = lammps-$(VERSION)
 REDHAT.ROOT = $(PWD)/../../
@@ -82,15 +78,15 @@ COMPILERSETUP = \
   fi
 
 ifeq ("$(ROLLNETWORK)", "eth")
-  MPI= $(ROLLMPI) 
+  MPIMODULE = $(ROLLMPI) 
 else
-  MPI= $(ROLLMPI)_$(ROLLNETWORK)
+  MPIMODULE = $(ROLLMPI)_$(ROLLNETWORK)
 endif
 
 MPISETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
-    module load $(MPI); \
+    module load $(MPIMODULE); \
   fi; \
   export MPI_HOME=`which mpicxx | perl -pe 's!/bin/.*!!'`; \
   if test -z "$${MPI_HOME}"; then \
@@ -100,20 +96,18 @@ MPISETUP = \
   export PATH=$${PATH}:$${MPI_HOME}/bin; \
   export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
 
-
-
 build:
 	tar zxvf $(SOURCE).tgz
 	cp patch-files/Makefile.rocks $(SOURCE)/src/MAKE/
 	cp patch-files/Makefile.atc.icc $(SOURCE)/lib/atc/Makefile.icc
 	cp patch-files/Makefile.meam.ifort $(SOURCE)/lib/meam/Makefile.ifort
 	cp patch-files/Makefile.poems.icc $(SOURCE)/lib/poems/Makefile.icc
-	cp patch-files/Makefile.reax.icc $(SOURCE)/lib/reax/Makefile.icc
-	perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" $(SOURCE)/src/MAKE/Makefile.rocks
+	cp patch-files/Makefile.reax.ifort $(SOURCE)/lib/reax/Makefile.ifort
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE)/src; \
+	  perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" MAKE/Makefile.rocks; \
 	  tar zxvf $(REDHAT.ROOT)/src/fftw-linux-x86_64.tar.gz; \
 	  mv linux-x86_64 fftw; \
 	  mv fftw/include/sfftw.h fftw/include/fftw.h; \
@@ -136,14 +130,14 @@ build:
 	  $(MAKE) ROOT=lmp -f Makefile.icc; \
 	  cp libpoems.a ../../src; \
 	  cd ../reax; \
-	  $(MAKE) ROOT=lmp -f Makefile.icc; \
+	  $(MAKE) ROOT=lmp -f Makefile.ifort; \
 	  cp libreax.a ../../src; \
 	  cd ../../src; \
 	  $(MAKE) ROOT=lmp rocks \
 	)
 
 install::
-	mkdir -p $(ROOT)/$(PKGROOT)/bin
+	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
 	cp $(SOURCE)/src/lmp_rocks $(ROOT)/$(PKGROOT)/bin/lammps
 	cp -r $(SOURCE)/examples $(ROOT)/$(PKGROOT)/examples
 
