@@ -30,7 +30,7 @@ use Test::More qw(no_plan);
 my $appliance = $#ARGV >= 0 ? $ARGV[0] :
                 -d '/export/rocks/install' ? 'Frontend' : 'Compute';
 my $installedOnAppliancesPattern = 'Compute';
-my @packages = ('apbs', 'lammps', 'namd/2.6', 'namd/2.8', 'gromacs');
+my @packages = ('apbs', 'cp2k', 'gromacs', 'lammps', 'namd/2.6', 'namd/2.8');
 my $output;
 my $TESTFILE = 'tmpchemistry';
 
@@ -59,8 +59,10 @@ SKIP: {
   skip 'apbs test not installed', 1 if ! -d $testDir;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
-. /etc/profile.d/modules.sh
-module load ROLLCOMPILER apbs
+if test -f /etc/profile.d/modules.sh; then
+  . /etc/profile.d/modules.sh
+  module load ROLLCOMPILER apbs
+fi
 cd $packageHome/examples/actin-dimer
 $packageHome/bin/apbs apbs-smol-auto.in
 END
@@ -70,27 +72,30 @@ END
 
 }
 
-# lammps
-$packageHome = '/opt/lammps';
-$testDir = "$packageHome/examples/colloid";
+# cp2k
+$packageHome = '/opt/cp2k';
+$testDir = "$packageHome/test";
 SKIP: {
 
-  skip 'lammps not installed', 1 if ! -d $packageHome;
-  skip 'lammps test not installed', 1 if ! -d $testDir;
+  skip 'cp2k not installed', 1 if ! -d $packageHome;
+  skip 'cp2k test not installed', 1 if ! -d $testDir;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
-. /etc/profile.d/modules.sh
-module load ROLLCOMPILER ROLLMPI_ROLLNETWORK lammps
-cd $packageHome/examples/colloid
-hostname > nodes
-mpirun -np 1 -machinefile nodes $packageHome/bin/lammps < in.colloid
-/bin/rm -f nodes
+if test -f /etc/profile.d/modules.sh; then
+  . /etc/profile.d/modules.sh
+  module load ROLLCOMPILER ROLLMPI_ROLLNETWORK cp2k
+fi
+cd $testDir
+$packgeHomebin/cp2k.popt 3H2O-ep.inp
+/bin/rm -f *.Log *.out *.wfn* *.ener *.restart *mainQS* *.xyz
 END
-  close(OUT);
-  $output = `/bin/bash $TESTFILE.sh`;
-  ok($output =~ /900 atoms/, 'lammps sample run');
+close(OUT);
+
+  $output = `/bin/bash $TESTFILE.sh 2>&1`;
+  ok($output =~ /TEMPERATURE.*303.105/, 'cp2k test run');
 
 }
+
 # gromacs
 $packageHome = '/opt/gromacs';
 $testDir = "$packageHome/gmxtest/complex/acetoniltrilRF";
@@ -100,8 +105,10 @@ SKIP: {
   skip 'gromacs test not installed', 1 if ! -d $testDir;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
-. /etc/profile.d/modules.sh
-module load ROLLCOMPILER ROLLMPI_ROLLNETWORK gromacs
+if test -f /etc/profile.d/modules.sh; then
+  . /etc/profile.d/modules.sh
+  module load ROLLCOMPILER ROLLMPI_ROLLNETWORK gromacs
+fi
 cd $testDir
 hostname > nodes
 mpirun -np 1 -machinefile nodes $packageHome/bin/grompp 
@@ -114,6 +121,29 @@ END
 
 }
 
+# lammps
+$packageHome = '/opt/lammps';
+$testDir = "$packageHome/examples/colloid";
+SKIP: {
+
+  skip 'lammps not installed', 1 if ! -d $packageHome;
+  skip 'lammps test not installed', 1 if ! -d $testDir;
+  open(OUT, ">$TESTFILE.sh");
+  print OUT <<END;
+if test -f /etc/profile.d/modules.sh; then
+  . /etc/profile.d/modules.sh
+  module load ROLLCOMPILER ROLLMPI_ROLLNETWORK lammps
+fi
+cd $packageHome/examples/colloid
+hostname > nodes
+mpirun -np 1 -machinefile nodes $packageHome/bin/lammps < in.colloid
+/bin/rm -f nodes
+END
+  close(OUT);
+  $output = `/bin/bash $TESTFILE.sh`;
+  ok($output =~ /900 atoms/, 'lammps sample run');
+
+}
 
 # namd/2.6
 $packageHome = '/opt/namd/2.6';
