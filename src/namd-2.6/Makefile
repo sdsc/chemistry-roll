@@ -77,15 +77,15 @@ COMPILERSETUP = \
   fi
 
 ifeq ("$(ROLLNETWORK)", "eth")
-  MPI= $(ROLLMPI)
+  MPIMODULE = $(ROLLMPI)
 else
-  MPI= $(ROLLMPI)_$(ROLLNETWORK)
+  MPIMODULE = $(ROLLMPI)_$(ROLLNETWORK)
 endif
 
 MPISETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
-    module load $(MPI); \
+    module load $(MPIMODULE); \
   fi; \
   export MPI_HOME=`which mpicxx | perl -pe 's!/bin/.*!!'`; \
   if test -z "$${MPI_HOME}"; then \
@@ -95,15 +95,15 @@ MPISETUP = \
   export PATH=$${PATH}:$${MPI_HOME}/bin; \
   export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
 
+FCC = f77
 CHARMARCH = mpi-linux-x86_64
 CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
 CXX = g++
-FCC = f77
 ifeq ("$(ROLLCOMPILER)", "intel")
-  CHARMARCH = mpi-linux-x86_64-ifort-mpicxx
-  CHARMBUILDOPTS = mpicxx ifort -O2 -fPIC
-  CXX = icc        
   FCC = ifort
+  CHARMARCH = mpi-linux-x86_64-$(FCC)-mpicxx
+  CHARMBUILDOPTS = mpicxx $(FCC) -O2 -fPIC
+  CXX = icc        
 endif
 
 build:
@@ -113,12 +113,12 @@ build:
 	cp patch-files/Linux-x86_64.* $(SOURCE)/arch
 	cp patch-files/Make.charm $(SOURCE)
 	if test $(ROLLMPI) != "openmpi"; then \
-	   cp patch-files/conv-mach-mpich.sh \
-	  $(SOURCE)/charm-6.1.3/src/arch/mpi-linux-x86_64/conv-mach.sh;  \
-        else \
-	   cp patch-files/conv-mach.sh \
-	  $(SOURCE)/charm-6.1.3/src/arch/mpi-linux-x86_64;  \
-        fi 
+	  cp patch-files/conv-mach-mpich.sh \
+	     $(SOURCE)/charm-6.1.3/src/arch/mpi-linux-x86_64/conv-mach.sh; \
+	else \
+	  cp patch-files/conv-mach.sh \
+	     $(SOURCE)/charm-6.1.3/src/arch/mpi-linux-x86_64; \
+	fi 
 	perl -pi -e "s!ROOTDIR!`pwd`/$(SOURCE)!g" \
 	  $(SOURCE)/arch/Linux-x86_64-MPI*.arch $(SOURCE)/arch/Linux-x86_64.* \
 	  $(SOURCE)/Make.charm \
@@ -138,7 +138,7 @@ build:
 	)
 
 install::
-	mkdir -p $(ROOT)/$(PKGROOT)/bin
+	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/bin
 	cp $(SOURCE)/*/{charmrun,flipbinpdb,flipdcd,namd2,psfgen} \
 	   $(ROOT)/$(PKGROOT)/bin
 
