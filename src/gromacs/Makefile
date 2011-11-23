@@ -78,15 +78,15 @@ COMPILERSETUP = \
   fi
 
 ifeq ("$(ROLLNETWORK)", "eth")
-  MPI= $(ROLLMPI)
+  MPIMODULE = $(ROLLMPI)
 else
-  MPI= $(ROLLMPI)_$(ROLLNETWORK)
+  MPIMODULE = $(ROLLMPI)_$(ROLLNETWORK)
 endif
 
 MPISETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
-    module load $(MPI); \
+    module load $(MPIMODULE); \
   fi; \
   export MPI_HOME=`which mpicxx | perl -pe 's!/bin/.*!!'`; \
   if test -z "$${MPI_HOME}"; then \
@@ -96,16 +96,16 @@ MPISETUP = \
   export PATH=$${PATH}:$${MPI_HOME}/bin; \
   export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
 
+CC = gcc
 CXX = g++
-CC=gcc
 FCC = f77
 ifeq ("$(ROLLCOMPILER)", "intel")
+  CC = icc
   CXX = icpc        
-  CC= icc
   FCC = ifort
 endif
 ifeq ("$(ROLLCOMPILER)", "pgi")
-  CC= pgcc
+  CC = pgcc
   CXX = pgCC
   FCC = pgf90
 endif
@@ -115,26 +115,31 @@ build:
 	tar zxvf gmxtest.tar.gz
 	tar zxvf fftw-3.2.2.tar.gz
 	( \
-	   cd fftw-3.2.2; \
 	  $(COMPILERSETUP); \
-           ./configure --prefix=$(REDHAT.ROOT)/src/gromacs/fftw-3.2.2/build --enable-openmp --enable-single CFLAGS=-fPIC FFLAGS=-fPIC CC=$(CC) CXX=$(CXX) f77=$(FCC); \
-           make; \
-           make install; \
+	  cd fftw-3.2.2; \
+	  ./configure --prefix=$(REDHAT.ROOT)/src/gromacs/fftw-3.2.2/build \
+	              --enable-openmp --enable-single \
+	              CFLAGS=-fPIC FFLAGS=-fPIC CC=$(CC) CXX=$(CXX) f77=$(FCC);\
+	  make; \
+	  make install \
         )
 	( \
-	  cd $(SOURCE); \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
-	  ./configure --prefix=$(ROOT)/$(PKGROOT) --enable-mpi --with-fft=fftw3 CC=$(CC) F77=$(FCC) CXX=$(CXX) CFLAGS=-I$(REDHAT.ROOT)/src/gromacs/fftw-3.2.2/build/include LDFLAGS=-L$(REDHAT.ROOT)/src/gromacs/fftw-3.2.2/build/lib; \
-	  make; \
+	  cd $(SOURCE); \
+	  ./configure --prefix=$(ROOT)/$(PKGROOT) --enable-mpi \
+	              --with-fft=fftw3 CC=$(CC) F77=$(FCC) CXX=$(CXX) \
+	              CFLAGS=-I`pwd`/../fftw-3.2.2/build/include \
+	              LDFLAGS=-L`pwd`/../fftw-3.2.2/build/lib; \
+	  make \
 	)
 
 install::
-	(\
-          cd $(SOURCE); \
+	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
-          make install; \
+	  cd $(SOURCE); \
+	  make install \
         )
 	cp -r gmxtest $(ROOT)/$(PKGROOT)
 
