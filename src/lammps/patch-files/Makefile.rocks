@@ -50,8 +50,8 @@ FFT_LIB =       -lfftw
 # SYSPATH = paths of libraries
 
 gpu_SYSLIB =       -lcudart
-meam_SYSLIB =      -lifcore -lsvml -lompstub -limf
-reax_SYSLIB =      -lifcore -lsvml -lompstub -limf
+meam_SYSLIB =      -lifcore -lsvml -liompstubs5 -limf
+reax_SYSLIB =      -lifcore -lsvml -liompstubs5 -limf
 MKLROOT = MKL_ROOT
 user-atc_SYSLIB =   -Wl,--start-group $(MKLROOT)/lib/intel64/libmkl_intel_lp64.a $(MKLROOT)/lib/intel64/libmkl_sequential.a $(MKLROOT)/lib/intel64/libmkl_core.a -Wl,--end-group -lpthread
 
