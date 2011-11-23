@@ -78,15 +78,15 @@ COMPILERSETUP = \
   fi
 
 ifeq ("$(ROLLNETWORK)", "eth")
-  MPI= $(ROLLMPI)
+  MPIMODULE = $(ROLLMPI)
 else
-  MPI= $(ROLLMPI)_$(ROLLNETWORK)
+  MPIMODULE = $(ROLLMPI)_$(ROLLNETWORK)
 endif
 
 MPISETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
-    module load $(MPI); \
+    module load $(MPIMODULE); \
   fi; \
   export MPI_HOME=`which mpicxx | perl -pe 's!/bin/.*!!'`; \
   if test -z "$${MPI_HOME}"; then \
@@ -99,21 +99,20 @@ MPISETUP = \
 CHARMARCH = mpi-linux-x86_64
 CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
 CXX = g++
-CC=gcc
+CC = gcc
 FCC = f77
 ifeq ("$(ROLLCOMPILER)", "intel")
-  FCC = ifort
   CHARMARCH = mpi-linux-x86_64-$(FCC)-mpicxx
   CHARMBUILDOPTS = mpicxx $(FCC) -j16 -O2 
   CXX = icpc        
-  CC= icc
-endif
-ifeq ("$(ROLLCOMPILER)", "pgi")
-  FCC = pgf90
+  CC = icc
+  FCC = ifort
+else ifeq ("$(ROLLCOMPILER)", "pgi")
   CHARMARCH = mpi-linux-x86_64-$(FCC)-mpicxx
   CHARMBUILDOPTS = mpicxx $(FCC) -j16 -O2 
-  CC= pgcc
   CXX = pgCC
+  CC = pgcc
+  FCC = pgf90
 endif
 
 build:
@@ -139,7 +138,7 @@ build:
 	)
 
 install::
-	mkdir -p $(ROOT)/$(PKGROOT)/bin
+	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/bin
 	cp $(SOURCE)/*/{charmrun,flipbinpdb,flipdcd,namd2,psfgen} \
 	   $(ROOT)/$(PKGROOT)/bin
 	cp -r tiny $(ROOT)/$(PKGROOT)
