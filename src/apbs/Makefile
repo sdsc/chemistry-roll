@@ -77,15 +77,15 @@ COMPILERSETUP = \
   fi
 
 ifeq ("$(ROLLNETWORK)", "eth")
-  MPI = $(ROLLMPI)
+  MPIMODULE = $(ROLLMPI)
 else
-  MPI = $(ROLLMPI)_$(ROLLNETWORK)
+  MPIMODULE = $(ROLLMPI)_$(ROLLNETWORK)
 endif
 
 MPISETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
-    module load $(MPI); \
+    module load $(MPIMODULE); \
   fi; \
   export MPI_HOME=`which mpicxx | perl -pe 's!/bin/.*!!'`; \
   if test -z "$${MPI_HOME}"; then \
@@ -112,7 +112,7 @@ build:
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE); \
-	  if test $(ROLLMPI) = "openmpi"; then \
+	  if test "$(ROLLMPI)" = "openmpi"; then \
 	    ./configure CC=$(CC) F77=$(FCC) --prefix=$(ROOT)/$(PKGROOT) \
 	                --with-openmpi=$${MPI_HOME}; \
 	  else \
