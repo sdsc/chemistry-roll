@@ -5,10 +5,10 @@
 <description>
 Chemistry-related application codes
 apbs http://www.poissonboltzmann.org/apbs
+cp2k http://cp2k.berlios.de
+gromacs http://www.gromacs.org
 lammps http://lammps.sandia.gov
 namd http://www.ks.uiuc.edu/Research/namd
-gromacs http://www.gromacs.org
-http://cp2k.berlios.de
 </description>
 
 <copyright>
@@ -19,27 +19,57 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 <changelog>
 </changelog>
 
-<package>apbs_intel_mvapich2_ofed</package>
-<package>lammps_intel_mvapich2_ofed</package>
-<package>namd_intel_mvapich2_ofed</package>
-<package>namd_2.6_intel_mvapich2_ofed</package>
-<package>gromacs_intel_mvapich2_ofed</package>
-<package>cp2k_intel_mvapich2_ofed</package>
+<package>apbs_intel_mx_openmpi</package>
+<package>cp2k_intel_mx_openmpi</package>
+<package>gromacs_intel_mx_openmpi</package>
+<package>lammps_intel_mx_openmpi</package>
+<package>namd_intel_mx_openmpi</package>
+<package>namd_2.6_intel_mx_openmpi</package>
 
 <post>
 
 <file name="/etc/profile.d/apbs.csh" perms="0644">
 set path = ( /opt/apbs/bin $path )
 </file>
-
 <file name="/etc/profile.d/apbs.sh" perms="0644">
 export PATH=/opt/apbs/bin:$PATH
+</file>
+
+<file name="/etc/profile.d/cp2k.csh" perms="0644">
+set path = ( /opt/cp2k/bin $path )
+</file>
+<file name="/etc/profile.d/cp2k.sh" perms="0644">
+export PATH=/opt/cp2k/bin:$PATH
+</file>
+
+<file name="/etc/profile.d/gromacs.csh" perms="0644">
+set path = ( /opt/gromacs/bin $path )
+if ($?LD_LIBRARY_PATH) then
+  setenv LD_LIBRARY_PATH /opt/gromacs/lib:$LD_LIBRARY_PATH
+else
+  setenv LD_LIBRARY_PATH /opt/gromacs/lib
+endif
+setenv GMXBIN /opt/gromacs/bin
+setenv GMXDATA /opt/gromacs/share
+setenv GMXLDLIB /opt/gromacs/lib
+setenv GMXMAN /opt/gromacs/share/man
+</file>
+<file name="/etc/profile.d/gromacs.sh" perms="0644">
+export PATH=/opt/gromacs/bin:$PATH
+if test -n "$LD_LIBRARY_PATH"; then
+  export LD_LIBRARY_PATH=/opt/gromacs/lib:$LD_LIBRARY_PATH
+else
+  export LD_LIBRARY_PATH=/opt/gromacs/lib
+fi
+export GMXBIN=/opt/gromacs/bin
+export GMXDATA=/opt/gromacs/share
+export GMXLDLIB=/opt/gromacs/lib
+export GMXMAN=/opt/gromacs/share/man
 </file>
 
 <file name="/etc/profile.d/lammps.csh" perms="0644">
 set path = ( /opt/lammps/bin $path )
 </file>
-
 <file name="/etc/profile.d/lammps.sh" perms="0644">
 export PATH=/opt/lammps/bin:$PATH
 </file>
@@ -47,26 +77,10 @@ export PATH=/opt/lammps/bin:$PATH
 <file name="/etc/profile.d/namd.csh" perms="0644">
 set path = ( /opt/namd/2.8/bin $path )
 </file>
-
 <file name="/etc/profile.d/namd.sh" perms="0644">
 export PATH=/opt/namd/2.8/bin:$PATH
 </file>
 
-<file name="/etc/profile.d/gromacs.csh" perms="0644">
-set path = ( /opt/gromacs/bin $path )
-</file>
-
-<file name="/etc/profile.d/gromacs.sh" perms="0644">
-export PATH=/opt/gromacs/bin:$PATH
-</file>
-
-<file name="/etc/profile.d/cp2k.csh" perms="0644">
-set path = ( /opt/cp2k/bin $path )
-</file>
-
-<file name="/etc/profile.d/cp2k.sh" perms="0644">
-export PATH=/opt/cp2k/bin:$PATH
-</file>
 </post>
 
 </kickstart>

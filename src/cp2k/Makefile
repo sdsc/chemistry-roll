@@ -60,32 +60,9 @@ endif
 ifndef ROLLNETWORK
   ROLLNETWORK = eth
 endif
-
 ifndef ROLLMPI
   ROLLMPI = openmpi
 endif
-
-ifeq ("$(ROLLNETWORK)", "eth")
-  MPI= $(ROLLMPI)
-else
-  MPI= $(ROLLMPI)_$(ROLLNETWORK)
-endif
-
-
-ROLLTYPEMKL=_openmpi_
-ifeq ("$(ROLLMPI)","mpich")
-    ROLLTYPEMKL=_
-endif
-ifeq ("$(ROLLMPI)","mvapich")
-    ROLLTYPEMKL=_
-endif
-ifeq ("$(ROLLMPI)","mpich2")
-    ROLLTYPEMKL=_intelmpi_
-endif
-ifeq ("$(ROLLMPI)","mvapich2")
-    ROLLTYPEMKL=_intelmpi_
-endif
-
 
 PKGROOT = /opt/cp2k
 SOURCE = cp2k.$(VERSION)
@@ -93,49 +70,55 @@ REDHAT.ROOT = $(PWD)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 
-ROLLMAKEFILE = Linux-x86-64-gfortran
 COMPILERSETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
     module load $(ROLLCOMPILER); \
   fi
 
-CXX=g++
-ifeq ("$(ROLLCOMPILER)", "intel")
-  ROLLMAKEFILE = Linux-x86-64-intel
-  CXX = icpc
-else ifeq ("$(ROLLCOMPILER)", "pgi")
-  ROLLMAKEFILE = Linux-x86-64-pgi
-  CXX = pgCC
-endif
-
 ifeq ("$(ROLLNETWORK)", "eth")
-  OPENMPISUFFIX =
+  MPIMODULE = $(ROLLMPI)
 else
-  OPENMPISUFFIX = _$(ROLLNETWORK)
-endif
-
-ifeq ("${MKL_ROOT}", "")
-   export MKL_ROOT=/opt/intel/composer_xe_2011_sp1.7.256/mkl
+  MPIMODULE = $(ROLLMPI)_$(ROLLNETWORK)
 endif
 
 MPISETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
-    module load $(MPI); \
+    module load $(MPIMODULE); \
   fi; \
   export MPI_HOME=`which mpicxx | perl -pe 's!/bin/.*!!'`; \
   if test -z "$${MPI_HOME}"; then \
-    export MPI_HOME=/opt/$(MPI); \
+    export MPI_HOME=/opt/$(ROLLMPI); \
   fi; \
   echo Using MPI from $${MPI_HOME}; \
   export PATH=$${PATH}:$${MPI_HOME}/bin; \
   export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
 
-F90COMP = gfortran
+ifeq ("${MKL_ROOT}", "")
+  export MKL_ROOT=/opt/intel/composer_xe_2011_sp1.7.256/mkl
+endif
+
+ROLLTYPEMKL = _openmpi_
+ifeq ("$(ROLLMPI)", "mvapich")
+  ROLLTYPEMKL = _
+else ifeq ("$(ROLLMPI)", "mpich2")
+  ROLLTYPEMKL = _intelmpi_
+else ifeq ("$(ROLLMPI)", "mvapich2")
+  ROLLTYPEMKL = _intelmpi_
+endif
+
+CXX = g++
+ROLLMAKEFILE = Linux-x86-64-gfortran
+ifeq ("$(ROLLCOMPILER)", "intel")
+  CXX = icpc
+  ROLLMAKEFILE = Linux-x86-64-intel
+else ifeq ("$(ROLLCOMPILER)", "pgi")
+  CXX = pgCC
+  ROLLMAKEFILE = Linux-x86-64-pgi
+endif
 NCPUS=128
 ROLLFFTW = /opt/fftw/3.2.1/$(ROLLCOMPILER)
-
 
 build:
 	tar zxvf $(SOURCE).tar.gz
@@ -163,8 +146,8 @@ build:
 	)
 
 install::
-	mkdir -p $(ROOT)/$(PKGROOT)/bin
-	mkdir -p $(ROOT)/$(PKGROOT)/test
+	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/bin
+	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/test
 	cp $(SOURCE)/exe/$(ROLLMAKEFILE)/cp2k.popt $(ROOT)/$(PKGROOT)/bin
 	cp -r $(SOURCE)/tests/EP/* $(ROOT)/$(PKGROOT)/test/
 	rm -fr $(ROOT)/$(PKGROOT)/test/CVS
