@@ -64,7 +64,7 @@ if test -f /etc/profile.d/cp2k.sh; then
 prepend-path PATH /opt/cp2k/bin
 </file>
 
-<file name="/opt/modulefiles/applications/namd/.version.2.2.184">
+<file name="/opt/modulefiles/applications/cp2k/.version.2.2.184">
 #%Module1.0
 set ModulesVersion "2.2.184"
 </file>
@@ -90,7 +90,7 @@ prepend-path PATH $GMXBIN
 prepend-path LD_LIBRARY_PATH $GMXLDLIB
 </file>
 
-<file name="/opt/modulefiles/applications/namd/.version.4.5.4">
+<file name="/opt/modulefiles/applications/gromacs/.version.4.5.4">
 #%Module1.0
 set ModulesVersion "4.5.4"
 </file>
