@@ -27,7 +27,7 @@ FCFLAGS  = $(DFLAGS) -I$(FFTW_INC) -O3 -xW -heap-arrays 64 -funroll-loops -fpp -
 FCFLAGS2 = $(DFLAGS) -I$(FFTW_INC) -O1 -xW -heap-arrays 64 -fpp -free
 LDFLAGS  = $(FCFLAGS) -I$(FFTW_INC)
 INTEL_LIB = MKL_ROOT/lib/intel64
-LIBS     = $(INTEL_LIB)/libmkl_scalapack_lp64.a  -Wl,--start-group $(INTEL_LIB)/libmkl_intel_lp64.a $(INTEL_LIB)/libmkl_sequential.a $(INTEL_LIB)/libmkl_core $(INTEL_LIB)/libmkl_blacsROLLTYPEMKLlp64.a -Wl,--end-group -lpthread  -LROLLFFTW/lib -lfftw3 ROLLWRAPPER/libint_cpp_wrapper.o  -LROLLLIBINT -lderiv -lint -lstdc++
+LIBS     = $(INTEL_LIB)/libmkl_scalapack_lp64.a  -Wl,--start-group $(INTEL_LIB)/libmkl_intel_lp64.a $(INTEL_LIB)/libmkl_sequential.a $(INTEL_LIB)/libmkl_core.a $(INTEL_LIB)/libmkl_blacsROLLTYPEMKLlp64.a -Wl,--end-group -lpthread  -LROLLFFTW/lib -lfftw3 ROLLWRAPPER/libint_cpp_wrapper.o  -LROLLLIBINT -lderiv -lint -lstdc++
 
 
 OBJECTS_ARCHITECTURE = machine_intel.o
