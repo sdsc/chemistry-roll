@@ -108,13 +108,13 @@ else ifeq ("$(ROLLMPI)", "mvapich2")
   ROLLTYPEMKL = _intelmpi_
 endif
 
-CXX = g++
+export CXX=g++
 ROLLMAKEFILE = Linux-x86-64-gfortran
 ifeq ("$(ROLLCOMPILER)", "intel")
-  CXX = icpc
+  export CXX=icpc
   ROLLMAKEFILE = Linux-x86-64-intel
 else ifeq ("$(ROLLCOMPILER)", "pgi")
-  CXX = pgCC
+  export CXX=pgCC
   ROLLMAKEFILE = Linux-x86-64-pgi
 endif
 NCPUS=128
@@ -140,7 +140,7 @@ build:
 	  make; \
 	  make install; \
 	  cd ../tools/hfx_tools/libint_tools; \
-	  $(CXX) -O3 -c libint_cpp_wrapper.cpp -I../../../libint/include; \
+	  $${CXX} -O3 -c libint_cpp_wrapper.cpp -I../../../libint/include; \
 	  cd ../../../makefiles; \
 	  make -j $(NCPUS) ARCH=$(ROLLMAKEFILE) VERSION=popt \
 	)
