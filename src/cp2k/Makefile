@@ -109,12 +109,16 @@ else ifeq ("$(ROLLMPI)", "mvapich2")
 endif
 
 export CXX=g++
+export CC=gcc
+export FC=gcc
 ROLLMAKEFILE = Linux-x86-64-gfortran
 ifeq ("$(ROLLCOMPILER)", "intel")
   export CXX=icpc
+  export CC=icc
   ROLLMAKEFILE = Linux-x86-64-intel
 else ifeq ("$(ROLLCOMPILER)", "pgi")
   export CXX=pgCC
+  export CC=pgcc
   ROLLMAKEFILE = Linux-x86-64-pgi
 endif
 NCPUS=128
