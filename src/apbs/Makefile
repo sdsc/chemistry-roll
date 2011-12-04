@@ -95,15 +95,6 @@ MPISETUP = \
   export PATH=$${PATH}:$${MPI_HOME}/bin; \
   export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
 
-CC = gcc
-FCC = f77
-ifeq ("$(ROLLCOMPILER)", "intel")
-  CC = icc
-  FCC = ifort
-else ifeq ("$(ROLLCOMPILER)", "pgi")
-  CC = pgcc
-  FCC = pgf77
-endif
 
 build:
 	tar zxvf $(SOURCE).tgz
@@ -113,10 +104,10 @@ build:
 	  $(MPISETUP); \
 	  cd $(SOURCE); \
 	  if test "$(ROLLMPI)" = "openmpi"; then \
-	    ./configure CC=$(CC) F77=$(FCC) --prefix=$(ROOT)/$(PKGROOT) \
+	    ./configure CC=mpicc F77=mpif77 --prefix=$(ROOT)/$(PKGROOT) \
 	                --with-openmpi=$${MPI_HOME}; \
 	  else \
-	    ./configure CC=$(CC) F77=$(FCC) --prefix=$(ROOT)/$(PKGROOT) \
+	    ./configure CC=mpicc F77=mpif77 --prefix=$(ROOT)/$(PKGROOT) \
 	                --with-mpich2=$${MPI_HOME}; \
           fi; \
 	  make \
