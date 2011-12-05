@@ -122,7 +122,7 @@ else ifeq ("$(ROLLCOMPILER)", "pgi")
   ROLLMAKEFILE = Linux-x86-64-pgi
 endif
 NCPUS=128
-ROLLFFTW = /opt/fftw/3.2.1/$(ROLLCOMPILER)
+ROLLFFTW = /opt/fftw/3.3/$(ROLLCOMPILER)
 
 build:
 	tar zxvf $(SOURCE).tar.gz
