@@ -115,14 +115,16 @@ ROLLMAKEFILE = Linux-x86-64-gfortran
 ifeq ("$(ROLLCOMPILER)", "intel")
   export CXX=icpc
   export CC=icc
+  export FC=ifort
   ROLLMAKEFILE = Linux-x86-64-intel
 else ifeq ("$(ROLLCOMPILER)", "pgi")
   export CXX=pgCC
   export CC=pgcc
+  export FC=pgf90
   ROLLMAKEFILE = Linux-x86-64-pgi
 endif
 NCPUS=128
-ROLLFFTW = /opt/fftw/3.3/$(ROLLCOMPILER)
+ROLLFFTW = /opt/fftw/3.3/$(ROLLCOMPILER)/$(ROLLMPI)
 
 build:
 	tar zxvf $(SOURCE).tar.gz
