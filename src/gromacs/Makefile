@@ -113,14 +113,24 @@ endif
 build:
 	tar zxvf $(SOURCE).tar.gz
 	tar zxvf gmxtest.tar.gz
+	tar zxvf fftw-3.2.2.tar.gz
+	( \
+	  $(COMPILERSETUP); \
+	  cd fftw-3.2.2; \
+	  ./configure --prefix=$(REDHAT.ROOT)/src/gromacs/fftw-3.2.2/build \
+	              --enable-openmp --enable-single \
+	              CFLAGS=-fPIC FFLAGS=-fPIC CC=$(CC) CXX=$(CXX) f77=$(FCC);\
+	  make; \
+	  make install \
+        )
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE); \
 	  ./configure --prefix=$(ROOT)/$(PKGROOT) --enable-mpi \
 	              --with-fft=fftw3 CC=$(CC) F77=$(FCC) CXX=$(CXX) \
-	              CFLAGS=-I/opt/fftw/3.3/$(ROLLCOMPILER)/include \
-	              LDFLAGS=-L/opt/fftw/3.3/$(ROLLCOMPILER)/lib; \
+	              CFLAGS=-I`pwd`/../fftw-3.2.2/build/include \
+	              LDFLAGS=-L`pwd`/../fftw-3.2.2/build/lib; \
 	  make \
 	)
 
