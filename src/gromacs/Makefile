@@ -113,7 +113,6 @@ endif
 build:
 	tar zxvf $(SOURCE).tar.gz
 	tar zxvf gmxtest.tar.gz
-	tar zxvf fftw-3.2.2.tar.gz
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
