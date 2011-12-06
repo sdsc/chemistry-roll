@@ -129,8 +129,8 @@ build:
 	  cd $(SOURCE); \
 	  ./configure --prefix=$(ROOT)/$(PKGROOT) --enable-mpi \
 	              --with-fft=fftw3 CC=$(CC) F77=$(FCC) CXX=$(CXX) \
-	              CFLAGS=-I`pwd`/../fftw-3.3/build/include \
-	              LDFLAGS=-L`pwd`/../fftw-3.3/build/lib; \
+	              CFLAGS=-I$(REDHAT.ROOT)/src/gromacs/fftw-3.3/build/include \
+	              LDFLAGS=-L$(REDHAT.ROOT)/src/gromacs/fftw-3.3/build/lib; \
 	  make \
 	)
 
