@@ -73,6 +73,9 @@ REDHAT.ROOT = $(PWD)/../../
 COMPILERSETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
+    module load intel; \
+    export MKL_HOME=$${MKL_ROOT}; \
+    module unload intel; \
     module load $(ROLLCOMPILER); \
   fi
 
@@ -94,10 +97,6 @@ MPISETUP = \
   echo Using MPI from $${MPI_HOME}; \
   export PATH=$${PATH}:$${MPI_HOME}/bin; \
   export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
-
-ifeq ("${MKL_ROOT}", "")
-  export MKL_ROOT=/opt/intel/composer_xe_2011_sp1.7.256/mkl
-endif
 
 ROLLTYPEMKL = _openmpi_
 ifeq ("$(ROLLMPI)", "mvapich")
@@ -129,7 +128,7 @@ ROLLFFTW = /opt/fftw/3.3/$(ROLLCOMPILER)/$(ROLLMPI)
 build:
 	tar zxvf $(SOURCE).tar.gz
 	cp patch-files/$(ROLLMAKEFILE).popt $(SOURCE)/arch
-	perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
+	perl -pi -e "s!MKL_ROOT!$${MKL_HOME}!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
         perl -pi -e "s!ROLLTYPEMKL!$(ROLLTYPEMKL)!g" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
 	perl -pi -e "s!ROLLFFTW!$(ROLLFFTW)!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
 	perl -pi -e "s!ROLLLIBINT!$(PWD)/$(SOURCE)/libint/lib!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \

@@ -74,6 +74,9 @@ REDHAT.ROOT = $(PWD)/../../
 COMPILERSETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
+    module load intel; \
+    export MKL_HOME=$${MKL_ROOT}; \
+    module unload intel; \
     module load $(ROLLCOMPILER); \
   fi
 
@@ -107,7 +110,7 @@ build:
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE)/src; \
-	  perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" MAKE/Makefile.rocks; \
+	  perl -pi -e "s!MKL_ROOT!$${MKL_HOME}!" MAKE/Makefile.rocks; \
 	  tar zxvf $(REDHAT.ROOT)/src/fftw-linux-x86_64.tar.gz; \
 	  mv linux-x86_64 fftw; \
 	  mv fftw/include/sfftw.h fftw/include/fftw.h; \
