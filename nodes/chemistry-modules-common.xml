@@ -40,6 +40,7 @@ if test -f /etc/profile.d/apbs.sh; then
 
 <file name="/opt/modulefiles/applications/apbs/1.3" perms="0644">
 #%Module1.0
+setenv APBSHOME /opt/apbs
 prepend-path PATH /opt/apbs/bin
 </file>
 
@@ -61,6 +62,7 @@ if test -f /etc/profile.d/cp2k.sh; then
 
 <file name="/opt/modulefiles/applications/cp2k/2.2.184" perms="0644">
 #%Module1.0
+setenv CP2KHOME /opt/cp2k
 prepend-path PATH /opt/cp2k/bin
 </file>
 
@@ -82,6 +84,7 @@ if test -f /etc/profile.d/gromacs.sh; then
 
 <file name="/opt/modulefiles/applications/gromacs/4.5.4" perms="0644">
 #%Module1.0
+setenv GROMACSHOME /opt/gromacs
 setenv GMXBIN /opt/gromacs/bin
 setenv GMXDATA /opt/gromacs/share
 setenv GMXLDLIB /opt/gromacs/lib
@@ -108,6 +111,7 @@ if test -f /etc/profile.d/lammps.sh; then
 
 <file name="/opt/modulefiles/applications/lammps/18Feb11" perms="0644">
 #%Module1.0
+setenv LAMMPSHOME /opt/lammps
 prepend-path PATH /opt/lammps/bin
 </file>
 
@@ -129,6 +133,7 @@ if test -f /etc/profile.d/namd.sh; then
 
 <file name="/opt/modulefiles/applications/namd/2.6" perms="0644">
 #%Module1.0
+setenv NAMDHOME /opt/namd/2.6
 prepend-path PATH /opt/namd/2.6/bin
 </file>
 
@@ -139,6 +144,7 @@ set ModulesVersion "2.6"
 
 <file name="/opt/modulefiles/applications/namd/2.8" perms="0644">
 #%Module1.0
+setenv NAMDHOME /opt/namd/2.8
 prepend-path PATH /opt/namd/2.8/bin
 </file>
 
