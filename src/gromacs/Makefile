@@ -122,7 +122,7 @@ build:
 	              CFLAGS=-fPIC FFLAGS=-fPIC CC=$(CC) CXX=$(CXX) f77=$(FCC);\
 	  make; \
 	  make install \
-        )
+	)
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
@@ -140,7 +140,7 @@ install::
 	  $(MPISETUP); \
 	  cd $(SOURCE); \
 	  make install \
-        )
+	)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)
 
 clean::

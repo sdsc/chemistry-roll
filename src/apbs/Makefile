@@ -109,7 +109,7 @@ build:
 	  else \
 	    ./configure CC=mpicc F77=mpif77 --prefix=$(ROOT)/$(PKGROOT) \
 	                --with-mpich2=$${MPI_HOME}; \
-          fi; \
+	  fi; \
 	  make \
 	)
 
