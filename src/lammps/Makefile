@@ -71,6 +71,8 @@ REDHAT.ROOT = $(PWD)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 
+ROLLFLAGS = -lgfortran
+
 COMPILERSETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
@@ -84,6 +86,13 @@ ifeq ("$(ROLLNETWORK)", "eth")
   MPIMODULE = $(ROLLMPI) 
 else
   MPIMODULE = $(ROLLMPI)_$(ROLLNETWORK)
+endif
+
+ifeq ("$(ROLLCOMPILER)","pgi")
+  ROLLFLAGS = -lpgf90 -lpgf90_rpm1 -lpgf902 -lpgf90rtl -lpgftnrtl -lrt
+endif
+ifeq ("$(ROLLCOMPILER)","intel")
+  ROLLFLAGS = /opt/intel/composer_xe_2011_sp1.7.256/compiler/lib/intel64/libifcore.a
 endif
 
 MPISETUP = \
@@ -102,41 +111,56 @@ MPISETUP = \
 build:
 	tar zxvf $(SOURCE).tgz
 	cp patch-files/Makefile.rocks $(SOURCE)/src/MAKE/
-	cp patch-files/Makefile.atc.icc $(SOURCE)/lib/atc/Makefile.icc
-	cp patch-files/Makefile.meam.ifort $(SOURCE)/lib/meam/Makefile.ifort
-	cp patch-files/Makefile.poems.icc $(SOURCE)/lib/poems/Makefile.icc
-	cp patch-files/Makefile.reax.ifort $(SOURCE)/lib/reax/Makefile.ifort
+	cp patch-files/Makefile.atc $(SOURCE)/lib/atc
+	cp patch-files/Makefile.awpmd $(SOURCE)/lib/awpmd
+	cp patch-files/logexc.h $(SOURCE)/lib/awpmd/ivutils/include
+	cp patch-files/Makefile.meam $(SOURCE)/lib/meam
+	cp patch-files/Makefile.poems $(SOURCE)/lib/poems
+	cp patch-files/Makefile.reax $(SOURCE)/lib/reax
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE)/src; \
-	  perl -pi -e "s!MKL_ROOT!$${MKL_HOME}!" MAKE/Makefile.rocks; \
+	  perl -pi -e "s!MKL_ROOT!$${MKL_HOME}!;s!ROLLFLAGS!$(ROLLFLAGS)!" MAKE/Makefile.rocks; \
 	  tar zxvf $(REDHAT.ROOT)/src/fftw-linux-x86_64.tar.gz; \
 	  mv linux-x86_64 fftw; \
 	  mv fftw/include/sfftw.h fftw/include/fftw.h; \
 	  mv fftw/lib/libsfftw.a fftw/lib/libfftw.a; \
-	  $(MAKE) ROOT=lmp rocks yes-all; \
-	  cp ../../patch-files/Makefile.package .; \
-	  cd GPU; \
-	  files=`ls *`;\
-	  cd ..; \
-	  for file in $${files}; do \
-	    rm -f $${file};  \
-	  done;  \
-	  cd ../lib/atc; \
-	  $(MAKE) ROOT=lmp -f Makefile.icc; \
-	  cp libatc.a ../../src; \
-	  cd ../meam; \
-	  $(MAKE) ROOT=lmp -f Makefile.ifort; \
-	  cp libmeam.a ../../src; \
-	  cd ../poems; \
-	  $(MAKE) ROOT=lmp -f Makefile.icc; \
-	  cp libpoems.a ../../src; \
-	  cd ../reax; \
-	  $(MAKE) ROOT=lmp -f Makefile.ifort; \
-	  cp libreax.a ../../src; \
-	  cd ../../src; \
-	  $(MAKE) ROOT=lmp rocks \
+           make yes-class2; \
+          make yes-colloid; \
+          make yes-dipole; \
+          make yes-fld; \
+          make yes-granular; \
+          make yes-kspace; \
+          make yes-manybody; \
+          make yes-mc; \
+          make yes-meam; \
+          make yes-molecule; \
+          make yes-opt; \
+          make yes-peri; \
+          make yes-poems; \
+          make yes-reax; \
+          make yes-replica; \
+          make yes-shock; \
+          make yes-srd; \
+          make yes-xtc; \
+           cd ../lib/atc; \
+          make -f Makefile.atc; \
+          cp *.a ../../src; \
+          cd ../awpmd; \
+          make -f Makefile.awpmd; \
+          cp *.a ../../src; \
+          cd ../meam; \
+          make -f Makefile.meam; \
+          cp *.a ../../src; \
+          cd ../poems; \
+          make -f Makefile.poems; \
+          cp *.a ../../src; \
+          cd ../reax; \
+          make -f Makefile.reax; \
+          cp *.a ../../src; \
+          cd ../../src; \
+          make ROOT=lmp rocks; \
 	)
 
 install::
