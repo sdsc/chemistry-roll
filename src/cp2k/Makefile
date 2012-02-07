@@ -135,7 +135,7 @@ build:
           perl -pi -e "s!ROLLTYPEMKL!$(ROLLTYPEMKL)!g" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLFFTW!$(ROLLFFTW)!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLLIBINT!$(PWD)/$(SOURCE)/libint/lib!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
-	  perl -pi -e "s!ROLLWRAPPER!$(PWD)/$(SOURCE)/tools/hfx_tools/libint_tools!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt
+	  perl -pi -e "s!ROLLWRAPPER!$(PWD)/$(SOURCE)/tools/hfx_tools/libint_tools!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
 	  cd $(SOURCE); \
 	  tar xvzf ../libint-1.1.4.tar.gz; \
 	  mkdir libint; \
