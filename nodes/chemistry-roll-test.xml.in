@@ -111,7 +111,8 @@ if test -f /etc/profile.d/modules.sh; then
 fi
 cd $testDir
 hostname > nodes
-mpirun -np 1 -machinefile nodes $packageHome/bin/grompp 
+$packageHome/bin/grompp 
+mpirun -np 1  $packageHome/bin/mdrun
 cat md.log
 /bin/rm -f nodes
 END
