@@ -110,11 +110,9 @@ if test -f /etc/profile.d/modules.sh; then
   module load ROLLCOMPILER ROLLMPI_ROLLNETWORK gromacs
 fi
 cd $testDir
-hostname > nodes
 $packageHome/bin/grompp 
 mpirun -np 1  $packageHome/bin/mdrun
 cat md.log
-/bin/rm -f nodes
 END
   close(OUT);
   $output = `/bin/bash $TESTFILE.sh`;
@@ -136,9 +134,7 @@ if test -f /etc/profile.d/modules.sh; then
   module load ROLLCOMPILER ROLLMPI_ROLLNETWORK lammps
 fi
 cd $packageHome/examples/colloid
-hostname > nodes
-mpirun -np 1 -machinefile nodes $packageHome/bin/lammps < in.colloid
-/bin/rm -f nodes
+mpirun -np 1  $packageHome/bin/lammps < in.colloid
 END
   close(OUT);
   $output = `/bin/bash $TESTFILE.sh`;
