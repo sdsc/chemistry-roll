@@ -96,8 +96,8 @@ setenv GMXBIN /opt/gromacs/bin
 setenv GMXDATA /opt/gromacs/share
 setenv GMXLDLIB /opt/gromacs/lib
 setenv GMXMAN /opt/gromacs/share/man
-prepend-path PATH $GMXBIN
-prepend-path LD_LIBRARY_PATH $GMXLDLIB
+prepend-path PATH /opt/gromacs/bin
+prepend-path LD_LIBRARY_PATH /opt/gromacs/lib
 </file>
 
 <file name="/opt/modulefiles/applications/gromacs/.version.4.5.4">
