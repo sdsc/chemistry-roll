@@ -132,7 +132,7 @@ build:
 	              --with-fft=fftw3 CC=$(CC) F77=$(FCC) CXX=$(CXX) \
 	              CFLAGS=-I$(REDHAT.ROOT)/src/gromacs/fftw-3.3/build/include \
 	              LDFLAGS=-L$(REDHAT.ROOT)/src/gromacs/fftw-3.3/build/lib; \
-	  make \
+	  make; \
 	  umount $(PKGROOT) \
 	)
 
@@ -142,7 +142,7 @@ install::
 	  $(MPISETUP); \
 	  cd $(SOURCE); \
 	  mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT); \
-	  make install \
+	  make install; \
 	  umount $(PKGROOT) \
 	)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)
