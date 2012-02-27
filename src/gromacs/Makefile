@@ -126,6 +126,8 @@ build:
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
+          mkdir -p $(ROOT)/$(PKGROOT); \
+          if [ ! -d  $(PKGROOT) ]; then mkdir -p $(PKGROOT); fi; \
 	  cd $(SOURCE); \
 	  mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT); \
 	  ./configure --prefix=$(PKGROOT) --enable-mpi \
@@ -141,6 +143,8 @@ install::
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE); \
+          mkdir -p $(ROOT)/$(PKGROOT); \
+          if [ ! -d  $(PKGROOT) ]; then mkdir -p $(PKGROOT); fi; \
 	  mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT); \
 	  make install; \
 	  umount $(PKGROOT) \
