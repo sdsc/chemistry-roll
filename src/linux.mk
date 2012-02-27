@@ -54,7 +54,6 @@
 # @Copyright@
 #
 
-#SRCDIRS = `find . -maxdepth 1 -type d \
-#	-not -name CVS \
-#	-not -name .`
-SRCDIRS = gromacs
+SRCDIRS = `find . -maxdepth 1 -type d \
+	-not -name CVS \
+	-not -name .`
