@@ -127,11 +127,13 @@ build:
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE); \
-	  ./configure --prefix=$(ROOT)/$(PKGROOT) --enable-mpi \
+	  mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT); \
+	  ./configure --prefix=$(PKGROOT) --enable-mpi \
 	              --with-fft=fftw3 CC=$(CC) F77=$(FCC) CXX=$(CXX) \
 	              CFLAGS=-I$(REDHAT.ROOT)/src/gromacs/fftw-3.3/build/include \
 	              LDFLAGS=-L$(REDHAT.ROOT)/src/gromacs/fftw-3.3/build/lib; \
 	  make \
+	  umount $(PKGROOT) \
 	)
 
 install::
@@ -139,7 +141,9 @@ install::
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE); \
+	  mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT); \
 	  make install \
+	  umount $(PKGROOT) \
 	)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)
 
