@@ -121,7 +121,7 @@ build:
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE)/src; \
-	  perl -pi -e "s!MKL_ROOT!$${MKL_HOME}!;s!ROLLFLAGS!$(ROLLFLAGS)!" MAKE/Makefile.rocks; \
+	  perl -pi -e "s!ROLLFLAGS!$(ROLLFLAGS)!" MAKE/Makefile.rocks; \
 	  tar zxvf $(REDHAT.ROOT)/src/fftw-linux-x86_64.tar.gz; \
 	  mv linux-x86_64 fftw; \
 	  mv fftw/include/sfftw.h fftw/include/fftw.h; \
