@@ -119,7 +119,7 @@ build:
 	  cd fftw-3.3; \
 	  ./configure --prefix=$(REDHAT.ROOT)/src/gromacs/fftw-3.3/build \
 	              --enable-openmp --enable-single \
-	              CFLAGS=-fPIC FFLAGS=-fPIC CC=$(CC) CXX=$(CXX) f77=$(FCC);\
+	              CFLAGS=-fPIC FFLAGS=-fPIC CC=$(CC) CXX=$(CXX) F77=$(FCC);\
 	  make; \
 	  make install \
 	)
