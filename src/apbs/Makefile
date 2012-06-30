@@ -64,6 +64,20 @@ ifndef ROLLMPI
   ROLLMPI = openmpi
 endif
 
+CFLAGS=-O3 -mavx
+CXXFLAGS=-O3 -mavx
+FFLAGS=-O3 -mavx
+ifeq ("$(ROLLCOMPILER)","intel")
+CFLAGS=-O3 -xHOST
+CXXFLAGS=-O3 -xHOST
+FFLAGS=-O3 -xHOST
+endif
+ifeq ("$(ROLLCOMPILER)","pgi")
+CFLAGS=-fast
+CXXFLAGS=-fast
+FFLAGS=-fast
+endif
+
 PKGROOT = /opt/apbs
 SOURCE = apbs-$(VERSION)
 REDHAT.ROOT = $(PWD)/../../
@@ -103,11 +117,14 @@ build:
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE); \
+          export CFLAGS="$(CFLAGS)"; \
+          export CXXFLAGS="$(CXXFLAGS)"; \
+          export FFLAGS="$(FFLAGS)"; \
 	  if test "$(ROLLMPI)" = "openmpi"; then \
-	    ./configure CC=mpicc F77=mpif77 --prefix=$(ROOT)/$(PKGROOT) \
+	    ./configure CC=mpicc F77=mpif77 --prefix=$(ROOT)/$(PKGROOT) $(OPT) \
 	                --with-openmpi=$${MPI_HOME}; \
 	  else \
-	    ./configure CC=mpicc F77=mpif77 --prefix=$(ROOT)/$(PKGROOT) \
+	    ./configure CC=mpicc F77=mpif77 --prefix=$(ROOT)/$(PKGROOT) $(OPT) \
 	                --with-mpich2=$${MPI_HOME}; \
 	  fi; \
 	  make \
