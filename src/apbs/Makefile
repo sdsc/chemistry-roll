@@ -64,13 +64,13 @@ ifndef ROLLMPI
   ROLLMPI = openmpi
 endif
 
-CFLAGS=-O3 -mavx
-CXXFLAGS=-O3 -mavx
-FFLAGS=-O3 -mavx
+CFLAGS=-O2 -mavx
+CXXFLAGS=-O2 -mavx
+FFLAGS=-O2 -mavx
 ifeq ("$(ROLLCOMPILER)","intel")
-CFLAGS=-O3 -xHOST
-CXXFLAGS=-O3 -xHOST
-FFLAGS=-O3 -xHOST
+CFLAGS=-O2 -xHOST
+CXXFLAGS=-O2 -xHOST
+FFLAGS=-O2 -xHOST
 endif
 ifeq ("$(ROLLCOMPILER)","pgi")
 CFLAGS=-fast
