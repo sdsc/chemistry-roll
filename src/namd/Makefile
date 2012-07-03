@@ -103,7 +103,7 @@ CC = gcc
 ifeq ("$(ROLLCOMPILER)", "intel")
   FCC = ifort
   CHARMARCH = mpi-linux-x86_64-$(FCC)-mpicxx
-  CHARMBUILDOPTS = mpicxx $(FCC) -j16 -O2 
+  CHARMBUILDOPTS = mpicxx $(FCC) -j16 -O2  -xHOST
   CXX = icpc        
   CC = icc
 else ifeq ("$(ROLLCOMPILER)", "pgi")
