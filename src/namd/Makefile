@@ -97,7 +97,7 @@ MPISETUP = \
 
 FCC = f77
 CHARMARCH = mpi-linux-x86_64
-CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
+CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE -mavx
 CXX = g++
 CC = gcc
 ifeq ("$(ROLLCOMPILER)", "intel")
@@ -109,7 +109,7 @@ ifeq ("$(ROLLCOMPILER)", "intel")
 else ifeq ("$(ROLLCOMPILER)", "pgi")
   FCC = pgf90
   CHARMARCH = mpi-linux-x86_64-$(FCC)-mpicxx
-  CHARMBUILDOPTS = mpicxx $(FCC) -j16 -O2 
+  CHARMBUILDOPTS = mpicxx $(FCC) -j16 -O2  -fast
   CXX = pgCC
   CC = pgcc
 endif
