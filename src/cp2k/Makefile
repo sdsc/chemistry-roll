@@ -110,16 +110,30 @@ endif
 export CXX=g++
 export CC=gcc
 export FC=gcc
+
+CFLAGS=-O2 -mavx
+CXXFLAGS=-O2 -mavx
+FFLAGS=-O2 -mavx
+FCLAGS=-O2 -mavx
+
 ROLLMAKEFILE = Linux-x86-64-gfortran
 ifeq ("$(ROLLCOMPILER)", "intel")
   export CXX=icpc
   export CC=icc
   export FC=ifort
+  CFLAGS=-O2 -xHOST
+  CXXFLAGS=-O2 -xHOST
+  FFLAGS=-O2 -xHOST
+  FCFLAGS=-O2 -xHOST
   ROLLMAKEFILE = Linux-x86-64-intel
 else ifeq ("$(ROLLCOMPILER)", "pgi")
   export CXX=pgCC
   export CC=pgcc
   export FC=pgf90
+  CFLAGS=-fast
+  CXXFLAGS=-fast
+  FFLAGS=-fast
+  FCLAGS=-fast
   ROLLMAKEFILE = Linux-x86-64-pgi
 endif
 NCPUS=128
@@ -136,16 +150,21 @@ build:
 	  perl -pi -e "s!ROLLFFTW!$(ROLLFFTW)!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLLIBINT!$(PWD)/$(SOURCE)/libint/lib!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLWRAPPER!$(PWD)/$(SOURCE)/tools/hfx_tools/libint_tools!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
+          export CFLAGS="$(CFLAGS)"; \
+          export CXXFLAGS="$(CXXFLAGS)"; \
+          export FFLAGS="$(FFLAGS)"; \
+          export FCLAGS="$(FCLAGS)"; \
 	  cd $(SOURCE); \
 	  tar xvzf ../libint-1.1.4.tar.gz; \
 	  mkdir libint; \
 	  cd libint-1.1.4; \
-	  ./configure --with-libint-max-am=5 --with-libderiv-max-am1=4 \
-	              --prefix=`pwd`/../libint; \
+          ./configure --with-cc-optflags="$(CFLAGS)" \
+              --with-cxx-optflags="$(CXXFLAGS)" --with-libint-max-am=5 \
+              --with-libderiv-max-am1=4 --prefix=`pwd`/../libint; \
 	  make; \
 	  make install; \
 	  cd ../tools/hfx_tools/libint_tools; \
-	  $${CXX} -O3 -c libint_cpp_wrapper.cpp -I../../../libint/include; \
+	  $${CXX} $(CXXFLAGS) -c libint_cpp_wrapper.cpp -I../../../libint/include; \
 	  cd ../../../makefiles; \
 	  make -j $(NCPUS) ARCH=$(ROLLMAKEFILE) VERSION=popt \
 	)
