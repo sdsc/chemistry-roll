@@ -64,7 +64,7 @@ ifndef ROLLMPI
   ROLLMPI = openmpi
 endif
 
-PKGROOT = /opt/namd/$(VERSION)
+PKGROOT = /opt/namd
 SOURCE = namd-$(VERSION)
 REDHAT.ROOT = $(PWD)/../../
 
