@@ -121,10 +121,10 @@ build:
           export CXXFLAGS="$(CXXFLAGS)"; \
           export FFLAGS="$(FFLAGS)"; \
 	  if test "$(ROLLMPI)" = "openmpi"; then \
-	    ./configure CC=mpicc F77=mpif77 --prefix=$(ROOT)/$(PKGROOT) $(OPT) \
+	    ./configure CC=mpicc F77=mpif77 --prefix=$(PKGROOT) $(OPT) \
 	                --with-openmpi=$${MPI_HOME}; \
 	  else \
-	    ./configure CC=mpicc F77=mpif77 --prefix=$(ROOT)/$(PKGROOT) $(OPT) \
+	    ./configure CC=mpicc F77=mpif77 --prefix=$(PKGROOT) $(OPT) \
 	                --with-mpich2=$${MPI_HOME}; \
 	  fi; \
 	  make \
@@ -136,7 +136,7 @@ install::
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE); \
-	  make install; \
+	  make prefix=$(ROOT)/$(PKGROOT) install; \
 	  cp -r examples $(ROOT)/$(PKGROOT); \
 	  cp tools/manip/psize.py $(ROOT)/$(PKGROOT)/examples/actin-dimer/ \
 	)
