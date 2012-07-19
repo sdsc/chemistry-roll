@@ -137,7 +137,6 @@ else ifeq ("$(ROLLCOMPILER)", "pgi")
   ROLLMAKEFILE = Linux-x86-64-pgi
 endif
 NCPUS=128
-ROLLFFTW = /opt/fftw/3.3/$(ROLLCOMPILER)/$(ROLLMPI)
 
 build:
 	tar zxvf $(SOURCE).tar.gz
@@ -145,9 +144,10 @@ build:
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
+	  fftwHome=`find /opt/fftw/3* -maxdepth 0`/$(ROLLCOMPILER)/$(ROLLMPI); \
 	  perl -pi -e "s!MKL_ROOT!$${MKL_HOME}!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
           perl -pi -e "s!ROLLTYPEMKL!$(ROLLTYPEMKL)!g" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
-	  perl -pi -e "s!ROLLFFTW!$(ROLLFFTW)!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!ROLLFFTW!$$fftwHome!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLLIBINT!$(PWD)/$(SOURCE)/libint/lib!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLWRAPPER!$(PWD)/$(SOURCE)/tools/hfx_tools/libint_tools!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
           export CFLAGS="$(CFLAGS)"; \
