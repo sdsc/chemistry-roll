@@ -19,77 +19,15 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 <changelog>
 </changelog>
 
-<package>apbs_ROLLCOMPILER_ROLLNETWORK_ROLLMPI</package>
-<package>cp2k_ROLLCOMPILER_ROLLNETWORK_ROLLMPI</package>
-<package>gromacs_ROLLCOMPILER_ROLLNETWORK_ROLLMPI</package>
-<package>lammps_ROLLCOMPILER_ROLLNETWORK_ROLLMPI</package>
-<package>namd_ROLLCOMPILER_ROLLNETWORK_ROLLMPI</package>
-
-<post>
-
-<file name="/etc/profile.d/apbs.csh" perms="0644">
-setenv APBSHOME /opt/apbs
-set path = ( /opt/apbs/bin $path )
-</file>
-<file name="/etc/profile.d/apbs.sh" perms="0644">
-export APBSHOME=/opt/apbs
-export PATH=/opt/apbs/bin:$PATH
-</file>
-
-<file name="/etc/profile.d/cp2k.csh" perms="0644">
-setenv CP2KHOME /opt/cp2k
-set path = ( /opt/cp2k/bin $path )
-</file>
-<file name="/etc/profile.d/cp2k.sh" perms="0644">
-export CP2KHOME=/opt/cp2k
-export PATH=/opt/cp2k/bin:$PATH
-</file>
-
-<file name="/etc/profile.d/gromacs.csh" perms="0644">
-setenv GROMACSHOME /opt/gromacs
-set path = ( /opt/gromacs/bin $path )
-if ($?LD_LIBRARY_PATH) then
-  setenv LD_LIBRARY_PATH /opt/gromacs/lib:$LD_LIBRARY_PATH
-else
-  setenv LD_LIBRARY_PATH /opt/gromacs/lib
-endif
-setenv GMXBIN /opt/gromacs/bin
-setenv GMXDATA /opt/gromacs/share
-setenv GMXLDLIB /opt/gromacs/lib
-setenv GMXMAN /opt/gromacs/share/man
-</file>
-<file name="/etc/profile.d/gromacs.sh" perms="0644">
-export GROMACSHOME=/opt/gromacs
-export PATH=/opt/gromacs/bin:$PATH
-if test -n "$LD_LIBRARY_PATH"; then
-  export LD_LIBRARY_PATH=/opt/gromacs/lib:$LD_LIBRARY_PATH
-else
-  export LD_LIBRARY_PATH=/opt/gromacs/lib
-fi
-export GMXBIN=/opt/gromacs/bin
-export GMXDATA=/opt/gromacs/share
-export GMXLDLIB=/opt/gromacs/lib
-export GMXMAN=/opt/gromacs/share/man
-</file>
-
-<file name="/etc/profile.d/lammps.csh" perms="0644">
-setenv LAMMPSHOME /opt/lammps
-set path = ( /opt/lammps/bin $path )
-</file>
-<file name="/etc/profile.d/lammps.sh" perms="0644">
-export LAMMPSHOME=/opt/lammps
-export PATH=/opt/lammps/bin:$PATH
-</file>
-
-<file name="/etc/profile.d/namd.csh" perms="0644">
-setenv NAMDHOME /opt/namd
-set path = ( /opt/namd/2.8/bin $path )
-</file>
-<file name="/etc/profile.d/namd.sh" perms="0644">
-export NAMDHOME=/opt/namd
-export PATH=/opt/namd/2.8/bin:$PATH
-</file>
-
-</post>
+<package>apbs_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
+<package>cp2k_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
+<package>gromacs_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
+<package>lammps_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
+<package>namd_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
+<package>apbs-modules</package>
+<package>cp2k-modules</package>
+<package>gromacs-modules</package>
+<package>lammps-modules</package>
+<package>namd-modules</package>
 
 </kickstart>

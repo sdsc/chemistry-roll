@@ -26,22 +26,11 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
   <tail>chemistry-install</tail>
 </order>
 
-<edge from="envmodules-common">
-  <to>chemistry-modules-common</to>
-</edge>
-<order head="envmodules-common">
-  <tail>chemistry-modules-common</tail>
-</order>
-
 <edge from="server">
   <to>chemistry_doc</to>
 </edge>
 <order head="server">
   <tail>chemistry_doc</tail>
-</order>
-
-<order head="chemistry-install">
-  <tail>chemistry-modules-common</tail>
 </order>
 
 <edge from="base">

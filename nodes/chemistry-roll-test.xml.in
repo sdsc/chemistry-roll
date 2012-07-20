@@ -30,7 +30,7 @@ use Test::More qw(no_plan);
 my $appliance = $#ARGV >= 0 ? $ARGV[0] :
                 -d '/export/rocks/install' ? 'Frontend' : 'Compute';
 my $installedOnAppliancesPattern = 'Compute';
-my @packages = ('apbs', 'cp2k', 'gromacs', 'lammps', 'namd/2.6', 'namd/2.8');
+my @packages = ('apbs', 'cp2k', 'gromacs', 'lammps', 'namd');
 my $output;
 my $TESTFILE = 'tmpchemistry';
 
@@ -142,57 +142,32 @@ END
 
 }
 
-# namd/2.6
-$packageHome = '/opt/namd/2.6';
-$testDir = '/opt/namd/2.8/example';
+# namd
+$packageHome = '/opt/namd';
+$testDir = '/opt/namd/example';
 SKIP: {
 
-  skip 'namd/2.6 not installed', 1 if ! -d $packageHome;
+  skip 'namd not installed', 1 if ! -d $packageHome;
   skip 'namd test not installed', 1 if ! -d $testDir;
   my $output = `cd $testDir; $packageHome/bin/namd2 tiny.namd 2>&1`;
-  ok($output =~ /WRITING VELOCITIES/, 'namd 2.6 sample run');
+  ok($output =~ /WRITING VELOCITIES/, 'namd sample run');
   `/bin/rm $testDir/FFTW*`;
 
 }
 
-# namd/2.8
-$packageHome = '/opt/namd/2.8';
-$testDir = '/opt/namd/2.8/example';
-SKIP: {
-
-  skip 'namd/2.8 not installed', 1 if ! -d $packageHome;
-  skip 'namd test not installed', 1 if ! -d $testDir;
-  my $output = `cd $testDir; $packageHome/bin/namd2 tiny.namd 2>&1`;
-  ok($output =~ /WRITING VELOCITIES/, 'namd 2.8 sample run');
-  `/bin/rm $testDir/FFTW*`;
-
-}
-
-# chemistry-modules-common
 SKIP: {
 
   skip 'chemistry not installed', 1
     if $appliance !~ /$installedOnAppliancesPattern/;
-  my $modulesInstalled = -f '/etc/profile.d/modules.sh';
-  if($modulesInstalled) {
-    like($ENV{MODULEPATH}, qr#/opt/modulefiles/applications#,
-         'MODULEPATH set for applications');
-  }
+  skip 'modules not installed', 1 if ! -f '/etc/profile.d/modules.sh';
   foreach my $package(@packages) {
     my ($noVersion) = $package =~ m#([^/]+)#;
-    if($modulesInstalled) {
-      ok(! -f "/etc/profile.d/$noVersion.csh" &&
-         ! -f "/etc/profile.d/$noVersion.sh", "$package profile.d removed");
-      `/bin/ls /opt/modulefiles/applications/$noVersion/[0-9]* 2>&1`;
-      ok($? == 0, "$package module installed");
-      `/bin/ls /opt/modulefiles/applications/$noVersion/.version.[0-9]* 2>&1`;
-      ok($? == 0, "$package version module installed");
-      ok(-l "/opt/modulefiles/applications/$noVersion/.version",
-         "$package version module link created");
-    } else {
-      ok(-f "/etc/profile.d/$noVersion.csh" &&
-         -f "/etc/profile.d/$noVersion.sh", "$package profile.d created");
-    }
+    `/bin/ls /opt/modulefiles/applications/$noVersion/[0-9]* 2>&1`;
+    ok($? == 0, "$package module installed");
+    `/bin/ls /opt/modulefiles/applications/$noVersion/.version.[0-9]* 2>&1`;
+    ok($? == 0, "$package version module installed");
+    ok(-l "/opt/modulefiles/applications/$noVersion/.version",
+       "$package version module link created");
   }
 
 }

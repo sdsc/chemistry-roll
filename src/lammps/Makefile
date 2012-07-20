@@ -109,7 +109,7 @@ MPISETUP = \
   export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
 
 build:
-	tar zxvf $(SOURCE).tgz
+	tar zxvf $(SOURCE).tar.gz
 	cp patch-files/Makefile.rocks $(SOURCE)/src/MAKE/
 	cp patch-files/Makefile.atc $(SOURCE)/lib/atc
 	cp patch-files/Makefile.awpmd $(SOURCE)/lib/awpmd
