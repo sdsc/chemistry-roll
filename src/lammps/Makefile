@@ -144,6 +144,7 @@ build:
           make yes-shock; \
           make yes-srd; \
           make yes-xtc; \
+          make yes-user-reaxc; \
            cd ../lib/atc; \
           make -f Makefile.atc; \
           cp *.a ../../src; \
