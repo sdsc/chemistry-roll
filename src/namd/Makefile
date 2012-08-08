@@ -117,7 +117,7 @@ endif
 build:
 	tar zxvf $(SOURCE).tgz
 	tar zxvf tiny.tar.gz
-	cd $(SOURCE) && tar xvf charm-6.3.2.tar
+	cd $(SOURCE) && tar xvf charm-*.tar
 	cp patch-files/Linux-x86_64-MPI*.arch $(SOURCE)/arch
 	cp patch-files/Linux-x86_64.* $(SOURCE)/arch
 	perl -pi -e "s!ROOTDIR!`pwd`/$(SOURCE)!g" \
@@ -128,7 +128,7 @@ build:
 	  cd $(SOURCE); \
 	  tar zxvf $(REDHAT.ROOT)/src/fftw-linux-x86_64.tar.gz; \
 	  tar zxvf $(REDHAT.ROOT)/src/tcl-linux-x86_64.tar.gz; \
-	  cd charm-6.3.2; \
+	  cd charm-*[0-9]; \
 	  ./build charm++ mpi-linux-x86_64 $(CHARMBUILDOPTS); \
 	  cd ..; \
 	  ./config Linux-x86_64-MPI-$(CC) --charm-arch $(CHARMARCH); \
