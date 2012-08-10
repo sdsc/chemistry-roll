@@ -30,7 +30,7 @@ use Test::More qw(no_plan);
 my $appliance = $#ARGV >= 0 ? $ARGV[0] :
                 -d '/export/rocks/install' ? 'Frontend' : 'Compute';
 my $installedOnAppliancesPattern = 'Compute';
-my @packages = ('apbs', 'cp2k', 'gromacs', 'lammps', 'namd');
+my @packages = ('apbs', 'cp2k', 'gromacs', 'lammps', 'namd/2.6', 'namd/2.9');
 my $output;
 my $TESTFILE = 'tmpchemistry';
 
@@ -142,15 +142,28 @@ END
 
 }
 
-# namd
-$packageHome = '/opt/namd';
-$testDir = '/opt/namd/example';
+# namd/2.6
+$packageHome = '/opt/namd/2.6';
+$testDir = '/opt/namd/2.9/example';
 SKIP: {
 
-  skip 'namd not installed', 1 if ! -d $packageHome;
+  skip 'namd/2.6 not installed', 1 if ! -d $packageHome;
   skip 'namd test not installed', 1 if ! -d $testDir;
   my $output = `cd $testDir; $packageHome/bin/namd2 tiny.namd 2>&1`;
-  ok($output =~ /WRITING VELOCITIES/, 'namd sample run');
+  ok($output =~ /WRITING VELOCITIES/, 'namd 2.6 sample run');
+  `/bin/rm $testDir/FFTW*`;
+
+}
+
+# namd/2.9
+$packageHome = '/opt/namd/2.9';
+$testDir = '/opt/namd/2.9/example';
+SKIP: {
+
+  skip 'namd/2.9 not installed', 1 if ! -d $packageHome;
+  skip 'namd test not installed', 1 if ! -d $testDir;
+  my $output = `cd $testDir; $packageHome/bin/namd2 tiny.namd 2>&1`;
+  ok($output =~ /WRITING VELOCITIES/, 'namd 2.9 sample run');
   `/bin/rm $testDir/FFTW*`;
 
 }
