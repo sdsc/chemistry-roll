@@ -27,10 +27,10 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 </order>
 
 <edge from="server">
-  <to>chemistry_doc</to>
+  <to>chemistry-doc</to>
 </edge>
 <order head="server">
-  <tail>chemistry_doc</tail>
+  <tail>chemistry-doc</tail>
 </order>
 
 <edge from="base">
