@@ -1,3 +1,3 @@
 NAME    = lammps-modules
-VERSION = 11Jan12
+VERSION = 21Aug12
 RELEASE = 1
