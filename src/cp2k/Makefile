@@ -121,10 +121,10 @@ ifeq ("$(ROLLCOMPILER)", "intel")
   export CXX=icpc
   export CC=icc
   export FC=ifort
-  CFLAGS=-O2 -xHOST
-  CXXFLAGS=-O2 -xHOST
-  FFLAGS=-O2 -xHOST
-  FCFLAGS=-O2 -xHOST
+  CFLAGS=-xHOST
+  CXXFLAGS=-xHOST
+  FFLAGS=-xHOST
+  FCFLAGS=-xHOST
   ROLLMAKEFILE = Linux-x86-64-intel
 else ifeq ("$(ROLLCOMPILER)", "pgi")
   export CXX=pgCC
