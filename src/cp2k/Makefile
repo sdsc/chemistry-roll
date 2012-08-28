@@ -142,11 +142,11 @@ build:
 	  perl -pi -e "s!ROLLFFTW!$$fftwHome!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLLIBINT!$(PWD)/$(SOURCE)/libint/lib!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLWRAPPER!$(PWD)/$(SOURCE)/tools/hfx_tools/libint_tools!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
-	  export CC=$(CC)
+	  export CC=$(CC); \
 	  export CFLAGS="$(COMPILE_FLAGS)"; \
-	  export FC=$(FC)
+	  export FC=$(FC); \
 	  export FCFLAGS="$(COMPILE_FLAGS)"; \
-	  export CXX=$(CXX)
+	  export CXX=$(CXX); \
 	  export CXXFLAGS="$(COMPILE_FLAGS)"; \
 	  export FFLAGS="$(COMPILE_FLAGS)"; \
 	  cd $(SOURCE); \
