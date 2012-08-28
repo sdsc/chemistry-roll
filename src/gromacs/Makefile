@@ -100,18 +100,19 @@ MPISETUP = \
 CC = gcc
 CXX = g++
 FCC = f77
-COPTS=-fPIC -O2 -mavx
+COMPILE_FLAGS = -fPIC -O2
 ifeq ("$(ROLLCOMPILER)", "intel")
   CC = icc
   CXX = icpc        
   FCC = ifort
-  COPTS=-fPIC -O2 -xHOST
-endif
-ifeq ("$(ROLLCOMPILER)", "pgi")
+  COMPILE_FLAGS = -fPIC -O2 -xHOST
+else ifeq ("$(ROLLCOMPILER)", "pgi")
   CC = pgcc
   CXX = pgCC
   FCC = pgf90
-  COPTS=-fPIC -fast
+  COMPILE_FLAGS = -fPIC -fast
+else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
+  COMPILE_FLAGS += -mavx
 endif
 
 build:
@@ -123,7 +124,8 @@ build:
 	  cd fftw-3.3; \
 	  ./configure --prefix=$(REDHAT.ROOT)/src/gromacs/fftw-3.3/build \
 	              --enable-openmp --enable-single \
-	              CFLAGS="$(COPTS)" FFLAGS="$(COPTS)" CC=$(CC) CXX=$(CXX) F77=$(FCC);\
+	              CFLAGS="$(COMPILE_FLAGS)" FFLAGS="$(COMPILE_FLAGS)" \
+	              CC=$(CC) CXX=$(CXX) F77=$(FCC);\
 	  make; \
 	  make install \
 	)
@@ -139,7 +141,7 @@ build:
 	              --with-fft=fftw3 CC=$(CC) F77=$(FCC) CXX=$(CXX) \
                       CPPFLAGS=-I$(REDHAT.ROOT)/src/gromacs/fftw-3.3/build/include \
                       LDFLAGS=-L$(REDHAT.ROOT)/src/gromacs/fftw-3.3/build/lib \
-                      CFLAGS="$(COPTS)" FFLAGS="$(COPTS)"; \
+                      CFLAGS="$(COMPILE_FLAGS)" FFLAGS="$(COMPILE_FLAGS)"; \
 	  make; \
 	  umount $(PKGROOT) \
 	)

@@ -19,3 +19,6 @@ make ROLLCOMPILER=intel ROLLMPI=mvapich2 ROLLNETWORK=ib
 
 produces a roll with a name that begins "chemistry_intel_mvapich2_ib"; it
 contains and installs similarly-named rpms.
+
+This roll also supports the ROLLOPTS make variable.  If it contains 'avx',
+options are passed to the compiler to produce AVX instructions.

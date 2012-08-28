@@ -1,6 +1,6 @@
 NAMD_ARCH = Linux-x86_64
 
-FLOATOPTS = -ip -fno-rtti -xHOST
+FLOATOPTS = COMPILER_FLAGS
 
 CXX = icpc
 CXXOPTS = -static-intel -O2 $(FLOATOPTS)

@@ -1,7 +1,7 @@
 NAMD_ARCH = Linux-x86_64
 CHARMARCH = mpi-linux-x86_64-pgf90-mpicxx
 
-FLOATOPTS = -fast
+FLOATOPTS = COMPILER_FLAGS
 
 CXX = pgCC
 CXXOPTS = $(FLOATOPTS)

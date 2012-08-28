@@ -108,34 +108,25 @@ else ifeq ("$(ROLLMPI)", "mvapich2")
   ROLLTYPEMKL = _intelmpi_
 endif
 
-export CXX=g++
-export CC=gcc
-export FC=gcc
-
-CFLAGS=-O2 -mavx
-CXXFLAGS=-O2 -mavx
-FFLAGS=-O2 -mavx
-FCLAGS=-O2 -mavx
-
+CXX = g++
+CC = gcc
+FC = gcc
 ROLLMAKEFILE = Linux-x86-64-gfortran
+COMPILE_FLAGS = -O2
 ifeq ("$(ROLLCOMPILER)", "intel")
-  export CXX=icpc
-  export CC=icc
-  export FC=ifort
-  CFLAGS=-xHOST
-  CXXFLAGS=-xHOST
-  FFLAGS=-xHOST
-  FCFLAGS=-xHOST
+  CXX = icpc
+  CC = icc
+  FC = ifort
+  COMPILE_FLAGS = -xHOST
   ROLLMAKEFILE = Linux-x86-64-intel
 else ifeq ("$(ROLLCOMPILER)", "pgi")
-  export CXX=pgCC
-  export CC=pgcc
-  export FC=pgf90
-  CFLAGS=-fast
-  CXXFLAGS=-fast
-  FFLAGS=-fast
-  FCLAGS=-fast
+  CXX = pgCC
+  CC = pgcc
+  FC = pgf90
+  COMPILE_FLAGS = -fast
   ROLLMAKEFILE = Linux-x86-64-pgi
+else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
+  COMPILE_FLAGS += -mavx
 endif
 NCPUS=128
 
@@ -147,25 +138,28 @@ build:
 	  $(MPISETUP); \
 	  fftwHome=`find /opt/fftw/3* -maxdepth 0`/$(ROLLCOMPILER)/$(ROLLMPI)/$(ROLLNETWORK); \
 	  perl -pi -e "s!MKL_ROOT!$${MKL_HOME}!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
-          perl -pi -e "s!ROLLTYPEMKL!$(ROLLTYPEMKL)!g" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!ROLLTYPEMKL!$(ROLLTYPEMKL)!g" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLFFTW!$$fftwHome!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLLIBINT!$(PWD)/$(SOURCE)/libint/lib!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLWRAPPER!$(PWD)/$(SOURCE)/tools/hfx_tools/libint_tools!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
-          export CFLAGS="$(CFLAGS)"; \
-          export CXXFLAGS="$(CXXFLAGS)"; \
-          export FFLAGS="$(FFLAGS)"; \
-          export FCLAGS="$(FCLAGS)"; \
+	  export CC=$(CC)
+	  export CFLAGS="$(COMPILE_FLAGS)"; \
+	  export FC=$(FC)
+	  export FCFLAGS="$(COMPILE_FLAGS)"; \
+	  export CXX=$(CXX)
+	  export CXXFLAGS="$(COMPILE_FLAGS)"; \
+	  export FFLAGS="$(COMPILE_FLAGS)"; \
 	  cd $(SOURCE); \
 	  tar xvzf ../libint-1.1.4.tar.gz; \
 	  mkdir libint; \
 	  cd libint-1.1.4; \
-          ./configure --with-cc-optflags="$(CFLAGS)" \
-              --with-cxx-optflags="$(CXXFLAGS)" --with-libint-max-am=5 \
-              --with-libderiv-max-am1=4 --prefix=`pwd`/../libint; \
+	  ./configure --with-cc-optflags="$(COMPILE_FLAGS)" \
+	    --with-cxx-optflags="$(COMPILE_FLAGS)" --with-libint-max-am=5 \
+	    --with-libderiv-max-am1=4 --prefix=`pwd`/../libint; \
 	  make; \
 	  make install; \
 	  cd ../tools/hfx_tools/libint_tools; \
-	  $${CXX} $(CXXFLAGS) -c libint_cpp_wrapper.cpp -I../../../libint/include; \
+	  $(CXX) $(COMPILE_FLAGS) -c libint_cpp_wrapper.cpp -I../../../libint/include; \
 	  cd ../../../makefiles; \
 	  make -j $(NCPUS) ARCH=$(ROLLMAKEFILE) VERSION=popt \
 	)

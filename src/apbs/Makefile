@@ -64,18 +64,13 @@ ifndef ROLLMPI
   ROLLMPI = openmpi
 endif
 
-CFLAGS=-O2 -mavx
-CXXFLAGS=-O2 -mavx
-FFLAGS=-O2 -mavx
+COMPILE_FLAGS = -O2
 ifeq ("$(ROLLCOMPILER)","intel")
-CFLAGS=-O2 -xHOST
-CXXFLAGS=-O2 -xHOST
-FFLAGS=-O2 -xHOST
-endif
-ifeq ("$(ROLLCOMPILER)","pgi")
-CFLAGS=-fast
-CXXFLAGS=-fast
-FFLAGS=-fast
+  COMPILE_FLAGS = -O2 -xHOST
+else ifeq ("$(ROLLCOMPILER)","pgi")
+  COMPILE_FLAGS = -fast
+else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
+  COMPILE_FLAGS += -mavx
 endif
 
 PKGROOT = /opt/apbs
@@ -118,9 +113,9 @@ build:
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE); \
-          export CFLAGS="$(CFLAGS)"; \
-          export CXXFLAGS="$(CXXFLAGS)"; \
-          export FFLAGS="$(FFLAGS)"; \
+          export CFLAGS="$(COMPILE_FLAGS)"; \
+          export CXXFLAGS="$(COMPILE_FLAGS)"; \
+          export FFLAGS="$(COMPILE_FLAGS)"; \
 	  if test "$(ROLLMPI)" = "openmpi"; then \
 	    ./configure CC=mpicc F77=mpif77 --prefix=$(PKGROOT) $(OPT) \
 	                --with-openmpi=$${MPI_HOME}; \

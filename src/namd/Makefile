@@ -96,33 +96,39 @@ MPISETUP = \
   export PATH=$${PATH}:$${MPI_HOME}/bin; \
   export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
 
-FCC = f77
-CHARMARCH = mpi-linux-x86_64
-CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE -mavx
 CXX = g++
 CC = gcc
+FCC = f77
+COMPILER_FLAGS = -O2
+CHARMARCH = mpi-linux-x86_64
+CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
 ifeq ("$(ROLLCOMPILER)", "intel")
+  CXX = icpc        
+  CC = icc
   FCC = ifort
   CHARMARCH = mpi-linux-x86_64-$(FCC)-mpicxx
   CHARMBUILDOPTS = mpicxx $(FCC) -j16 -O2  -xHOST
-  CXX = icpc        
-  CC = icc
+  COMPILER_FLAGS = -ip -fno-rtti -xHOST
 else ifeq ("$(ROLLCOMPILER)", "pgi")
+  CXX = pgCC
+  CC = pgcc
   FCC = pgf90
   CHARMARCH = mpi-linux-x86_64-$(FCC)-mpicxx
   CHARMBUILDOPTS = mpicxx $(FCC) -j16 -O2  -fast
-  CXX = pgCC
-  CC = pgcc
+  COMPILER_FLAGS = -fast
+else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
+  CHARMBUILDOPTS += -mavx
+  COMPILER_FLAGS += -mavx
 endif
 
 build:
 	tar zxvf $(SOURCE).tgz
 	tar zxvf tiny.tar.gz
 	cd $(SOURCE) && tar xvf charm-*.tar
-	cp patch-files/Linux-x86_64-MPI*.arch $(SOURCE)/arch
-	cp patch-files/Linux-x86_64.* $(SOURCE)/arch
-	perl -pi -e "s!ROOTDIR!`pwd`/$(SOURCE)!g" \
-	  $(SOURCE)/arch/Linux-x86_64-MPI*.arch $(SOURCE)/arch/Linux-x86_64.*
+	cp patch-files/Linux-x86_64* $(SOURCE)/arch
+	perl -pi -e "s!ROOTDIR!`pwd`/$(SOURCE)!g" $(SOURCE)/arch/Linux-x86_64*
+	perl -pi -e "s!COMPILER_FLAGS!$(COMPILER_FLAGS)!g" \
+	  $(SOURCE)/arch/Linux-x86_64*
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
