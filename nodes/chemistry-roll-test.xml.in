@@ -86,7 +86,7 @@ if test -f /etc/profile.d/modules.sh; then
   module load ROLLCOMPILER ROLLMPI_ROLLNETWORK cp2k
 fi
 cd $testDir
-$packgeHomebin/cp2k.popt 3H2O-ep.inp
+$packageHome/bin/cp2k.popt 3H2O-ep.inp
 /bin/rm -f *.Log *.out *.wfn* *.ener *.restart *mainQS* *.xyz
 END
 close(OUT);
