@@ -1,4 +1,4 @@
-ROLLNAME = chemistry$(ROLLSUFFIX)
+ROLLNAME = chemistry
 RELEASE  = 0
 COLOR    = orange
 

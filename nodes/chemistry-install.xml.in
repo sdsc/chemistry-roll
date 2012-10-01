@@ -29,5 +29,6 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 <package>gromacs-modules</package>
 <package>lammps-modules</package>
 <package>namd-modules</package>
+<package>chemistry-roll-test</package>
 
 </kickstart>

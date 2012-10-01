@@ -1,25 +1,4 @@
-<?xml version="1.0" standalone="no"?>
-
-<kickstart>
-
-<description>
-The chemistry roll installation test.
-</description>
-
-<copyright>
-Copyright (c) 2000 - 2011 The Regents of the University of California.
-All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
-</copyright>
-
-<changelog>
-</changelog>
-
-<post>
-
-/bin/mkdir -m 0755 /root/rolltests
-
-<file name="/root/rolltests/chemistry.t" perms="0755">
-<![CDATA[#!/usr/bin/perl -w
+#!/usr/bin/perl -w
 # chemistry roll installation test.  Usage:
 # chemistry.t [nodetype]
 #   where nodetype is one of "Compute", "Dbnode", "Frontend" or "Login"
@@ -30,7 +9,7 @@ use Test::More qw(no_plan);
 my $appliance = $#ARGV >= 0 ? $ARGV[0] :
                 -d '/export/rocks/install' ? 'Frontend' : 'Compute';
 my $installedOnAppliancesPattern = 'Compute';
-my @packages = ('apbs', 'cp2k', 'gromacs', 'lammps', 'namd/2.6', 'namd/2.9');
+my @packages = ('apbs', 'cp2k', 'gromacs', 'lammps', 'namd');
 my $output;
 my $TESTFILE = 'tmpchemistry';
 
@@ -98,7 +77,7 @@ close(OUT);
 
 # gromacs
 $packageHome = '/opt/gromacs';
-$testDir = "$packageHome/gmxtest/complex/acetoniltrilRF";
+$testDir = "$packageHome/gmxtest/complex/acetonitrilRF";
 SKIP: {
 
   skip 'gromacs not installed', 1 if ! -d $packageHome;
@@ -115,7 +94,7 @@ mpirun -np 1  $packageHome/bin/mdrun
 cat md.log
 END
   close(OUT);
-  $output = `/bin/bash $TESTFILE.sh`;
+  $output = `/bin/bash $TESTFILE.sh 2>&1`;
   ok($output =~ /Total Dipole/, 'gromacs sample run');
 
 }
@@ -142,27 +121,24 @@ END
 
 }
 
-# namd/2.6
-$packageHome = '/opt/namd/2.6';
-$testDir = '/opt/namd/2.9/example';
+# namd
+$packageHome = '/opt/namd';
+$testDir = '/opt/namd/tiny';
 SKIP: {
 
-  skip 'namd/2.6 not installed', 1 if ! -d $packageHome;
+  skip 'namd not installed', 1 if ! -d $packageHome;
   skip 'namd test not installed', 1 if ! -d $testDir;
-  my $output = `cd $testDir; $packageHome/bin/namd2 tiny.namd 2>&1`;
-  ok($output =~ /WRITING VELOCITIES/, 'namd 2.6 sample run');
-  `/bin/rm $testDir/FFTW*`;
-
-}
-
-# namd/2.9
-$packageHome = '/opt/namd/2.9';
-$testDir = '/opt/namd/2.9/example';
-SKIP: {
-
-  skip 'namd/2.9 not installed', 1 if ! -d $packageHome;
-  skip 'namd test not installed', 1 if ! -d $testDir;
-  my $output = `cd $testDir; $packageHome/bin/namd2 tiny.namd 2>&1`;
+  open(OUT, ">$TESTFILE.sh");
+  print OUT <<END;
+if test -f /etc/profile.d/modules.sh; then
+  . /etc/profile.d/modules.sh
+  module load ROLLCOMPILER ROLLMPI_ROLLNETWORK
+fi
+cd $testDir
+$packageHome/bin/namd2 tiny.namd
+END
+  close(OUT);
+  $output = `/bin/bash $TESTFILE.sh`;
   ok($output =~ /WRITING VELOCITIES/, 'namd 2.9 sample run');
   `/bin/rm $testDir/FFTW*`;
 
@@ -186,9 +162,3 @@ SKIP: {
 }
 
 `rm -f $TESTFILE*`;
-]]>
-</file>
-
-</post>
-
-</kickstart> 
