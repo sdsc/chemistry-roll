@@ -13,22 +13,19 @@
 # - SCALAPACK library          1.8.0
 #
 #
-CC       = mpicc
+CC       = cc
 CPP      = 
 FC       = mpif90 
 LD       = mpif90
 AR       = ar -r
-DFLAGS   = -D__INTEL -D__FFTSG -D__parallel -D__BLACS -D__SCALAPACK -D__FFTW3 -D__FFTMKL -D__LIBINT -D__HAS_NO_ISO_C_BINDING
-#DFLAGS   = -D__INTEL -D__FFTSG -D__parallel -D__BLACS -D__SCALAPACK -D__FFTW3 -D__FFTMKL
+DFLAGS   = -D__INTEL -D__FFTSG -D__parallel -D__BLACS -D__SCALAPACK -D__FFTW3
 CPPFLAGS = 
-FFTW_INC = ROLLFFTW/include
-FCFLAGS  = $(DFLAGS) -I$(FFTW_INC) -O3 -heap-arrays 64 -funroll-loops -fpp -free -I../libint/include
-#FCFLAGS  = $(DFLAGS) -I$(FFTW_INC) -O3 -heap-arrays 64 -funroll-loops -fpp -free
-FCFLAGS2 = $(DFLAGS) -I$(FFTW_INC) -O1  -heap-arrays 64 -fpp -free
-LDFLAGS  = $(FCFLAGS) -I$(FFTW_INC)
 INTEL_LIB = MKL_ROOT/lib/intel64
+FFTW_INC = ROLLFFTW/include
+FCFLAGS  = $(DFLAGS) -I$(FFTW_INC) -O2 -xW -heap-arrays 64 -funroll-loops -fpp -free 
+FCFLAGS2 = $(DFLAGS) -I$(FFTW_INC) -O1 -xW -heap-arrays 64 -fpp -free 
+LDFLAGS  = $(FCFLAGS)
 LIBS     = $(INTEL_LIB)/libmkl_scalapack_lp64.a  -Wl,--start-group $(INTEL_LIB)/libmkl_intel_lp64.a $(INTEL_LIB)/libmkl_sequential.a $(INTEL_LIB)/libmkl_core.a $(INTEL_LIB)/libmkl_blacsROLLTYPEMKLlp64.a -Wl,--end-group -lpthread  -LROLLFFTW/lib -lfftw3 ROLLWRAPPER/libint_cpp_wrapper.o  -LROLLLIBINT -lderiv -lint -lstdc++
-
 
 OBJECTS_ARCHITECTURE = machine_intel.o
 

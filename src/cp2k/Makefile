@@ -65,7 +65,7 @@ ifndef ROLLMPI
 endif
 
 PKGROOT = /opt/cp2k
-SOURCE = cp2k.$(VERSION)
+SOURCE = cp2k-$(VERSION)
 REDHAT.ROOT = $(PWD)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
@@ -86,6 +86,10 @@ else
   MPIMODULE = $(ROLLMPI)_$(ROLLNETWORK)
 endif
 
+OMPI_CFLAGS=
+OMPI_CXXFLAGS=
+OMPI_FFLAGS=
+OMPI_FCFLAGS=
 MPISETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
@@ -111,24 +115,28 @@ endif
 CXX = g++
 CC = gcc
 FC = gcc
-ROLLMAKEFILE = Linux-x86-64-gfortran
+ROLLMAKEFILE = Linux-x86-64-$(ROLLCOMPILER)
 COMPILE_FLAGS = -O2
 ifeq ("$(ROLLCOMPILER)", "intel")
   CXX = icpc
   CC = icc
   FC = ifort
-  COMPILE_FLAGS = -xHOST
-  ROLLMAKEFILE = Linux-x86-64-intel
+  COMPILE_FLAGS = -O2
+  OMPI_CFLAGS=-pthread
+  OMPI_CXXFLAGS=-pthread
+  OMPI_FFLAGS=-pthread
+  OMPI_FCFLAGS=-pthread
 else ifeq ("$(ROLLCOMPILER)", "pgi")
   CXX = pgCC
   CC = pgcc
   FC = pgf90
   COMPILE_FLAGS = -fast
-  ROLLMAKEFILE = Linux-x86-64-pgi
 else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
   COMPILE_FLAGS += -mavx
 endif
+COMPILE_FLAGS += -I$(REDHAT.ROOT)/src/cp2k/$(SOURCE)/obj/$(ROLLMAKEFILE)/popt
 NCPUS=128
+LIBINT=1.1.4
 
 build:
 	tar zxvf $(SOURCE).tar.gz
@@ -149,19 +157,23 @@ build:
 	  export CXX=$(CXX); \
 	  export CXXFLAGS="$(COMPILE_FLAGS)"; \
 	  export FFLAGS="$(COMPILE_FLAGS)"; \
+          export OMPI_CFLAGS="$(OMPI_CFLAGS)"; \
+          export OMPI_CXXFLAGS="$(OMPI_CXXFLAGS)"; \
+          export OMPI_FFLAGS="$(OMPI_FFLAGS)"; \
+          export OMPI_FCFLAGS="$(OMPI_FCFLAGS)"; \
 	  cd $(SOURCE); \
-	  tar xvzf ../libint-1.1.4.tar.gz; \
+	  tar xvzf ../libint-$(LIBINT).tar.gz; \
 	  mkdir libint; \
-	  cd libint-1.1.4; \
+	  cd libint-$(LIBINT); \
 	  ./configure --with-cc-optflags="$(COMPILE_FLAGS)" \
 	    --with-cxx-optflags="$(COMPILE_FLAGS)" --with-libint-max-am=5 \
 	    --with-libderiv-max-am1=4 --prefix=`pwd`/../libint; \
-	  make; \
+	  make -j $(NCPUS); \
 	  make install; \
 	  cd ../tools/hfx_tools/libint_tools; \
 	  $(CXX) $(COMPILE_FLAGS) -c libint_cpp_wrapper.cpp -I../../../libint/include; \
 	  cd ../../../makefiles; \
-	  make -j $(NCPUS) ARCH=$(ROLLMAKEFILE) VERSION=popt \
+	  make -j $(NCPUS) CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt \
 	)
 
 install::
