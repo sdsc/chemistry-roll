@@ -64,14 +64,15 @@ if test -f /etc/profile.d/modules.sh; then
   . /etc/profile.d/modules.sh
   module load ROLLCOMPILER ROLLMPI_ROLLNETWORK cp2k
 fi
-cd $testDir
-$packageHome/bin/cp2k.popt 3H2O-ep.inp
-/bin/rm -f *.Log *.out *.wfn* *.ener *.restart *mainQS* *.xyz
+mkdir $TESTFILE.dir
+cd $TESTFILE.dir
+cp $testDir/* .
+cp2k.popt 3H2O-ep.inp
 END
 close(OUT);
 
   $output = `/bin/bash $TESTFILE.sh 2>&1`;
-  ok($output =~ /TEMPERATURE.*303.105/, 'cp2k test run');
+  ok($output =~ /TEMPERATURE.*303.1/, 'cp2k test run');
 
 }
 
@@ -161,4 +162,4 @@ SKIP: {
 
 }
 
-`rm -f $TESTFILE*`;
+`rm -fr $TESTFILE*`;
