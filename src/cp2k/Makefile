@@ -144,7 +144,7 @@ build:
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
-	  fftwHome=`find /opt/fftw/3* -maxdepth 0`/$(ROLLCOMPILER)/$(ROLLMPI)/$(ROLLNETWORK); \
+	  fftwHome=`find /opt/fftw/3* -maxdepth 0`/$(ROLLCOMPILER)/$(ROLLMPI); \
 	  perl -pi -e "s!MKL_ROOT!$${MKL_HOME}!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLTYPEMKL!$(ROLLTYPEMKL)!g" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLFFTW!$$fftwHome!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
