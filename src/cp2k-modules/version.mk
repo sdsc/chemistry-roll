@@ -1,3 +1,3 @@
 NAME    = cp2k-modules
-VERSION = 2.2.426
+VERSION = 2.3
 RELEASE = 2
