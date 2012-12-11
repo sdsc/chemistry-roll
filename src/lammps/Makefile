@@ -127,7 +127,7 @@ build:
 	  mv linux-x86_64 fftw; \
 	  mv fftw/include/sfftw.h fftw/include/fftw.h; \
 	  mv fftw/lib/libsfftw.a fftw/lib/libfftw.a; \
-           make yes-class2; \
+          make yes-class2; \
           make yes-colloid; \
           make yes-dipole; \
           make yes-fld; \
@@ -146,6 +146,7 @@ build:
           make yes-srd; \
           make yes-xtc; \
           make yes-user-reaxc; \
+          make yes-user-cg-cmm; \
            cd ../lib/atc; \
           make -f Makefile.atc; \
           cp *.a ../../src; \
