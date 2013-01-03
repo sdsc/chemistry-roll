@@ -64,13 +64,13 @@ ifndef ROLLMPI
   ROLLMPI = openmpi
 endif
 
-COMPILE_FLAGS = -O2
+COMPILE_FLAGS = -O2 
 ifeq ("$(ROLLCOMPILER)","intel")
   COMPILE_FLAGS = -O2 -xHOST
 else ifeq ("$(ROLLCOMPILER)","pgi")
   COMPILE_FLAGS = -fast
 else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
-  COMPILE_FLAGS += -mavx
+  COMPILE_FLAGS += -mavx 
 endif
 
 PKGROOT = /opt/apbs
@@ -82,6 +82,9 @@ REDHAT.ROOT = $(PWD)/../../
 COMPILERSETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
+    module load intel; \
+    export MKL_HOME=$${MKL_ROOT}; \
+    module unload intel; \
     latestModule=`module avail 2>&1 | grep -o '$(ROLLCOMPILER)/[^ (]*' | sed 's/$(ROLLCOMPILER).//' | sort -t. -k1,1n -k2,2n -k3,3n | tail -1`; \
     module load $(ROLLCOMPILER)/$${latestModule}; \
   fi
@@ -118,10 +121,10 @@ build:
           export FFLAGS="$(COMPILE_FLAGS)"; \
 	  if test "$(ROLLMPI)" = "openmpi"; then \
 	    ./configure CC=mpicc F77=mpif77 --prefix=$(PKGROOT) $(OPT) \
-	                --with-openmpi=$${MPI_HOME}; \
+	                --with-openmpi=$${MPI_HOME} --with-blas="-L$${MKL_HOME}/lib/intel64 -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm" --with-blas-name="mkl_core" ; \
 	  else \
 	    ./configure CC=mpicc F77=mpif77 --prefix=$(PKGROOT) $(OPT) \
-	                --with-mpich2=$${MPI_HOME}; \
+	                --with-mpich2=$${MPI_HOME} --with-blas="-L$${MKL_HOME}/lib/intel64 lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm" --with-blas-name="mkl_core"; \
 	  fi; \
 	  make \
 	)
