@@ -93,7 +93,7 @@ ifeq ("$(ROLLCOMPILER)","pgi")
   ROLLFLAGS = -lpgf90 -lpgf90_rpm1 -lpgf902 -lpgf90rtl -lpgftnrtl -lrt
 endif
 ifeq ("$(ROLLCOMPILER)","intel")
-  ROLLFLAGS = /opt/intel/composer_xe_2011_sp1.7.256/compiler/lib/intel64/libifcore.a
+  ROLLFLAGS = `find $${INTELHOME} -name libifcore.a | grep intel64`
 endif
 
 MPISETUP = \
