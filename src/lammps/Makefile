@@ -114,7 +114,6 @@ build:
 	cp patch-files/Makefile.rocks $(SOURCE)/src/MAKE/
 	cp patch-files/Makefile.atc $(SOURCE)/lib/atc
 	cp patch-files/Makefile.awpmd $(SOURCE)/lib/awpmd
-	cp patch-files/logexc.h $(SOURCE)/lib/awpmd/ivutils/include
 	cp patch-files/Makefile.meam $(SOURCE)/lib/meam
 	cp patch-files/Makefile.poems $(SOURCE)/lib/poems
 	cp patch-files/Makefile.reax $(SOURCE)/lib/reax
