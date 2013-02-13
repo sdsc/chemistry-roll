@@ -124,7 +124,7 @@ build:
 	                --with-openmpi=$${MPI_HOME} --with-blas="-L$${MKL_HOME}/lib/intel64 -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm" --with-blas-name="mkl_core" ; \
 	  else \
 	    ./configure CC=mpicc F77=mpif77 --prefix=$(PKGROOT) $(OPT) \
-	                --with-mpich2=$${MPI_HOME} --with-blas="-L$${MKL_HOME}/lib/intel64 lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm" --with-blas-name="mkl_core"; \
+	                --with-mpich2=$${MPI_HOME} --with-blas="-L$${MKL_HOME}/lib/intel64 -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm" --with-blas-name="mkl_core"; \
 	  fi; \
 	  make \
 	)
