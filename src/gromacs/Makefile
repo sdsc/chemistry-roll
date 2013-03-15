@@ -132,7 +132,7 @@ build:
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
-          cp patch-files/fftw3.h $(REDHAT.ROOT)/src/gromacs/fftw-3.3/build/include; \
+          cp $(REDHAT.ROOT)/src/gromacs/fftw-3.3/api/fftw3.h $(REDHAT.ROOT)/src/gromacs/fftw-3.3/build/include; \
           mkdir -p $(ROOT)/$(PKGROOT); \
           if [ ! -d  $(PKGROOT) ]; then mkdir -p $(PKGROOT); fi; \
 	  cd $(SOURCE); \
