@@ -1,0 +1,10 @@
+                PATCH FILES
+
+  Replace the compiler names with mpi wrappers
+
+Makefile.awpmd
+Makefile.poems
+Makefile.rocks
+Makefile.atc
+Makefile.meam
+Makefile.reax
