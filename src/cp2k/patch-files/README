@@ -1,0 +1,12 @@
+                  PATCH FILES
+
+  Compiler specific makefiles read with "include statement" by the makefile,
+  include paths to mkl
+
+Linux-x86-64-gnu.popt
+Linux-x86-64-intel.popt
+Linux-x86-64-pgi.popt
+
+
+
+
