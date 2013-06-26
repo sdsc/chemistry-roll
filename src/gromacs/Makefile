@@ -97,19 +97,10 @@ MPISETUP = \
   export PATH=$${PATH}:$${MPI_HOME}/bin; \
   export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
 
-CC = gcc
-CXX = g++
-FCC = f77
 COMPILE_FLAGS = -fPIC -O2
 ifeq ("$(ROLLCOMPILER)", "intel")
-  CC = icc
-  CXX = icpc        
-  FCC = ifort
   COMPILE_FLAGS = -fPIC -O2 -xHOST
 else ifeq ("$(ROLLCOMPILER)", "pgi")
-  CC = pgcc
-  CXX = pgCC
-  FCC = pgf90
   COMPILE_FLAGS = -fPIC -fast
 else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
   COMPILE_FLAGS += -mavx
@@ -118,30 +109,18 @@ endif
 build:
 	tar zxvf $(SOURCE).tar.gz
 	tar zxvf gmxtest.tar.gz
-	tar zxvf fftw-3.3.tar.gz
-	( \
-	  $(COMPILERSETUP); \
-	  cd fftw-3.3; \
-	  ./configure --prefix=$(REDHAT.ROOT)/src/gromacs/fftw-3.3/build \
-	              --enable-openmp --enable-single \
-	              CFLAGS="$(COMPILE_FLAGS)" FFLAGS="$(COMPILE_FLAGS)" \
-	              CC=$(CC) CXX=$(CXX) F77=$(FCC);\
-	  make; \
-	  make install \
-	)
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
-          cp $(REDHAT.ROOT)/src/gromacs/fftw-3.3/api/fftw3.h $(REDHAT.ROOT)/src/gromacs/fftw-3.3/build/include; \
           mkdir -p $(ROOT)/$(PKGROOT); \
           if [ ! -d  $(PKGROOT) ]; then mkdir -p $(PKGROOT); fi; \
 	  cd $(SOURCE); \
+          mkdir build; \
+          cd build; \
 	  mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT); \
-	  ./configure --prefix=$(PKGROOT) --enable-mpi \
-	              --with-fft=fftw3 CC=$(CC) F77=$(FCC) CXX=$(CXX) \
-                      CPPFLAGS=-I$(REDHAT.ROOT)/src/gromacs/fftw-3.3/build/include \
-                      LDFLAGS=-L$(REDHAT.ROOT)/src/gromacs/fftw-3.3/build/lib \
-                      CFLAGS="$(COMPILE_FLAGS)" FFLAGS="$(COMPILE_FLAGS)"; \
+          export CC=mpicc; \
+          export CXX=mpicxx; \
+          CC=mpicc cmake  .. -DGMX_BUILD_OWN_FFTW=ON -DGMX_MPI=ON -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" -DCMAKE_INSTALL_PREFIX=$(PKGROOT); \
 	  make; \
 	  umount $(PKGROOT) \
 	)
@@ -150,7 +129,7 @@ install::
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
-	  cd $(SOURCE); \
+	  cd $(SOURCE)/build; \
           mkdir -p $(ROOT)/$(PKGROOT); \
           if [ ! -d  $(PKGROOT) ]; then mkdir -p $(PKGROOT); fi; \
 	  mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT); \
