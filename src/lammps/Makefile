@@ -115,9 +115,10 @@ build:
 	cp patch-files/Makefile.atc $(SOURCE)/lib/atc
 	cp patch-files/Makefile.awpmd $(SOURCE)/lib/awpmd
 	cp patch-files/Makefile.meam $(SOURCE)/lib/meam
-	cp patch-files/Makefile.lammps.ifort $(SOURCE)/lib/meam
+	cp patch-files/Makefile.lammps.ifort.meam $(SOURCE)/lib/meam/Makefile.lammps.ifort
 	cp patch-files/Makefile.poems $(SOURCE)/lib/poems
 	cp patch-files/Makefile.reax $(SOURCE)/lib/reax
+	cp patch-files/Makefile.lammps.ifort.reax $(SOURCE)/lib/reax/Makefile.lammps.ifort
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
