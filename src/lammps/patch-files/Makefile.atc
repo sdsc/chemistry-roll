@@ -1,5 +1,9 @@
 SHELL = /bin/sh
 
+# which file will be copied to Makefile.lammps
+
+EXTRAMAKE = Makefile.lammps.installed
+
 # ------ FILES ------
 
 SRC = ATC_HardyKernel.cpp \
@@ -95,14 +99,14 @@ OBJ =   $(SRC:.cpp=.o)
 # ------ SETTINGS ------
 
 # include any MPI settings needed for the ATC library to build with
-# the same MPI library that LAMMPS is built with
+# must be the same MPI library that LAMMPS is built with
 
-CC =	        mpicxx
-CCFLAGS =       -O  -I../../src -DMPICH_IGNORE_CXX_SEEK
+CC =	        mpicc
+CCFLAGS =       -O -g -fPIC -I../../src -DMPICH_IGNORE_CXX_SEEK
 ARCHIVE =	ar
 ARCHFLAG =	-rc
 DEPFLAGS =      -M
-LINK =         	mpicxx
+LINK =         	mpicc
 LINKFLAGS =	-O
 USRLIB =
 SYSLIB =
@@ -111,6 +115,7 @@ SYSLIB =
 
 lib: 	$(OBJ)
 	$(ARCHIVE) $(ARFLAGS) $(LIB) $(OBJ)
+	@cp $(EXTRAMAKE) Makefile.lammps
 
 # ------ COMPILE RULES ------
 

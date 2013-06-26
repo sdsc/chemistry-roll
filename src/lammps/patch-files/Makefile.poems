@@ -15,10 +15,11 @@
 # *      CONTACT:        anderk5@rpi.edu                                    *
 # *_________________________________________________________________________*/
 
-
-
 SHELL = /bin/sh
 
+# which file will be copied to Makefile.lammps
+
+EXTRAMAKE = Makefile.lammps.empty
 
 # ------ FILES ------
 
@@ -66,12 +67,12 @@ OBJ =   $(SRC:.cpp=.o)
 
 # ------ SETTINGS ------
 
-CC =		mpicxx
-CCFLAGS =       -O
+CC =		mpicc
+CCFLAGS =       -O -fPIC -Wall -Wcheck -wd869,981,1572
 ARCHIVE =	ar
 ARCHFLAG =	-rc
 DEPFLAGS =      -M
-LINK =		mpicxx
+LINK =		mpicc
 LINKFLAGS =	-O
 USRLIB =
 SYSLIB =
@@ -80,6 +81,7 @@ SYSLIB =
 
 lib: 	$(OBJ)
 	$(ARCHIVE) $(ARFLAGS) $(LIB) $(OBJ)
+	@cp $(EXTRAMAKE) Makefile.lammps
 
 # ------ COMPILE RULES ------
 
