@@ -13,6 +13,10 @@ The chemistry Roll provides the following software packages:
 <para>lammps</para>
 </listitem><listitem>
 <para>namd</para>
+</listitem><listitem>
+<para>gromacs</para>
+</listitem><listitem>
+<para>cp2k</para>
 </listitem>
 </itemizedlist>
 
