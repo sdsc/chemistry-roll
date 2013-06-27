@@ -40,7 +40,7 @@ SKIP: {
   print OUT <<END;
 if test -f /etc/profile.d/modules.sh; then
   . /etc/profile.d/modules.sh
-  module load ROLLCOMPILER apbs
+  module load intel apbs
 fi
 cd $packageHome/examples/actin-dimer
 $packageHome/bin/apbs apbs-smol-auto.in
@@ -62,7 +62,7 @@ SKIP: {
   print OUT <<END;
 if test -f /etc/profile.d/modules.sh; then
   . /etc/profile.d/modules.sh
-  module load ROLLCOMPILER ROLLMPI_ROLLNETWORK cp2k
+  module load intel mvapich2_ib cp2k
 fi
 mkdir $TESTFILE.dir
 cd $TESTFILE.dir
@@ -87,16 +87,17 @@ SKIP: {
   print OUT <<END;
 if test -f /etc/profile.d/modules.sh; then
   . /etc/profile.d/modules.sh
-  module load ROLLCOMPILER ROLLMPI_ROLLNETWORK gromacs
+  module load intel mvapich2_ib gromacs
 fi
 cd $testDir
-$packageHome/bin/grompp 
-mpirun -np 1  $packageHome/bin/mdrun
+$packageHome/bin/grompp_mpi
+mpirun -np 1  $packageHome/bin/mdrun_mpi
 cat md.log
 END
   close(OUT);
   $output = `/bin/bash $TESTFILE.sh 2>&1`;
-  ok($output =~ /Total Dipole/, 'gromacs sample run');
+  ok($output =~ /-9.76265e\+03/, 'gromacs sample run');
+  exit;
 
 }
 
@@ -111,7 +112,7 @@ SKIP: {
   print OUT <<END;
 if test -f /etc/profile.d/modules.sh; then
   . /etc/profile.d/modules.sh
-  module load ROLLCOMPILER ROLLMPI_ROLLNETWORK lammps
+  module load intel mvapich2_ib lammps
 fi
 cd $packageHome/examples/colloid
 mpirun -np 1  $packageHome/bin/lammps < in.colloid
@@ -133,7 +134,7 @@ SKIP: {
   print OUT <<END;
 if test -f /etc/profile.d/modules.sh; then
   . /etc/profile.d/modules.sh
-  module load ROLLCOMPILER ROLLMPI_ROLLNETWORK
+  module load intel mvapich2_ib
 fi
 cd $testDir
 $packageHome/bin/namd2 tiny.namd
