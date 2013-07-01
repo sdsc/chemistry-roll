@@ -3,6 +3,9 @@
 # chemistry.t [nodetype]
 #   where nodetype is one of "Compute", "Dbnode", "Frontend" or "Login"
 #   if not specified, the test assumes either Compute or Frontend
+my $compiler="ROLLCOMPILER";
+my $mpi="ROLLMPI";
+my $network="ROLLNETWORK";
 
 use Test::More qw(no_plan);
 
@@ -40,7 +43,7 @@ SKIP: {
   print OUT <<END;
 if test -f /etc/profile.d/modules.sh; then
   . /etc/profile.d/modules.sh
-  module load intel apbs
+  module load $compiler ${mpi}_${network} apbs
 fi
 cd $packageHome/examples/actin-dimer
 $packageHome/bin/apbs apbs-smol-auto.in
@@ -62,7 +65,7 @@ SKIP: {
   print OUT <<END;
 if test -f /etc/profile.d/modules.sh; then
   . /etc/profile.d/modules.sh
-  module load intel mvapich2_ib cp2k
+  module load $compiler ${mpi}_${network} cp2k
 fi
 mkdir $TESTFILE.dir
 cd $TESTFILE.dir
@@ -87,7 +90,7 @@ SKIP: {
   print OUT <<END;
 if test -f /etc/profile.d/modules.sh; then
   . /etc/profile.d/modules.sh
-  module load intel mvapich2_ib gromacs
+  module load $compiler ${mpi}_${network} gromacs
 fi
 cd $testDir
 $packageHome/bin/grompp_mpi
@@ -112,7 +115,7 @@ SKIP: {
   print OUT <<END;
 if test -f /etc/profile.d/modules.sh; then
   . /etc/profile.d/modules.sh
-  module load intel mvapich2_ib lammps
+  module load $compiler ${mpi}_${network} lammps
 fi
 cd $packageHome/examples/colloid
 mpirun -np 1  $packageHome/bin/lammps < in.colloid
@@ -134,7 +137,7 @@ SKIP: {
   print OUT <<END;
 if test -f /etc/profile.d/modules.sh; then
   . /etc/profile.d/modules.sh
-  module load intel mvapich2_ib
+  module load $compiler ${mpi}_${network}  namd
 fi
 cd $testDir
 $packageHome/bin/namd2 tiny.namd
