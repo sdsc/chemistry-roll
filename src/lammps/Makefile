@@ -146,6 +146,7 @@ build:
           make yes-shock; \
           make yes-srd; \
           make yes-xtc; \
+          make yes-rigid; \
           make yes-user-reaxc; \
           make yes-user-cg-cmm; \
            cd ../lib/atc; \
