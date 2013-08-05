@@ -18,9 +18,9 @@ my $TESTFILE = 'tmpchemistry';
 
 # chemistry_doc.xml
 if ($appliance eq 'Frontend') {
-  ok(-d '/var/www/html/roll-documentation/chemistry', 'doc installed');
+  ok(-d '/var/www/html/roll-documentation/6.1/chemistry', 'doc installed');
 } else {
-  ok(! -d '/var/www/html/roll-documentation/chemistry', 'doc not installed');
+  ok(! -d '/var/www/html/roll-documentation/6.1/chemistry', 'doc not installed');
 }
 
 # chemistry-install.xml
