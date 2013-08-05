@@ -140,7 +140,7 @@ build:
 	  cd ..; \
 	  ./config Linux-x86_64-MPI-$(CC) --charm-arch $(CHARMARCH); \
 	  cd Linux-x86_64-MPI-$(CC); \
-	  make \
+	  make -j 16 \
 	)
 
 install::

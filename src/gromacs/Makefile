@@ -121,7 +121,7 @@ build:
           export CC=mpicc; \
           export CXX=mpicxx; \
           CC=mpicc cmake  .. -DGMX_BUILD_OWN_FFTW=ON -DGMX_MPI=ON -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" -DCMAKE_INSTALL_PREFIX=$(PKGROOT); \
-	  make; \
+	  make -j 16; \
 	  umount $(PKGROOT) \
 	)
 
@@ -133,7 +133,7 @@ install::
           mkdir -p $(ROOT)/$(PKGROOT); \
           if [ ! -d  $(PKGROOT) ]; then mkdir -p $(PKGROOT); fi; \
 	  mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT); \
-	  make install; \
+	  make  -j 16 install; \
 	  umount $(PKGROOT) \
 	)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)

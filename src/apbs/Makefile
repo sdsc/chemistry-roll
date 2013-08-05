@@ -126,7 +126,7 @@ build:
 	    ./configure CC=mpicc F77=mpif77 --prefix=$(PKGROOT) $(OPT) \
 	                --with-mpich2=$${MPI_HOME} --with-blas="-L$${MKL_HOME}/lib/intel64 -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm" --with-blas-name="mkl_core"; \
 	  fi; \
-	  make \
+	  make -j 16 \
 	)
 
 install::
@@ -135,7 +135,7 @@ install::
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE); \
-	  make prefix=$(ROOT)/$(PKGROOT) install; \
+	  make -j 16 prefix=$(ROOT)/$(PKGROOT) install; \
 	  cp -r examples $(ROOT)/$(PKGROOT); \
 	  cp tools/manip/psize.py $(ROOT)/$(PKGROOT)/examples/actin-dimer/ \
 	)

@@ -135,7 +135,6 @@ else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
   COMPILE_FLAGS += -mavx
 endif
 COMPILE_FLAGS += -I$(REDHAT.ROOT)/src/cp2k/$(SOURCE)/obj/$(ROLLMAKEFILE)/popt
-NCPUS=128
 LIBINT=1.1.4
 
 build:
@@ -168,12 +167,12 @@ build:
 	  ./configure --with-cc-optflags="$(COMPILE_FLAGS)" \
 	    --with-cxx-optflags="$(COMPILE_FLAGS)" --with-libint-max-am=5 \
 	    --with-libderiv-max-am1=4 --prefix=`pwd`/../libint; \
-	  make -j $(NCPUS); \
+	  make -j 16; \
 	  make install; \
 	  cd ../tools/hfx_tools/libint_tools; \
 	  $(CXX) $(COMPILE_FLAGS) -c libint_cpp_wrapper.cpp -I../../../libint/include; \
 	  cd ../../../makefiles; \
-	  make -j $(NCPUS) CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt \
+	  make -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt \
 	)
 
 install::

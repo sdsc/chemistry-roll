@@ -165,7 +165,7 @@ build:
           make -f Makefile.reax; \
           cp *.a ../../src; \
           cd ../../src; \
-          make ROOT=lmp rocks; \
+          make -j 16 ROOT=lmp rocks; \
 	)
 
 install::
