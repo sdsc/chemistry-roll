@@ -100,8 +100,6 @@ END
   close(OUT);
   $output = `/bin/bash $TESTFILE.sh 2>&1`;
   ok($output =~ /-9.76265e\+03/, 'gromacs sample run');
-  exit;
-
 }
 
 # lammps
