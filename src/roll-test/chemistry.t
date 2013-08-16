@@ -3,9 +3,9 @@
 # chemistry.t [nodetype]
 #   where nodetype is one of "Compute", "Dbnode", "Frontend" or "Login"
 #   if not specified, the test assumes either Compute or Frontend
-my $compiler="ROLLCOMPILER";
-my $mpi="ROLLMPI";
-my $network="ROLLNETWORK";
+my $compiler="intel";
+my $mpi="mvapich2";
+my $network="ib";
 
 use Test::More qw(no_plan);
 
@@ -93,6 +93,7 @@ if test -f /etc/profile.d/modules.sh; then
   module load $compiler ${mpi}_${network} gromacs
 fi
 cd $testDir
+rm -f md.log
 $packageHome/bin/grompp_mpi
 mpirun -np 1  $packageHome/bin/mdrun_mpi
 cat md.log
