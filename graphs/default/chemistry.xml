@@ -19,10 +19,10 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 <changelog>
 </changelog>
 
-<edge from="compute">
+<edge from="client">
   <to>chemistry-install</to>
 </edge>
-<order head="compute">
+<order head="client">
   <tail>chemistry-install</tail>
 </order>
 
