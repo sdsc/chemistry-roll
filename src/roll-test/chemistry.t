@@ -3,9 +3,9 @@
 # chemistry.t [nodetype]
 #   where nodetype is one of "Compute", "Dbnode", "Frontend" or "Login"
 #   if not specified, the test assumes either Compute or Frontend
-my $compiler="intel";
-my $mpi="mvapich2";
-my $network="ib";
+my $compiler="ROLLCOMPILER";
+my $mpi="ROLLMPI";
+my $network="ROLLNETWORK";
 
 use Test::More qw(no_plan);
 
