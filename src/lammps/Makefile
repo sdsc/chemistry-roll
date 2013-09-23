@@ -89,11 +89,14 @@ else
   MPIMODULE = $(ROLLMPI)_$(ROLLNETWORK)
 endif
 
+ROLLFORT=gfortran
 ifeq ("$(ROLLCOMPILER)","pgi")
   ROLLFLAGS = -lpgf90 -lpgf90_rpm1 -lpgf902 -lpgf90rtl -lpgftnrtl -lrt
+  ROLLFORT=pgf90
 endif
 ifeq ("$(ROLLCOMPILER)","intel")
   ROLLFLAGS = `find $${INTELHOME} -name libifcore.a | grep intel64`
+  ROLLFORT=ifort
 endif
 
 MPISETUP = \
@@ -113,65 +116,60 @@ build:
 	tar zxvf $(SOURCE).tar.gz
 	cp patch-files/Makefile.rocks $(SOURCE)/src/MAKE/
 	cp patch-files/Makefile.atc $(SOURCE)/lib/atc
-	cp patch-files/Makefile.awpmd $(SOURCE)/lib/awpmd
 	cp patch-files/Makefile.meam $(SOURCE)/lib/meam
-	cp patch-files/Makefile.lammps.ifort.meam $(SOURCE)/lib/meam/Makefile.lammps.ifort
+	perl -pi -e "s!ROLLCOMPILER!$(ROLLFORT)!" $(SOURCE)/lib/meam/Makefile.mean; \
+	cp patch-files/Makefile.awpmd $(SOURCE)/lib/awpmd
 	cp patch-files/Makefile.poems $(SOURCE)/lib/poems
 	cp patch-files/Makefile.reax $(SOURCE)/lib/reax
-	cp patch-files/Makefile.lammps.ifort.reax $(SOURCE)/lib/reax/Makefile.lammps.ifort
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE)/src; \
-	  perl -pi -e "s!ROLLFLAGS!$(ROLLFLAGS)!" MAKE/Makefile.rocks; \
-	  tar zxvf $(REDHAT.ROOT)/src/fftw-linux-x86_64.tar.gz; \
-	  mv linux-x86_64 fftw; \
-	  mv fftw/include/sfftw.h fftw/include/fftw.h; \
-	  mv fftw/lib/libsfftw.a fftw/lib/libfftw.a; \
-          make yes-class2; \
-          make yes-colloid; \
-          make yes-dipole; \
-          make yes-fld; \
-          make yes-granular; \
-          make yes-kspace; \
-          make yes-manybody; \
-          make yes-mc; \
-          make yes-meam; \
-          make yes-molecule; \
-          make yes-opt; \
-          make yes-peri; \
-          make yes-poems; \
-          make yes-reax; \
-          make yes-replica; \
-          make yes-shock; \
-          make yes-srd; \
-          make yes-xtc; \
-          make yes-rigid; \
-          make yes-user-reaxc; \
-          make yes-user-cg-cmm; \
-           cd ../lib/atc; \
-          make -f Makefile.atc; \
-          cp *.a ../../src; \
-          cd ../awpmd; \
-          make -f Makefile.awpmd; \
-          cp *.a ../../src; \
-          cd ../meam; \
-          make -f Makefile.meam; \
-          cp *.a ../../src; \
-          cd ../poems; \
-          make -f Makefile.poems; \
-          cp *.a ../../src; \
-          cd ../reax; \
-          make -f Makefile.reax; \
-          cp *.a ../../src; \
-          cd ../../src; \
-          make -j 16 ROOT=lmp rocks; \
-	)
+		  perl -pi -e "s!ROLLFLAGS!$(ROLLFLAGS)!" MAKE/Makefile.rocks; \
+		  make yes-class2; \
+		  make yes-colloid; \
+		  make yes-dipole; \
+		  make yes-fld; \
+		  make yes-granular; \
+		  make yes-kspace; \
+		  make yes-manybody; \
+		  make yes-mc; \
+		  make yes-meam; \
+		  make yes-molecule; \
+		  make yes-opt; \
+		  make yes-peri; \
+		  make yes-poems; \
+		  make yes-reax; \
+		  make yes-replica; \
+		  make yes-shock; \
+		  make yes-srd; \
+		  make yes-xtc; \
+		  make yes-rigid; \
+		  make yes-user-reaxc; \
+		  make yes-user-cg-cmm; \
+		   cd ../lib/atc; \
+		  make -f Makefile.atc; \
+		  cp *.a ../../src; \
+		  cd ../awpmd; \
+		  make -f Makefile.awpmd; \
+		  cp *.a ../../src; \
+		  cd ../meam; \
+		  make -f Makefile.meam; \
+		  cp *.a ../../src; \
+		  cd ../poems; \
+		  make -f Makefile.poems; \
+		  cp *.a ../../src; \
+		  cd ../reax; \
+		  make -f Makefile.reax; \
+		  cp *.a ../../src; \
+		  cd ../../src; \
+		  make -j 16 ROOT=lmp rocks; \
+		)
 
 install::
-	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
-	cp $(SOURCE)/src/lmp_rocks $(ROOT)/$(PKGROOT)/bin/lammps
-	cp -r $(SOURCE)/examples $(ROOT)/$(PKGROOT)/examples
+		mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
+		cp $(SOURCE)/src/lmp_rocks $(ROOT)/$(PKGROOT)/bin/lammps
+		cp -r $(SOURCE)/examples $(ROOT)/$(PKGROOT)/examples
 
 clean::
-	rm -rf $(SOURCE)
+		rm -rf $(SOURCE)
