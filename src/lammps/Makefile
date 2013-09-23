@@ -118,11 +118,13 @@ build:
 	cp patch-files/Makefile.atc $(SOURCE)/lib/atc
 	cp patch-files/Makefile.meam $(SOURCE)/lib/meam
 	cp patch-files/Makefile.lammps.meam $(SOURCE)/lib/meam/Makefile.lammps
+	cp patch-files/Makefile.lammps.ifort.meam $(SOURCE)/lib/meam/Makefile.lammps.ifort
 	perl -pi -e "s!ROLLCOMPILER!$(ROLLFORT)!" $(SOURCE)/lib/meam/Makefile.meam
 	cp patch-files/Makefile.awpmd $(SOURCE)/lib/awpmd
 	cp patch-files/Makefile.poems $(SOURCE)/lib/poems
 	cp patch-files/Makefile.reax $(SOURCE)/lib/reax
 	cp patch-files/Makefile.lammps.reax $(SOURCE)/lib/reax/Makefile.lammps
+	cp patch-files/Makefile.lammps.ifort.reax $(SOURCE)/lib/meam/Makefile.lammps.reax
 	perl -pi -e "s!ROLLCOMPILER!$(ROLLFORT)!" $(SOURCE)/lib/reax/Makefile.reax
 	( \
 	  $(COMPILERSETUP); \
