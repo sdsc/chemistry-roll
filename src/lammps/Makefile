@@ -124,7 +124,7 @@ build:
 	cp patch-files/Makefile.poems $(SOURCE)/lib/poems
 	cp patch-files/Makefile.reax $(SOURCE)/lib/reax
 	cp patch-files/Makefile.lammps.reax $(SOURCE)/lib/reax/Makefile.lammps
-	cp patch-files/Makefile.lammps.ifort.reax $(SOURCE)/lib/meam/Makefile.lammps.reax
+	cp patch-files/Makefile.lammps.ifort.reax $(SOURCE)/lib/meam/Makefile.lammps.ifort
 	perl -pi -e "s!ROLLCOMPILER!$(ROLLFORT)!" $(SOURCE)/lib/reax/Makefile.reax
 	( \
 	  $(COMPILERSETUP); \
