@@ -7,13 +7,13 @@ SHELL = /bin/sh
 # specify flags and libraries needed for your compiler
 
 CC =		mpicxx
-CCFLAGS =	-O2
+CCFLAGS =	-O2 
 SHFLAGS =	-fPIC
 DEPFLAGS =	-M
 
 LINK =		mpicxx
 LINKFLAGS =	-O2
-LIB =           -lstdc++ ROLLFLAGS
+LIB =           -lstdc++ ROLLFLAGS -mkl=sequential
 SIZE =		size
 
 ARCHIVE =	ar
@@ -49,9 +49,9 @@ MPI_LIB =
 # LIB = name of FFT library
 
 
-FFT_INC =       -I$(PWD)/../fftw/include -DFFT_FFTW
-FFT_PATH =	-L$(PWD)/../fftw/lib
-FFT_LIB =       -lfftw
+FFT_INC =       /opt/fftw/3.3.3/intel/mvapich2/ib/include
+FFT_PATH =	
+FFT_LIB =  -L/opt/fftw/3.3.3/intel/mvapich2/ib/lib -lfftw3 -lm     
 
 # JPEG library, OPTIONAL
 # see discussion in doc/Section_start.html#2_2 (step 7)
