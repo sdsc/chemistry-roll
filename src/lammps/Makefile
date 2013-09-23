@@ -117,7 +117,7 @@ build:
 	cp patch-files/Makefile.rocks $(SOURCE)/src/MAKE/
 	cp patch-files/Makefile.atc $(SOURCE)/lib/atc
 	cp patch-files/Makefile.meam $(SOURCE)/lib/meam
-	perl -pi -e "s!ROLLCOMPILER!$(ROLLFORT)!" $(SOURCE)/lib/meam/Makefile.mean; \
+	perl -pi -e "s!ROLLCOMPILER!$(ROLLFORT)!" $(SOURCE)/lib/meam/Makefile.mean
 	cp patch-files/Makefile.awpmd $(SOURCE)/lib/awpmd
 	cp patch-files/Makefile.poems $(SOURCE)/lib/poems
 	cp patch-files/Makefile.reax $(SOURCE)/lib/reax
