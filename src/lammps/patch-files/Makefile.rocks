@@ -49,9 +49,9 @@ MPI_LIB =
 # LIB = name of FFT library
 
 
-FFT_INC =       /opt/fftw/3.3.3/intel/mvapich2/ib/include
+FFT_INC = 
 FFT_PATH =	
-FFT_LIB =  -L/opt/fftw/3.3.3/intel/mvapich2/ib/lib -lfftw3 -lm     
+FFT_LIB = 
 
 # JPEG library, OPTIONAL
 # see discussion in doc/Section_start.html#2_2 (step 7)
