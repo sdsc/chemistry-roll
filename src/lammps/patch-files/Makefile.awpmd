@@ -36,7 +36,7 @@ OBJ =   $(SRC:.cpp=.o)
 # include any MPI settings needed for the ATC library to build with
 # the same MPI library that LAMMPS is built with
 
-CC =	    mpicxx 
+CC =	    mpic++ 
 CCFLAGS = -O -fPIC -Isystems/interact/TCP/ -Isystems/interact -Iivutils/include
 ARCHIVE =	ar
 ARCHFLAG =	-rc
