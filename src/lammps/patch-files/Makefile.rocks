@@ -49,7 +49,7 @@ MPI_LIB =
 # LIB = name of FFT library
 
 
-FFT_INC = -DFFT_MKL   
+FFT_INC = -DFFT_MKL -IMKL_HOME/include   
 FFT_PATH =	
 FFT_LIB =  
 

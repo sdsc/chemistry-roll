@@ -1,5 +1,6 @@
 ROLLNAME = chemistry
-RELEASE  = 2
+RELEASE  = 4
 COLOR    = orange
+RPM.EXTRAS = AutoReq:No
 
 REDHAT.ROOT = $(PWD)

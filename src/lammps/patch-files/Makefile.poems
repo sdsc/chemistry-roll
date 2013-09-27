@@ -68,7 +68,7 @@ OBJ =   $(SRC:.cpp=.o)
 # ------ SETTINGS ------
 
 CC =		mpicc
-CCFLAGS =       -O -fPIC -Wall -Wcheck -wd869,981,1572
+CCFLAGS =       -O -fPIC ROLLWARNINGS
 ARCHIVE =	ar
 ARCHFLAG =	-rc
 DEPFLAGS =      -M

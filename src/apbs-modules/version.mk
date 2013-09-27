@@ -1,4 +1,4 @@
 NAME	= apbs-modules
 VERSION	= 1.3
-RELEASE	= 2
+RELEASE	= 4
 RPM.EXTRAS = AutoReq:No

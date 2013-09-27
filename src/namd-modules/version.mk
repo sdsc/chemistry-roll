@@ -1,4 +1,4 @@
 NAME    = namd-modules
-VERSION = 2.9
-RELEASE = 2
+VERSION = 2.10
+RELEASE = 4
 RPM.EXTRAS = AutoReq:No

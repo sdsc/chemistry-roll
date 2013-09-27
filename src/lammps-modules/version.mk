@@ -1,4 +1,4 @@
 NAME    = lammps-modules
 VERSION = 17Jun13
-RELEASE = 0
+RELEASE = 4
 RPM.EXTRAS = AutoReq:No

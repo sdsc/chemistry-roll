@@ -90,6 +90,7 @@ else
 endif
 
 ROLLFORT=gfortran
+ROLLWARNINGS=
 ifeq ("$(ROLLCOMPILER)","pgi")
   ROLLFLAGS = -lpgf90 -lpgf90_rpm1 -lpgf902 -lpgf90rtl -lpgftnrtl -lrt
   ROLLFORT=pgf90
@@ -97,6 +98,7 @@ endif
 ifeq ("$(ROLLCOMPILER)","intel")
   ROLLFLAGS = `find $${INTELHOME} -name libifcore.a | grep intel64`
   ROLLFORT=ifort
+  ROLLWARNINGS=-Wall -Wcheck -wd869,981,1572
 endif
 
 MPISETUP = \
@@ -119,18 +121,21 @@ build:
 	cp patch-files/Makefile.meam $(SOURCE)/lib/meam
 	cp patch-files/Makefile.lammps.meam $(SOURCE)/lib/meam/Makefile.lammps
 	cp patch-files/Makefile.lammps.ifort.meam $(SOURCE)/lib/meam/Makefile.lammps.ifort
+	cp patch-files/Makefile.lammps.pgf90.meam $(SOURCE)/lib/meam/Makefile.lammps.pgf90
 	perl -pi -e "s!ROLLCOMPILER!$(ROLLFORT)!" $(SOURCE)/lib/meam/Makefile.meam
 	cp patch-files/Makefile.awpmd $(SOURCE)/lib/awpmd
 	cp patch-files/Makefile.poems $(SOURCE)/lib/poems
+	perl -pi -e "s!ROLLWARNINGS!$(ROLLWARNINGS)!" $(SOURCE)/lib/poems/Makefile.poems
 	cp patch-files/Makefile.reax $(SOURCE)/lib/reax
 	cp patch-files/Makefile.lammps.reax $(SOURCE)/lib/reax/Makefile.lammps
 	cp patch-files/Makefile.lammps.ifort.reax $(SOURCE)/lib/meam/Makefile.lammps.ifort
 	perl -pi -e "s!ROLLCOMPILER!$(ROLLFORT)!" $(SOURCE)/lib/reax/Makefile.reax
 	( \
 	  $(COMPILERSETUP); \
-	  $(MPISETUP); \
+          $(MPISETUP); \
 	  cd $(SOURCE)/src; \
 		  perl -pi -e "s!ROLLFLAGS!$(ROLLFLAGS)!" MAKE/Makefile.rocks; \
+		  perl -pi -e "s!MKL_HOME!$${MKL_HOME}!" MAKE/Makefile.rocks; \
 		  make yes-class2; \
 		  make yes-colloid; \
 		  make yes-dipole; \
