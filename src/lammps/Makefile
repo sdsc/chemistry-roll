@@ -121,7 +121,6 @@ build:
 	cp patch-files/Makefile.meam $(SOURCE)/lib/meam
 	cp patch-files/Makefile.lammps.meam $(SOURCE)/lib/meam/Makefile.lammps
 	cp patch-files/Makefile.lammps.ifort.meam $(SOURCE)/lib/meam/Makefile.lammps.ifort
-	cp patch-files/Makefile.lammps.pgf90.meam $(SOURCE)/lib/meam/Makefile.lammps.pgf90
 	perl -pi -e "s!ROLLCOMPILER!$(ROLLFORT)!" $(SOURCE)/lib/meam/Makefile.meam
 	cp patch-files/Makefile.awpmd $(SOURCE)/lib/awpmd
 	cp patch-files/Makefile.poems $(SOURCE)/lib/poems
