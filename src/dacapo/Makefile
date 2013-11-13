@@ -122,6 +122,28 @@ build:
 	)
 
 install::
+	mkdir -p $(ROOT)/$(PKGROOT)/bin
+	mkdir $(ROOT)/$(PKGROOT)/python
+	mkdir -p $(REDHAT.ROOT)/src/build-chemistry-modules
+	cp $(SOURCE)/src/$(TARGET)_mpi/dacapo.run $(ROOT)/$(PKGROOT)/bin
+	cp -r $(SOURCE)/psp $(ROOT)/$(PKGROOT)
+	tar xvf python-ase-3.8.0.3420.tar.gz
+	( \
+             . /etc/profile.d/modules.sh; \
+             module load python; \
+             cd python-ase-3.8.0.3420; \
+             python setup.py build; \
+             python setup.py install --prefix=$(ROOT)/$(PKGROOT)/python; \
+        )
+	( \
+             . /etc/profile.d/modules.sh; \
+             module load python; \
+             cd $(SOURCE)/Python; \
+             python setup.py build; \
+             python setup.py install --prefix=$(ROOT)/$(PKGROOT)/python; \
+        )
+        cat dacapo.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/.$(ROLLCOMPILER)/dacapo!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g" \
+          > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
 
 clean::
-	rm -rf $(SOURCE)
+	rm -rf $(SOURCE) python-ase-3.8.0.3420
