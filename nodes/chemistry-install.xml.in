@@ -24,11 +24,13 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 <package>gromacs_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
 <package>lammps_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
 <package>namd_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
+<package>dacapo_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
 <package>apbs-modules</package>
 <package>cp2k-modules</package>
 <package>gromacs-modules</package>
 <package>lammps-modules</package>
 <package>namd-modules</package>
+<package>dacapo-modules</package>
 <package>chemistry-roll-test</package>
 
 </kickstart>
