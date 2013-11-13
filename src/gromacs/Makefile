@@ -135,7 +135,7 @@ install::
 	  make  -j 16 install; \
 	)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)
-        cat gromacs.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/.$(ROLLCOMPILER)/gromacs!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g" \
+	cat gromacs.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/.$(ROLLCOMPILER)/gromacs!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g" \
           > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
 
 clean::
