@@ -1,3 +1,0 @@
-#%Module1.0
-setenv LAMMPSHOME /opt/lammps
-prepend-path PATH /opt/lammps/bin
