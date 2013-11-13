@@ -1,3 +1,0 @@
-#%Module1.0
-setenv APBSHOME /opt/apbs
-prepend-path PATH /opt/apbs/bin
