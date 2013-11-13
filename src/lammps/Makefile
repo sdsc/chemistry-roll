@@ -178,8 +178,11 @@ build:
 
 install::
 		mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
+	        mkdir -p $(REDHAT.ROOT)/src/build-chemistry-modules
 		cp $(SOURCE)/src/lmp_rocks $(ROOT)/$(PKGROOT)/bin/lammps
 		cp -r $(SOURCE)/examples $(ROOT)/$(PKGROOT)/examples
+	        cat lammps.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/.$(ROLLCOMPILER)/lammps!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g" \
+          > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
 
 clean::
 		rm -rf $(SOURCE)
