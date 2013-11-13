@@ -131,6 +131,7 @@ build:
 
 install::
 	mkdir -p $(ROOT)/$(PKGROOT)/bin
+	mkdir -p $(REDHAT.ROOT)/src/build-chemistry-modules
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
@@ -139,6 +140,9 @@ install::
 	  cp -r examples $(ROOT)/$(PKGROOT); \
 	  cp tools/manip/psize.py $(ROOT)/$(PKGROOT)/examples/actin-dimer/ \
 	)
+        cat apbs.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/.$(ROLLCOMPILER)/apbs!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g" \
+          > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
+
 
 clean::
 	rm -rf $(SOURCE)
