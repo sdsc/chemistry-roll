@@ -121,7 +121,8 @@ build:
           export CC=mpicc; \
           export CXX=mpicxx; \
           CC=mpicc cmake  .. -DGMX_BUILD_OWN_FFTW=ON -DGMX_MPI=ON -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" -DCMAKE_INSTALL_PREFIX=$(PKGROOT); \
-	  make -j 16; \
+	  make; \
+          umount $(PKGROOT) \
 	)
 
 install::
@@ -132,10 +133,11 @@ install::
 	  cd $(SOURCE)/build; \
           mkdir -p $(ROOT)/$(PKGROOT); \
 	  mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT); \
-	  make  -j 16 install; \
+	  make install; \
+          umount $(PKGROOT) \
 	)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)
-	cat gromacs.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/.$(ROLLCOMPILER)/gromacs!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g" \
+	cat gromacs.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/gromacs!g;s!VERSION!$(VERSION)!g" \
           > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
 
 clean::
