@@ -1,4 +1,16 @@
-NAME    = lammps_$(ROLLCOMPILER)_$(ROLLMPI)_$(ROLLNETWORK)
-VERSION = 19Sep13
-RELEASE = 4
-RPM.EXTRAS = AutoReq:No
+NAME               = lammps_$(ROLLCOMPILER)_$(ROLLMPI)_$(ROLLNETWORK)
+VERSION            = 19Sep13
+RELEASE            = 4
+RPM.EXTRAS         = AutoReq:No
+PKGROOT            = /opt/lammps
+
+SRC_SUBDIR         = lammps
+
+SOURCE_NAME        = lammps
+SOURCE_VERSION     = $(VERSION)
+SOURCE_SUFFIX      = tar.gz
+SOURCE_PKG         = $(SOURCE_NAME)-$(SOURCE_VERSION).$(SOURCE_SUFFIX)
+SOURCE_DIR         = $(SOURCE_PKG:%.$(SOURCE_SUFFIX)=%)
+
+TAR_GZ_PKGS        = $(SOURCE_PKG)
+
