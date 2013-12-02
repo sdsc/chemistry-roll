@@ -1,45 +1,45 @@
-#
 # $Id$
 #
 # @Copyright@
-#
-# 				Rocks(tm)
+# 
+# 				Rocks(r)
 # 		         www.rocksclusters.org
-# 		        version 4.3 (Mars Hill)
-#
-# Copyright (c) 2000 - 2011 The Regents of the University of California.
-# All rights reserved.
-#
+# 		         version 5.6 (Emerald Boa)
+# 		         version 6.1 (Emerald Boa)
+# 
+# Copyright (c) 2000 - 2013 The Regents of the University of California.
+# All rights reserved.	
+# 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-#
+# 
 # 1. Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
-#
+# 
 # 2. Redistributions in binary form must reproduce the above copyright
 # notice unmodified and in its entirety, this list of conditions and the
-# following disclaimer in the documentation and/or other materials provided
+# following disclaimer in the documentation and/or other materials provided 
 # with the distribution.
-#
+# 
 # 3. All advertising and press materials, printed or electronic, mentioning
-# features or use of this software must display the following acknowledgement:
-#
-# 	"This product includes software developed by the Rocks(tm)
+# features or use of this software must display the following acknowledgement: 
+# 
+# 	"This product includes software developed by the Rocks(r)
 # 	Cluster Group at the San Diego Supercomputer Center at the
 # 	University of California, San Diego and its contributors."
-#
+# 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
 # authors may be used to endorse or promote products derived from this
 # software without specific prior written permission.  The name of the
 # software includes the following terms, and any derivatives thereof:
-# "Rocks", "Rocks Clusters", and "Avalanche Installer".  For licensing of
-# the associated name, interested parties should contact Technology
-# Transfer & Intellectual Property Services, University of California,
-# San Diego, 9500 Gilman Drive, Mail Code 0910, La Jolla, CA 92093-0910,
+# "Rocks", "Rocks Clusters", and "Avalanche Installer".  For licensing of 
+# the associated name, interested parties should contact Technology 
+# Transfer & Intellectual Property Services, University of California, 
+# San Diego, 9500 Gilman Drive, Mail Code 0910, La Jolla, CA 92093-0910, 
 # Ph: (858) 534-5815, FAX: (858) 534-7345, E-MAIL:invent@ucsd.edu
-#
+# 
 # THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 # THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -51,8 +51,10 @@
 # WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
+# 
 # @Copyright@
+#
+# $Log$
 
 ifndef ROLLCOMPILER
   ROLLCOMPILER = gnu
@@ -64,11 +66,11 @@ ifndef ROLLMPI
   ROLLMPI = openmpi
 endif
 
-PKGROOT = /opt/cp2k
-SOURCE = cp2k-$(VERSION)
-REDHAT.ROOT = $(PWD)/../../
+REDHAT.ROOT = $(CURDIR)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
+include Rules.mk
+include pull.mk
 
 COMPILERSETUP = \
   if test -e /etc/profile.d/modules.sh; then \
@@ -134,21 +136,19 @@ else ifeq ("$(ROLLCOMPILER)", "pgi")
 else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
   COMPILE_FLAGS += -mavx
 endif
-COMPILE_FLAGS += -I$(REDHAT.ROOT)/src/cp2k/$(SOURCE)/obj/$(ROLLMAKEFILE)/popt
-LIBINT=1.1.4
+COMPILE_FLAGS += -I$(REDHAT.ROOT)/src/cp2k/$(SOURCE_DIR)/obj/$(ROLLMAKEFILE)/popt
 
-build:
-	tar zxvf $(SOURCE).tar.gz
-	cp patch-files/$(ROLLMAKEFILE).popt $(SOURCE)/arch
+build: $(SRC_DIRS)
+	cp patch-files/$(ROLLMAKEFILE).popt $(SOURCE_DIR)/arch
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
 	  fftwHome=`find /opt/fftw/3* -maxdepth 0`/$(ROLLCOMPILER)/$(ROLLMPI)/$(ROLLNETWORK); \
-	  perl -pi -e "s!MKL_ROOT!$${MKL_HOME}!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
-	  perl -pi -e "s!ROLLTYPEMKL!$(ROLLTYPEMKL)!g" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
-	  perl -pi -e "s!ROLLFFTW!$$fftwHome!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
-	  perl -pi -e "s!ROLLLIBINT!$(PWD)/$(SOURCE)/libint/lib!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
-	  perl -pi -e "s!ROLLWRAPPER!$(PWD)/$(SOURCE)/tools/hfx_tools/libint_tools!" $(SOURCE)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!MKL_ROOT!$${MKL_HOME}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!ROLLTYPEMKL!$(ROLLTYPEMKL)!g" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!ROLLFFTW!$$fftwHome!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!ROLLLIBINT!$(PWD)/$(SOURCE_DIR)/libint/lib!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!ROLLWRAPPER!$(PWD)/$(SOURCE_DIR)/tools/hfx_tools/libint_tools!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  export CC=$(CC); \
 	  export CFLAGS="$(COMPILE_FLAGS)"; \
 	  export FC=$(FC); \
@@ -156,35 +156,36 @@ build:
 	  export CXX=$(CXX); \
 	  export CXXFLAGS="$(COMPILE_FLAGS)"; \
 	  export FFLAGS="$(COMPILE_FLAGS)"; \
-          export OMPI_CFLAGS="$(OMPI_CFLAGS)"; \
-          export OMPI_CXXFLAGS="$(OMPI_CXXFLAGS)"; \
-          export OMPI_FFLAGS="$(OMPI_FFLAGS)"; \
-          export OMPI_FCFLAGS="$(OMPI_FCFLAGS)"; \
-	  cd $(SOURCE); \
-	  tar xvzf ../libint-$(LIBINT).tar.gz; \
+	  export OMPI_CFLAGS="$(OMPI_CFLAGS)"; \
+	  export OMPI_CXXFLAGS="$(OMPI_CXXFLAGS)"; \
+	  export OMPI_FFLAGS="$(OMPI_FFLAGS)"; \
+	  export OMPI_FCFLAGS="$(OMPI_FCFLAGS)"; \
+	  cd $(SOURCE_DIR); \
+	  tar xvzf ../$(LIBINT_PKG); \
 	  mkdir libint; \
-	  cd libint-$(LIBINT); \
+	  cd $(LIBINT_DIR); \
 	  ./configure --with-cc-optflags="$(COMPILE_FLAGS)" \
 	    --with-cxx-optflags="$(COMPILE_FLAGS)" --with-libint-max-am=5 \
 	    --with-libderiv-max-am1=4 --prefix=`pwd`/../libint; \
-	  make -j 16; \
-	  make install; \
+	  $(MAKE) -j 16; \
+	  $(MAKE) install; \
 	  cd ../tools/hfx_tools/libint_tools; \
 	  $(CXX) $(COMPILE_FLAGS) -c libint_cpp_wrapper.cpp -I../../../libint/include; \
 	  cd ../../../makefiles; \
-	  make -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt \
+	  $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt \
 	)
+	@echo "::: Package $(NAME) build complete :::"
 
 install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/bin
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/test
 	mkdir -p $(REDHAT.ROOT)/src/build-chemistry-modules
-	cp $(SOURCE)/exe/$(ROLLMAKEFILE)/cp2k.popt $(ROOT)/$(PKGROOT)/bin
-	cp -r $(SOURCE)/tests/EP/* $(ROOT)/$(PKGROOT)/test/
+	cp $(SOURCE_DIR)/exe/$(ROLLMAKEFILE)/cp2k.popt $(ROOT)/$(PKGROOT)/bin
+	cp -r $(SOURCE_DIR)/tests/EP/* $(ROOT)/$(PKGROOT)/test/
 	rm -fr $(ROOT)/$(PKGROOT)/test/CVS
-        cat cp2k.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/.$(ROLLCOMPILER)/cp2k!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g" \
-          > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
-
+	cat cp2k.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/.$(ROLLCOMPILER)/cp2k!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g" \
+		> $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
+	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SOURCE)
+	rm -rf $(SOURCE_DIR)
