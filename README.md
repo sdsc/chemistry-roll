@@ -2,7 +2,7 @@
 
 ## Overview
 
-This roll bundles a collection of Chemistry packages: ABPS, CP2K, GROMACS,
+This roll bundles a collection of chemistry packages: ABPS, CP2K, GROMACS,
 LAMMPS, and NAMD. 
 
 For more information about the various packages included in the chemistry roll please visit their official web pages:
