@@ -57,4 +57,5 @@
 SRCDIRS = `find . -maxdepth 1 -type d \
 	-not -name CVS \
 	-not -name chemistry-modules \
+	-not -name dacapo \
 	-not -name .` chemistry-modules
