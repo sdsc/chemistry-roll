@@ -1,5 +1,4 @@
-# $Id$
-#
+# $Id$ #
 # @Copyright@
 # 
 # 				Rocks(r)
@@ -113,8 +112,7 @@ MPISETUP = \
   export PATH=$${PATH}:$${MPI_HOME}/bin; \
   export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
 
-build:
-	tar zxvf $(SOURCE_DIR).tar.gz
+build: $(SRC_DIRS)
 	cp patch-files/Makefile.rocks $(SOURCE_DIR)/src/MAKE/
 	cp patch-files/Makefile.atc $(SOURCE_DIR)/lib/atc
 	cp patch-files/Makefile.meam $(SOURCE_DIR)/lib/meam
@@ -180,8 +178,8 @@ install::
 	mkdir -p $(REDHAT.ROOT)/src/build-chemistry-modules
 	cp $(SOURCE_DIR)/src/lmp_rocks $(ROOT)/$(PKGROOT)/bin/lammps
 	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)/examples
-	cat lammps.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/.$(ROLLCOMPILER)/lammps!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g" \
-		> $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
+	cat lammps.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/lammps!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g;s!ROLLMPI!$(ROLLMPI)!g;s!ROLLNETWORK!$(ROLLNETWORK)!g" \
+          > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::

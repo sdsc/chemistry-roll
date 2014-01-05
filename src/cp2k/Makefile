@@ -136,19 +136,19 @@ else ifeq ("$(ROLLCOMPILER)", "pgi")
 else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
   COMPILE_FLAGS += -mavx
 endif
-COMPILE_FLAGS += -I$(REDHAT.ROOT)/src/cp2k/$(SOURCE_DIR)/obj/$(ROLLMAKEFILE)/popt
+COMPILE_FLAGS += -I$(REDHAT.ROOT)/src/cp2k/$(CP2K_DIR)/obj/$(ROLLMAKEFILE)/popt
 
 build: $(SRC_DIRS)
-	cp patch-files/$(ROLLMAKEFILE).popt $(SOURCE_DIR)/arch
+	cp patch-files/$(ROLLMAKEFILE).popt $(CP2K_DIR)/arch
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
 	  fftwHome=`find /opt/fftw/3* -maxdepth 0`/$(ROLLCOMPILER)/$(ROLLMPI)/$(ROLLNETWORK); \
-	  perl -pi -e "s!MKL_ROOT!$${MKL_HOME}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
-	  perl -pi -e "s!ROLLTYPEMKL!$(ROLLTYPEMKL)!g" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
-	  perl -pi -e "s!ROLLFFTW!$$fftwHome!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
-	  perl -pi -e "s!ROLLLIBINT!$(PWD)/$(SOURCE_DIR)/libint/lib!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
-	  perl -pi -e "s!ROLLWRAPPER!$(PWD)/$(SOURCE_DIR)/tools/hfx_tools/libint_tools!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!MKL_ROOT!$${MKL_HOME}!" $(CP2K_DIR)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!ROLLTYPEMKL!$(ROLLTYPEMKL)!g" $(CP2K_DIR)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!ROLLFFTW!$$fftwHome!" $(CP2K_DIR)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!ROLLLIBINT!$(PWD)/$(CP2K_DIR)/libint/lib!" $(CP2K_DIR)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!ROLLWRAPPER!$(PWD)/$(CP2K_DIR)/tools/hfx_tools/libint_tools!" $(CP2K_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  export CC=$(CC); \
 	  export CFLAGS="$(COMPILE_FLAGS)"; \
 	  export FC=$(FC); \
@@ -160,9 +160,9 @@ build: $(SRC_DIRS)
 	  export OMPI_CXXFLAGS="$(OMPI_CXXFLAGS)"; \
 	  export OMPI_FFLAGS="$(OMPI_FFLAGS)"; \
 	  export OMPI_FCFLAGS="$(OMPI_FCFLAGS)"; \
-	  cd $(SOURCE_DIR); \
-	  tar xvzf ../$(LIBINT_PKG); \
-	  mkdir libint; \
+	  cd $(CP2K_DIR); \
+	  mkdir $(LIBINT_DIR); \
+          mv ../$(LIBINT_DIR) .; \
 	  cd $(LIBINT_DIR); \
 	  ./configure --with-cc-optflags="$(COMPILE_FLAGS)" \
 	    --with-cxx-optflags="$(COMPILE_FLAGS)" --with-libint-max-am=5 \
@@ -180,12 +180,11 @@ install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/bin
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/test
 	mkdir -p $(REDHAT.ROOT)/src/build-chemistry-modules
-	cp $(SOURCE_DIR)/exe/$(ROLLMAKEFILE)/cp2k.popt $(ROOT)/$(PKGROOT)/bin
-	cp -r $(SOURCE_DIR)/tests/EP/* $(ROOT)/$(PKGROOT)/test/
-	rm -fr $(ROOT)/$(PKGROOT)/test/CVS
-	cat cp2k.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/.$(ROLLCOMPILER)/cp2k!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g" \
-		> $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
+	cp $(CP2K_DIR)/exe/$(ROLLMAKEFILE)/cp2k.popt $(ROOT)/$(PKGROOT)/bin
+	cp -r $(CP2K_DIR)/tests/EP/* $(ROOT)/$(PKGROOT)/test/
+	cat cp2k.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/cp2k!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g;s!ROLLMPI!$(ROLLMPI)!g;s!ROLLNETWORK!$(ROLLNETWORK)!g" \
+          > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SOURCE_DIR)
+	rm -rf $(CP2K_DIR)

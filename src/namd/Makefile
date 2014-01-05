@@ -131,9 +131,8 @@ build: $(SRC_DIRS)
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
+          mv linux-$(ARCH) $(SOURCE_DIR); \
 	  cd $(SOURCE_DIR); \
-	  tar zxvf $(FFTW_PKG); \
-	  tar zxvf $(TCL_PKG); \
 	  cd charm-*[0-9]; \
 	  ./build charm++ mpi-linux-x86_64 $(CHARMBUILDOPTS); \
 	  cd ..; \
@@ -149,8 +148,8 @@ install::
 	cp $(SOURCE_DIR)/*/{charmrun,flipbinpdb,flipdcd,namd2,psfgen} \
 	   $(ROOT)/$(PKGROOT)/bin
 	cp -r tiny $(ROOT)/$(PKGROOT)
-	cat namd.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/.$(ROLLCOMPILER)/namd!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g" \
-		> $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
+	cat namd.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/namd!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g;s!ROLLMPI!$(ROLLMPI)!g;s!ROLLNETWORK!$(ROLLNETWORK)!g" \
+          > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::

@@ -141,8 +141,8 @@ install::
 	  cp -r examples $(ROOT)/$(PKGROOT); \
 	  cp tools/manip/psize.py $(ROOT)/$(PKGROOT)/examples/actin-dimer/ \
 	)
-	cat apbs.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/.$(ROLLCOMPILER)/apbs!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g" \
-		> $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
+	 cat apbs.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/apbs!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g;s!ROLLMPI!$(ROLLMPI)!g;s!ROLLNETWORK!$(ROLLNETWORK)!g" \
+          > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::

@@ -137,7 +137,7 @@ install::
 	  umount $(PKGROOT) \
 	)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)
-	cat gromacs.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/gromacs!g;s!VERSION!$(VERSION)!g" \
+	cat gromacs.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/gromacs!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g;s!ROLLMPI!$(ROLLMPI)!g;s!ROLLNETWORK!$(ROLLNETWORK)!g" \
           > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
 	@echo "::: Package $(NAME) install complete :::"
 
