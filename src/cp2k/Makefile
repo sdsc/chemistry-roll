@@ -139,7 +139,9 @@ endif
 COMPILE_FLAGS += -I$(REDHAT.ROOT)/src/cp2k/$(CP2K_DIR)/obj/$(ROLLMAKEFILE)/popt
 
 build: $(SRC_DIRS)
-	cp patch-files/$(ROLLMAKEFILE).popt $(CP2K_DIR)/arch
+	cp Linux-x86-64-gnu.popt $(CP2K_DIR)/arch
+	patch $(CP2K_DIR)/arch/Linux-x86-64-intel.popt patch-files/Linux-x86-64-intel.popt.patch
+	patch $(CP2K_DIR)/arch/Linux-x86-64-pgi.popt patch-files/Linux-x86-64-pgi.popt.patch
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
