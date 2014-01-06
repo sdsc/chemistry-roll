@@ -125,7 +125,9 @@ endif
 
 build: $(SRC_DIRS)
 	cd $(SOURCE_DIR) && tar xvf charm-*.tar
-	cp patch-files/Linux-x86_64* $(SOURCE_DIR)/arch
+	patch $(SOURCE_DIR)/arch/Linux-x86_64.fftw patch-files/Linux-x86_64.fftw.patch
+	patch $(SOURCE_DIR)/arch/Linux-x86_64.tcl patch-files/Linux-x86_64.tcl.patch
+	cp Linux-x86_64* $(SOURCE_DIR)/arch
 	perl -pi -e "s!ROOTDIR!`pwd`/$(SOURCE_DIR)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
 	perl -pi -e "s!COMPILER_FLAGS!$(COMPILER_FLAGS)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
 	( \
