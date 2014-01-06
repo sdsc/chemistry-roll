@@ -111,7 +111,7 @@ MPISETUP = \
   export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
 
 build: $(SRC_DIRS)
-	cp patch-files/test.sh $(SOURCE_DIR)/examples/actin-dimer
+	cp test.sh $(SOURCE_DIR)/examples/actin-dimer
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
