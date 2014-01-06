@@ -20,12 +20,12 @@ TINY_DIR           = $(TINY_PKG:%.$(TINY_SUFFIX)=%)
 TCL_NAME           = tcl-linux
 TCL_VERSION        = $(ARCH)
 TAR_GZ_SUFFIX      = tar.gz
-TCL_PKG            = $(TCL_NAME).$(TAR_GZ_SUFFIX)
+TCL_PKG            = $(TCL_NAME)-$(ARCH).$(TAR_GZ_SUFFIX)
 TCL_DIR            = $(TCL_PKG:%.$(TAR_GZ_SUFFIX)=%)
 
 FFTW_NAME          = fftw-linux
 FFTW_VERSION       = $(ARCH)
-FFTW_PKG           = $(FFTW_NAME).$(TAR_GZ_SUFFIX)
+FFTW_PKG           = $(FFTW_NAME)-$(ARCH).$(TAR_GZ_SUFFIX)
 FFTW_DIR           = $(FFTW_PKG:%.$(TAR_GZ_SUFFIX)=%)
 
 TGZ_PKGS           = $(SOURCE_PKG)
