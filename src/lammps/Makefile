@@ -113,18 +113,18 @@ MPISETUP = \
   export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
 
 build: $(SRC_DIRS)
-	cp patch-files/Makefile.rocks $(SOURCE_DIR)/src/MAKE/
-	cp patch-files/Makefile.atc $(SOURCE_DIR)/lib/atc
-	cp patch-files/Makefile.meam $(SOURCE_DIR)/lib/meam
-	cp patch-files/Makefile.lammps.meam $(SOURCE_DIR)/lib/meam/Makefile.lammps
-	cp patch-files/Makefile.lammps.ifort.meam $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort
+	cp Makefile.rocks $(SOURCE_DIR)/src/MAKE/
+	cp Makefile.atc $(SOURCE_DIR)/lib/atc
+	cp Makefile.meam $(SOURCE_DIR)/lib/meam
+	cp Makefile.lammps.meam $(SOURCE_DIR)/lib/meam/Makefile.lammps
+	cp Makefile.lammps.ifort.meam $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort
 	perl -pi -e "s!ROLLCOMPILER!$(ROLLFORT)!" $(SOURCE_DIR)/lib/meam/Makefile.meam
-	cp patch-files/Makefile.awpmd $(SOURCE_DIR)/lib/awpmd
-	cp patch-files/Makefile.poems $(SOURCE_DIR)/lib/poems
+	cp Makefile.awpmd $(SOURCE_DIR)/lib/awpmd
+	cp Makefile.poems $(SOURCE_DIR)/lib/poems
 	perl -pi -e "s!ROLLWARNINGS!$(ROLLWARNINGS)!" $(SOURCE_DIR)/lib/poems/Makefile.poems
-	cp patch-files/Makefile.reax $(SOURCE_DIR)/lib/reax
-	cp patch-files/Makefile.lammps.reax $(SOURCE_DIR)/lib/reax/Makefile.lammps
-	cp patch-files/Makefile.lammps.ifort.reax $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort
+	cp Makefile.reax $(SOURCE_DIR)/lib/reax
+	cp Makefile.lammps.reax $(SOURCE_DIR)/lib/reax/Makefile.lammps
+	cp Makefile.lammps.ifort.reax $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort
 	perl -pi -e "s!ROLLCOMPILER!$(ROLLFORT)!" $(SOURCE_DIR)/lib/reax/Makefile.reax
 	( \
 	  $(COMPILERSETUP); \
