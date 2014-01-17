@@ -6,7 +6,7 @@ INC = $(wildcard *.h)
 LIB = libatc.a
 OBJ =   $(SRC:.cpp=.o)
 # ------ SETTINGS ------
-CC =	        mpic++
+CC =	        mpicxx
 CCFLAGS =       -O -g -I../../src -fPIC -DMPICH_IGNORE_CXX_SEEK
 ARCHIVE =	ar
 ARCHFLAG =	-rc
