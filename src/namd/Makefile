@@ -77,13 +77,12 @@ COMPILERSETUP = \
     . /etc/profile.d/modules.sh; \
     latestModule=`module avail 2>&1 | grep -o '$(ROLLCOMPILER)/[^ (]*' | sed 's/$(ROLLCOMPILER).//' | sort -t. -k1,1n -k2,2n -k3,3n | tail -1`; \
     module load $(ROLLCOMPILER)/$${latestModule}; \
+    module load cuda; \
+    dir=`which nvcc`; \
+    export CUDAPATH="`dirname $${dir}`/.." ; \
   fi
 
-ifeq ("$(ROLLNETWORK)", "eth")
-  MPIMODULE = $(ROLLMPI)
-else
-  MPIMODULE = $(ROLLMPI)_$(ROLLNETWORK)
-endif
+MPIMODULE = $(ROLLMPI)_$(ROLLNETWORK)
 
 MPISETUP = \
   if test -e /etc/profile.d/modules.sh; then \
@@ -104,6 +103,7 @@ FCC = f77
 COMPILER_FLAGS = -O2
 CHARMARCH = mpi-linux-x86_64
 CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
+CUDA = 
 ifeq ("$(ROLLCOMPILER)", "intel")
   CXX = icpc        
   CC = icc
@@ -122,11 +122,15 @@ else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
   CHARMBUILDOPTS += -mavx
   COMPILER_FLAGS += -mavx
 endif
+ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
+  CUDA = --with-cuda
+endif
 
 build: $(SRC_DIRS)
 	cd $(SOURCE_DIR) && tar xvf charm-*.tar
 	patch $(SOURCE_DIR)/arch/Linux-x86_64.fftw patch-files/Linux-x86_64.fftw.patch
 	patch $(SOURCE_DIR)/arch/Linux-x86_64.tcl patch-files/Linux-x86_64.tcl.patch
+	patch $(SOURCE_DIR)/arch/Linux-x86_64.cuda patch-files/Linux-x86_64.cuda.patch
 	cp Linux-x86_64* $(SOURCE_DIR)/arch
 	perl -pi -e "s!ROOTDIR!`pwd`/$(SOURCE_DIR)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
 	perl -pi -e "s!COMPILER_FLAGS!$(COMPILER_FLAGS)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
@@ -134,11 +138,12 @@ build: $(SRC_DIRS)
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
           mv linux-$(ARCH) $(SOURCE_DIR); \
+	  perl -pi -e "s!ROLLCUDA!$${CUDAPATH}!g" $(SOURCE_DIR)/arch/Linux-x86_64.cuda; \
 	  cd $(SOURCE_DIR); \
 	  cd charm-*[0-9]; \
 	  ./build charm++ mpi-linux-x86_64 $(CHARMBUILDOPTS); \
 	  cd ..; \
-	  ./config Linux-x86_64-MPI-$(CC) --charm-arch $(CHARMARCH); \
+	  ./config Linux-x86_64-MPI-$(CC) --charm-arch $(CHARMARCH) $(CUDA); \
 	  cd Linux-x86_64-MPI-$(CC); \
 	  $(MAKE) -j 16 \
 	)
