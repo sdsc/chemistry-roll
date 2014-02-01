@@ -1,6 +1,6 @@
 NAME               = lammps_$(ROLLCOMPILER)_$(ROLLMPI)_$(ROLLNETWORK)
-VERSION            = 19Sep13
-RELEASE            = 4
+VERSION            = 31Jan14
+RELEASE            = 0
 RPM.EXTRAS         = AutoReq:No
 PKGROOT            = /opt/lammps
 

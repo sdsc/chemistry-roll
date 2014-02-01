@@ -1,6 +1,6 @@
 NAME               = dacapo_$(ROLLCOMPILER)_$(ROLLMPI)_$(ROLLNETWORK)
 VERSION            = 3.8.0
-RELEASE            = 1
+RELEASE            = 0
 PKGROOT            = /opt/dacapo
 
 SRC_SUBDIR         = dacapo

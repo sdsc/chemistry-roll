@@ -64,7 +64,6 @@ if { \$loadApps  }  {
       puts stderr "loading ROLLCOMPILER and ROLLMPI_ROLLNETWORK modules"
   }
 }
-
 setenv APBSHOME /opt/apbs
 prepend-path PATH /opt/apbs/bin
 setenv APBSHOME /opt/apbs

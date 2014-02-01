@@ -1,6 +1,6 @@
 NAME               = cp2k_$(ROLLCOMPILER)_$(ROLLMPI)_$(ROLLNETWORK)
 VERSION            = 2.4.0
-RELEASE            = 4
+RELEASE            = 0
 RPM.EXTRAS         = AutoReq:No
 PKGROOT            = /opt/cp2k
 
