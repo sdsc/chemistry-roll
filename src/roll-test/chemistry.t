@@ -65,7 +65,7 @@ SKIP: {
   print OUT <<END;
 if test -f /etc/profile.d/modules.sh; then
   . /etc/profile.d/modules.sh
-  module load $compiler ${mpi}_${network} cp2k
+  module load $compiler ${mpi}_${network} cp2k fftw
 fi
 mkdir $TESTFILE.dir
 cd $TESTFILE.dir
