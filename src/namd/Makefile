@@ -104,6 +104,7 @@ FCC = f77
 COMPILER_FLAGS = -O2
 CHARMARCH = mpi-linux-x86_64
 CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
+CUDA=
 ifeq ("$(ROLLCOMPILER)", "intel")
   CXX = icpc        
   CC = icc
@@ -122,6 +123,9 @@ else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
   CHARMBUILDOPTS += -mavx
   COMPILER_FLAGS += -mavx
 endif
+ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
+  CUDA = --with-cuda
+endif
 
 build: $(SRC_DIRS)
 	cd $(SOURCE_DIR) && tar xvf charm-*.tar
@@ -138,7 +142,7 @@ build: $(SRC_DIRS)
 	  cd charm-*[0-9]; \
 	  ./build charm++ mpi-linux-x86_64 $(CHARMBUILDOPTS); \
 	  cd ..; \
-	  ./config Linux-x86_64-MPI-$(CC) --charm-arch $(CHARMARCH); \
+	  ./config Linux-x86_64-MPI-$(CC) --charm-arch $(CHARMARCH) $(CUDA); \
 	  cd Linux-x86_64-MPI-$(CC); \
 	  $(MAKE) -j 16 \
 	)
