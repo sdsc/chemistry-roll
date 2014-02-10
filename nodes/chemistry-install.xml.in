@@ -6,7 +6,6 @@
 Chemistry-related application codes
 apbs http://www.poissonboltzmann.org/apbs
 cp2k http://www.cp2k.org
-dacapo https://wiki.fysik.dtu.dk/dacapo
 gromacs http://www.gromacs.org
 lammps http://lammps.sandia.gov
 namd http://www.ks.uiuc.edu/Research/namd
@@ -25,7 +24,6 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 <package>gromacs_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
 <package>lammps_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
 <package>namd_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
-<package>dacapo_ROLLCOMPILER_ROLLMPI_ROLLNETWORK</package>
 <package>chemistry-modules</package>
 <package>chemistry-roll-test</package>
 
