@@ -27,8 +27,8 @@ development machine.
 
 
 ## Dependencies
+compiler (intel recommended),  mpi, and fftw  rolls
 
-Unknown at this time.
 
 
 ## Building
@@ -88,15 +88,12 @@ To install, execute these instructions on a Rocks frontend:
 % rocks run roll chemistry | bash
 ```
 
-Note that the optimization techniques used by ATLAS dictate only installing the
-package on systems with the same architecture and configuration as the build
-machine.
-
-In addition to the software itself, the roll installs ATLAS environment module
-files in:
-
 ```shell
-/opt/modulefiles/applications/.(compiler)/chemistry.
+/opt/modulefiles/applications/namd
+/opt/modulefiles/applications/gromacs
+/opt/modulefiles/applications/lammps
+/opt/modulefiles/applications/cp2k
+/opt/modulefiles/applications/apbs
 ```
 
 
@@ -108,10 +105,3 @@ run the test scripts execute the following command(s):
 
 ```shell
 % /root/rolltests/chemistry.t 
-ok 1 - chemistry is installed
-ok 2 - chemistry test run
-ok 3 - chemistry module installed
-ok 4 - chemistry version module installed
-ok 5 - chemistry version module link created
-1..5
-```
