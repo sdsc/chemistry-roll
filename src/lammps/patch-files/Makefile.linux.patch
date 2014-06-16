@@ -1,0 +1,30 @@
+9,10c9,10
+< CC =		icc
+< CCFLAGS =	-O
+---
+> CC =		mpicxx
+> CCFLAGS =	-O2
+14,16c14,16
+< LINK =		icc
+< LINKFLAGS =	-O
+< LIB =           -lstdc++
+---
+> LINK =		mpicxx
+> LINKFLAGS =	-O2
+> LIB =           -lstdc++ ROLLFLAGS  -mkl=sequential
+40c40
+< MPI_INC =       -DMPICH_SKIP_MPICXX 
+---
+> MPI_INC =       
+42c42
+< MPI_LIB =	-lmpich -lmpl -lpthread
+---
+> MPI_LIB =
+51c51
+< FFT_INC =       -DFFT_FFTW
+---
+> FFT_INC =       -DFFT_MKL -IMKL_HOME/include 
+53c53
+< FFT_LIB =	-lfftw
+---
+> FFT_LIB =	

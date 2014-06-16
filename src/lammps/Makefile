@@ -78,13 +78,10 @@ COMPILERSETUP = \
     export MKL_HOME=$${MKL_ROOT}; \
     module unload intel; \
     module load $(ROLLCOMPILER); \
+    module load cuda; \
+    export LD_LIBRARY_PATH=/opt/cuda/current/lib64:$${LD_LIBRARY_PATH}; \
   fi
 
-ifeq ("$(ROLLNETWORK)", "eth")
-  MPIMODULE = $(ROLLMPI) 
-else
-  MPIMODULE = $(ROLLMPI)_$(ROLLNETWORK)
-endif
 
 ROLLFORT=gfortran
 ROLLWARNINGS=
@@ -97,6 +94,8 @@ ifeq ("$(ROLLCOMPILER)","intel")
   ROLLFORT=ifort
   ROLLWARNINGS=-Wall -Wcheck -wd869,981,1572
 endif
+
+MPIMODULE = $(ROLLMPI)_$(ROLLNETWORK)
 
 MPISETUP = \
   if test -e /etc/profile.d/modules.sh; then \
@@ -111,26 +110,37 @@ MPISETUP = \
   export PATH=$${PATH}:$${MPI_HOME}/bin; \
   export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
 
+CUDABUILD = no
+ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
+   CUDABUILD = yes
+endif
+
 build: $(SRC_DIRS)
-	cp Makefile.rocks $(SOURCE_DIR)/src/MAKE/
-	cp Makefile.atc $(SOURCE_DIR)/lib/atc
-	cp Makefile.meam $(SOURCE_DIR)/lib/meam
-	cp Makefile.lammps.meam $(SOURCE_DIR)/lib/meam/Makefile.lammps
-	cp Makefile.lammps.ifort.meam $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort
+	patch $(SOURCE_DIR)/lib/gpu/Makefile.linux patch-files/Makefile.gpu.patch
+	patch $(SOURCE_DIR)/lib/cuda/Makefile.common patch-files/Makefile.cuda.patch
+	patch $(SOURCE_DIR)/src/MAKE/Makefile.linux patch-files/Makefile.linux.patch
+	patch -o $(SOURCE_DIR)/lib/atc/Makefile.atc  $(SOURCE_DIR)/lib/atc/Makefile.mpic+ patch-files/Makefile.atc.patch
+	patch -o $(SOURCE_DIR)/lib/meam/Makefile.meam  $(SOURCE_DIR)/lib/meam/Makefile.ifort patch-files/Makefile.ifort.meam.patch
+	patch -o $(SOURCE_DIR)/lib/meam/Makefile.lammps $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort patch-files/Makefile.lammps.meam.patch
+	cp $(SOURCE_DIR)/lib/meam/Makefile.lammps $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort
+
+	perl -pi -e "s!ROLLCUDA!/opt/cuda/current!" $(SOURCE_DIR)/lib/gpu/Makefile.linux
+	perl -pi -e "s!ROLLCUDA!/opt/cuda/current!" $(SOURCE_DIR)/lib/cuda/Makefile.common
 	perl -pi -e "s!ROLLCOMPILER!$(ROLLFORT)!" $(SOURCE_DIR)/lib/meam/Makefile.meam
-	cp Makefile.awpmd $(SOURCE_DIR)/lib/awpmd
-	cp Makefile.poems $(SOURCE_DIR)/lib/poems
+
+	cp $(SOURCE_DIR)/lib/awpmd/Makefile.openmpi $(SOURCE_DIR)/lib/awpmd/Makefile.awpmd
+	patch -o $(SOURCE_DIR)/lib/poems/Makefile.poems $(SOURCE_DIR)/lib/poems/Makefile.icc patch-files/Makefile.poems.patch
 	perl -pi -e "s!ROLLWARNINGS!$(ROLLWARNINGS)!" $(SOURCE_DIR)/lib/poems/Makefile.poems
-	cp Makefile.reax $(SOURCE_DIR)/lib/reax
-	cp Makefile.lammps.reax $(SOURCE_DIR)/lib/reax/Makefile.lammps
-	cp Makefile.lammps.ifort.reax $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort
+	patch -o $(SOURCE_DIR)/lib/reax/Makefile.reax $(SOURCE_DIR)/lib/reax/Makefile.ifort patch-files/Makefile.ifort.reax.patch
+	patch -o $(SOURCE_DIR)/lib/reax/Makefile.lammps $(SOURCE_DIR)/lib/reax/Makefile.lammps.ifort patch-files/Makefile.lammps.reax.patch
+	cp $(SOURCE_DIR)/lib/reax/Makefile.lammps $(SOURCE_DIR)/lib/reax/Makefile.lammps.ifort
 	perl -pi -e "s!ROLLCOMPILER!$(ROLLFORT)!" $(SOURCE_DIR)/lib/reax/Makefile.reax
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE_DIR)/src; \
-	  perl -pi -e "s!ROLLFLAGS!$(ROLLFLAGS)!" MAKE/Makefile.rocks; \
-	  perl -pi -e "s!MKL_HOME!$${MKL_HOME}!" MAKE/Makefile.rocks; \
+	  perl -pi -e "s!ROLLFLAGS!$(ROLLFLAGS)!" MAKE/Makefile.linux; \
+	  perl -pi -e "s!MKL_HOME!$${MKL_HOME}!" MAKE/Makefile.linux; \
 	  $(MAKE) yes-class2; \
 	  $(MAKE) yes-colloid; \
 	  $(MAKE) yes-dipole; \
@@ -167,15 +177,27 @@ build: $(SRC_DIRS)
 	  cd ../reax; \
 	  $(MAKE) -f Makefile.reax; \
 	  cp *.a ../../src; \
+          if test "$(CUDABUILD)" == "yes"; then \
+             cd ../gpu; \
+             $(MAKE) -f Makefile.linux; \
+	     cp *.a ../../src; \
+             cd ../../src; \
+             make yes-asphere; \
+             make yes-kspace; \
+             make yes-gpu; \
+             cd ../lib/cuda; \
+             $(MAKE); \
+	     cp *.a ../../src; \
+          fi; \
 	  cd ../../src; \
-	  $(MAKE) -j 16 ROOT=lmp rocks; \
+	  $(MAKE) -j 16 ROOT=lmp linux; \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
 	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
 	mkdir -p $(REDHAT.ROOT)/src/build-chemistry-modules
-	cp $(SOURCE_DIR)/src/lmp_rocks $(ROOT)/$(PKGROOT)/bin/lammps
+	cp $(SOURCE_DIR)/src/lmp_linux $(ROOT)/$(PKGROOT)/bin/lammps
 	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)/examples
 	cat lammps.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/lammps!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g;s!ROLLMPI!$(ROLLMPI)!g;s!ROLLNETWORK!$(ROLLNETWORK)!g" \
           > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module

@@ -1,0 +1,16 @@
+--- lammps-31Jan14/lib/gpu/Makefile.linux	2014-01-28 16:07:38.000000000 -0800
++++ patch-files/Makefile.gpu	2014-05-14 14:10:26.000000000 -0700
+@@ -7,11 +7,11 @@
+ 
+ EXTRAMAKE = Makefile.lammps.standard
+ 
+-CUDA_HOME = /usr/local/cuda
++CUDA_HOME = ROLLCUDA
+ NVCC = nvcc
+ 
+ # Tesla CUDA
+-CUDA_ARCH = -arch=sm_21
++CUDA_ARCH = -arch=sm_30
+ # newer CUDA
+ #CUDA_ARCH = -arch=sm_13
+ # older CUDA

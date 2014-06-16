@@ -1,0 +1,18 @@
+--- lammps-31Jan14/lib/poems/Makefile.icc	2013-05-30 12:48:45.000000000 -0700
++++ patch-files/Makefile.poems	2014-03-12 10:08:04.000000000 -0700
+@@ -67,12 +67,12 @@
+ 
+ # ------ SETTINGS ------
+ 
+-CC =		icc
+-CCFLAGS =       -O -fPIC -Wall -Wcheck -wd869,981,1572
++CC =		mpicc
++CCFLAGS =       -O -fPIC ROLLWARNINGS
+ ARCHIVE =	ar
+ ARCHFLAG =	-rc
+ DEPFLAGS =      -M
+-LINK =		icc
++LINK =		mpicc
+ LINKFLAGS =	-O
+ USRLIB =
+ SYSLIB =
