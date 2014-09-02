@@ -1,0 +1,9 @@
+--- lammps-1Aug14/lib/awpmd/Makefile.lammps.installed	2013-05-30 10:54:44.000000000 -0700
++++ patch-files/Makefile.lammps.installed	2014-09-02 12:54:34.000000000 -0700
+@@ -1,5 +1,5 @@
+ # Settings that the LAMMPS build will import when this package library is used
+ 
+ user-awpmd_SYSINC =
+-user-awpmd_SYSLIB = -lblas -llapack
++user-awpmd_SYSLIB = 
+ user-awpmd_SYSPATH =
