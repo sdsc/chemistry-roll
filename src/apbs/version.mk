@@ -1,6 +1,6 @@
 NAME               = apbs_$(ROLLCOMPILER)_$(ROLLMPI)_$(ROLLNETWORK)
 VERSION            = 1.3
-RELEASE            = 0
+RELEASE            = 6
 RPM.EXTRAS         = AutoReq:No
 PKGROOT            = /opt/apbs
 
