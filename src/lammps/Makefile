@@ -119,10 +119,11 @@ build: $(SRC_DIRS)
 	patch $(SOURCE_DIR)/lib/gpu/Makefile.linux patch-files/Makefile.gpu.patch
 	patch $(SOURCE_DIR)/lib/cuda/Makefile.common patch-files/Makefile.cuda.patch
 	patch $(SOURCE_DIR)/src/MAKE/Makefile.linux patch-files/Makefile.linux.patch
-	patch -o $(SOURCE_DIR)/lib/atc/Makefile.atc  $(SOURCE_DIR)/lib/atc/Makefile.mpic+ patch-files/Makefile.atc.patch
 	patch -o $(SOURCE_DIR)/lib/meam/Makefile.meam  $(SOURCE_DIR)/lib/meam/Makefile.ifort patch-files/Makefile.ifort.meam.patch
 	patch -o $(SOURCE_DIR)/lib/meam/Makefile.lammps $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort patch-files/Makefile.lammps.meam.patch
 	cp $(SOURCE_DIR)/lib/meam/Makefile.lammps $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort
+
+	cp $(SOURCE_DIR)/lib/atc/Makefile.mpic++ $(SOURCE_DIR)/lib/atc/Makefile.atc 
 
 	perl -pi -e "s!ROLLCUDA!/opt/cuda/current!" $(SOURCE_DIR)/lib/gpu/Makefile.linux
 	perl -pi -e "s!ROLLCUDA!/opt/cuda/current!" $(SOURCE_DIR)/lib/cuda/Makefile.common
@@ -132,9 +133,10 @@ build: $(SRC_DIRS)
 	patch -o $(SOURCE_DIR)/lib/poems/Makefile.poems $(SOURCE_DIR)/lib/poems/Makefile.icc patch-files/Makefile.poems.patch
 	perl -pi -e "s!ROLLWARNINGS!$(ROLLWARNINGS)!" $(SOURCE_DIR)/lib/poems/Makefile.poems
 	patch -o $(SOURCE_DIR)/lib/reax/Makefile.reax $(SOURCE_DIR)/lib/reax/Makefile.ifort patch-files/Makefile.ifort.reax.patch
-	patch -o $(SOURCE_DIR)/lib/reax/Makefile.lammps $(SOURCE_DIR)/lib/reax/Makefile.lammps.ifort patch-files/Makefile.lammps.reax.patch
-	cp $(SOURCE_DIR)/lib/reax/Makefile.lammps $(SOURCE_DIR)/lib/reax/Makefile.lammps.ifort
+	cp $(SOURCE_DIR)/lib/reax/Makefile.lammps.ifort  $(SOURCE_DIR)/lib/reax/Makefile.lammps
 	perl -pi -e "s!ROLLCOMPILER!$(ROLLFORT)!" $(SOURCE_DIR)/lib/reax/Makefile.reax
+	patch $(SOURCE_DIR)/lib/awpmd/Makefile.lammps.installed patch-files/Makefile.lammps.awpmd.installed.patch
+	patch $(SOURCE_DIR)/lib/atc/Makefile.lammps.installed patch-files/Makefile.lammps.atc.installed.patch
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
@@ -150,6 +152,7 @@ build: $(SRC_DIRS)
 	  $(MAKE) yes-manybody; \
 	  $(MAKE) yes-mc; \
 	  $(MAKE) yes-meam; \
+	  $(MAKE) yes-user-atc; \
 	  $(MAKE) yes-molecule; \
 	  $(MAKE) yes-opt; \
 	  $(MAKE) yes-peri; \

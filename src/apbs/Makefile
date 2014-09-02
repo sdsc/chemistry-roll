@@ -87,7 +87,7 @@ COMPILERSETUP = \
     module load intel; \
     export MKL_HOME=$${MKL_ROOT}; \
     module unload intel; \
-    module load $(ROLLCOMPILER)/; \
+    module load $(ROLLCOMPILER); \
   fi
 
 ifeq ("$(ROLLNETWORK)", "eth")
