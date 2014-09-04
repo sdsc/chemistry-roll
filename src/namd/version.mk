@@ -1,6 +1,6 @@
 NAME               = namd_$(ROLLCOMPILER)_$(ROLLMPI)_$(ROLLNETWORK)
 VERSION            = 2.9
-RELEASE            = 6
+RELEASE            = 7
 RPM.EXTRAS         = AutoReq:No
 PKGROOT            = /opt/namd
 

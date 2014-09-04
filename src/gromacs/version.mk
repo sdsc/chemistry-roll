@@ -1,7 +1,7 @@
 NAME               = gromacs_$(ROLLCOMPILER)_$(ROLLMPI)_$(ROLLNETWORK)
 VERSION            = 5.0
-RELEASE            = 6
-RP0.EXTRAS         = AutoReq:No
+RELEASE            = 7
+RPM.EXTRAS         = AutoReq:No
 PKGROOT            = /opt/gromacs
 
 SRC_SUBDIR         = gromacs

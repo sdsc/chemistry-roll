@@ -110,6 +110,7 @@ build: $(SRC_DIRS)
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
+          module load cmake; \
 	  mkdir -p $(ROOT)/$(PKGROOT); \
 	  if [ ! -d  $(PKGROOT) ]; then mkdir -p $(PKGROOT); fi; \
 	  cd $(SOURCE_DIR); \
@@ -129,6 +130,7 @@ install::
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
+          module load cmake; \
 	  cd $(SOURCE_DIR)/build; \
 	  mkdir -p $(ROOT)/$(PKGROOT); \
 	  mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT); \

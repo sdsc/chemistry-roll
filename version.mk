@@ -1,5 +1,5 @@
 ROLLNAME = chemistry
-RELEASE  = 6
+RELEASE  = 7
 COLOR    = orange
 RPM.EXTRAS = AutoReq:No
 
