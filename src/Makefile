@@ -65,7 +65,7 @@ default:
 	@echo "copyright|rpm|pkg|clean"
 
 copyright rpm pkg clean::
-	for i in $(SRCDIRS) ; do \
+	for i in $(SRCDIRS); do \
 	  grep -q ROLLCOMPILER $$i/version.mk; \
 	  if test $$? -eq 0; then \
 	    for c in $(ROLLCOMPILER); do \
@@ -74,15 +74,15 @@ copyright rpm pkg clean::
 	        if test $$? -eq 0; then \
 	          for m in $(ROLLMPI); do \
 	            echo make $@ in $$i with ROLLCOMPILER=$$c ROLLNETWORK=$$n ROLLMPI=$$m; \
-	            (cd $$i; $(MAKE) ROLLCOMPILER=$$c ROLLNETWORK=$$n ROLLMPI=$$m $@); \
+	            (cd $$i && $(MAKE) ROLLCOMPILER=$$c ROLLNETWORK=$$n ROLLMPI=$$m $@) || exit 2; \
 	          done; \
 	        else \
 	          echo make $@ in $$i with ROLLCOMPILER=$$c ROLLNETWORK=$$n; \
-	          (cd $$i; $(MAKE) ROLLCOMPILER=$$c ROLLNETWORK=$$n $@); \
+	          (cd $$i && $(MAKE) ROLLCOMPILER=$$c ROLLNETWORK=$$n $@) || exit 2; \
 	        fi; \
 	      done; \
 	    done; \
 	  else \
-	    (cd $$i; $(MAKE) ROLLCOMPILER="$(ROLLCOMPILER)" ROLLMPI="$(ROLLMPI)" ROLLNETWORK="$(ROLLNETWORK)" $@) ; \
+	    (cd $$i && $(MAKE) ROLLCOMPILER="$(ROLLCOMPILER)" ROLLMPI="$(ROLLMPI)" ROLLNETWORK="$(ROLLNETWORK)" $@) || exit 2; \
 	  fi; \
 	done
