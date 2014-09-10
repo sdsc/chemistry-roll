@@ -1,33 +1,47 @@
-NAME               = namd_$(ROLLCOMPILER)_$(ROLLMPI)_$(ROLLNETWORK)
-VERSION            = 2.9
-RELEASE            = 0
-RPM.EXTRAS         = AutoReq:No
-PKGROOT            = /opt/namd
+ifndef ROLLCOMPILER
+  ROLLCOMPILER = gnu
+endif
+COMPILERNAME := $(firstword $(subst /, ,$(ROLLCOMPILER)))
 
-SRC_SUBDIR         = namd
+ifndef ROLLMPI
+  ROLLMPI = openmpi
+endif
 
-SOURCE_NAME        = namd
-SOURCE_VERSION     = $(VERSION)
-SOURCE_SUFFIX      = tgz
-SOURCE_PKG         = $(SOURCE_NAME)-$(SOURCE_VERSION).$(SOURCE_SUFFIX)
-SOURCE_DIR         = $(SOURCE_PKG:%.$(SOURCE_SUFFIX)=%)
+ifndef ROLLNETWORK
+  ROLLNETWORK = eth
+endif
 
-TINY_NAME          = tiny
-TINY_SUFFIX        = tar.gz
-TINY_PKG           = $(TINY_NAME).$(TINY_SUFFIX)
-TINY_DIR           = $(TINY_PKG:%.$(TINY_SUFFIX)=%)
+NAME           = namd_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
+VERSION        = 2.9
+RELEASE        = 1
+PKGROOT        = /opt/namd
 
-TCL_NAME           = tcl-linux
-TCL_VERSION        = $(ARCH)
-TAR_GZ_SUFFIX      = tar.gz
-TCL_PKG            = $(TCL_NAME)-$(ARCH).$(TAR_GZ_SUFFIX)
-TCL_DIR            = $(TCL_PKG:%.$(TAR_GZ_SUFFIX)=%)
+SRC_SUBDIR     = namd
 
-FFTW_NAME          = fftw-linux
-FFTW_VERSION       = $(ARCH)
-FFTW_PKG           = $(FFTW_NAME)-$(ARCH).$(TAR_GZ_SUFFIX)
-FFTW_DIR           = $(FFTW_PKG:%.$(TAR_GZ_SUFFIX)=%)
+SOURCE_NAME    = namd
+SOURCE_SUFFIX  = tgz
+SOURCE_VERSION = $(VERSION)
+SOURCE_PKG     = $(SOURCE_NAME)-$(SOURCE_VERSION).$(SOURCE_SUFFIX)
+SOURCE_DIR     = $(SOURCE_PKG:%.$(SOURCE_SUFFIX)=%)
 
-TGZ_PKGS           = $(SOURCE_PKG)
-TAR_GZ_PKGS        = $(TINY_PKG) $(TCL_PKG) $(FFTW_PKG)
+TINY_NAME      = tiny
+TINY_SUFFIX    = tar.gz
+TINY_PKG       = $(TINY_NAME).$(TINY_SUFFIX)
+TINY_DIR       = $(TINY_PKG:%.$(TINY_SUFFIX)=%)
 
+TCL_NAME       = tcl-linux
+TCL_SUFFIX     = tar.gz
+TCL_VERSION    = $(ARCH)
+TCL_PKG        = $(TCL_NAME)-$(ARCH).$(TCL_SUFFIX)
+TCL_DIR        = $(TCL_PKG:%.$(TCL_SUFFIX)=%)
+
+FFTW_NAME      = fftw-linux
+FFTW_SUFFIX    = tar.gz
+FFTW_VERSION   = $(ARCH)
+FFTW_PKG       = $(FFTW_NAME)-$(ARCH).$(FFTW_SUFFIX)
+FFTW_DIR       = $(FFTW_PKG:%.$(FFTW_SUFFIX)=%)
+
+TGZ_PKGS       = $(SOURCE_PKG)
+TAR_GZ_PKGS    = $(TINY_PKG) $(TCL_PKG) $(FFTW_PKG)
+
+RPM.EXTRAS     = AutoReq:No

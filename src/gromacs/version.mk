@@ -1,20 +1,34 @@
-NAME               = gromacs_$(ROLLCOMPILER)_$(ROLLMPI)_$(ROLLNETWORK)
-VERSION            = 4.6.5
-RELEASE            = 0
-RP0.EXTRAS         = AutoReq:No
-PKGROOT            = /opt/gromacs
+ifndef ROLLCOMPILER
+  ROLLCOMPILER = gnu
+endif
+COMPILERNAME := $(firstword $(subst /, ,$(ROLLCOMPILER)))
 
-SRC_SUBDIR         = gromacs
+ifndef ROLLMPI
+  ROLLMPI = openmpi
+endif
 
-SOURCE_NAME        = gromacs
-SOURCE_VERSION     = $(VERSION)
-SOURCE_SUFFIX      = tar.gz
-SOURCE_PKG         = $(SOURCE_NAME)-$(SOURCE_VERSION).$(SOURCE_SUFFIX)
-SOURCE_DIR         = $(SOURCE_PKG:%.$(SOURCE_SUFFIX)=%)
+ifndef ROLLNETWORK
+  ROLLNETWORK = eth
+endif
 
-GMXTEST_NAME       = gmxtest
-GMXTEST_PKG        = $(GMXTEST_NAME).$(SOURCE_SUFFIX)
-GMXTEST_DIR        = $(GMXTEST_PKG:%.$(SOURCE_SUFFIX)=%)
+NAME           = gromacs_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
+VERSION        = 4.6.5
+RELEASE        = 1
+PKGROOT        = /opt/gromacs
 
-TAR_GZ_PKGS        = $(SOURCE_PKG) $(GMXTEST_PKG)
+SRC_SUBDIR     = gromacs
 
+SOURCE_NAME    = gromacs
+SOURCE_SUFFIX  = tar.gz
+SOURCE_VERSION = $(VERSION)
+SOURCE_PKG     = $(SOURCE_NAME)-$(SOURCE_VERSION).$(SOURCE_SUFFIX)
+SOURCE_DIR     = $(SOURCE_PKG:%.$(SOURCE_SUFFIX)=%)
+
+GMXTEST_NAME   = gmxtest
+GMXTEST_SUFFIX = tar.gz
+GMXTEST_PKG    = $(GMXTEST_NAME).$(GMXTEST_SUFFIX)
+GMXTEST_DIR    = $(GMXTEST_PKG:%.$(GMXTEST_SUFFIX)=%)
+
+TAR_GZ_PKGS    = $(SOURCE_PKG) $(GMXTEST_PKG)
+
+RPM.EXTRAS     = AutoReq:No
