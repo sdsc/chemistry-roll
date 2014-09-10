@@ -125,6 +125,7 @@ install::
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
+          module load cmake; \
 	  cd $(SOURCE_DIR)/build; \
 	  $(MAKE) prefix=$(ROOT)/$(PKGROOT) install \
 	)

@@ -13,7 +13,7 @@ endif
 
 NAME           = namd_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
 VERSION        = 2.9
-RELEASE        = 1
+RELEASE        = 8
 PKGROOT        = /opt/namd
 
 SRC_SUBDIR     = namd

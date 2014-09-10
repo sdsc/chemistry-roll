@@ -13,7 +13,7 @@ endif
 
 NAME           = gromacs_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
 VERSION        = 4.6.5
-RELEASE        = 1
+RELEASE        = 8
 PKGROOT        = /opt/gromacs
 
 SRC_SUBDIR     = gromacs

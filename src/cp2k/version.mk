@@ -13,7 +13,7 @@ endif
 
 NAME           = cp2k_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
 VERSION        = 2.4.0
-RELEASE        = 1
+RELEASE        = 8
 PKGROOT        = /opt/cp2k
 
 SRC_SUBDIR     = cp2k

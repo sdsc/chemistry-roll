@@ -13,7 +13,7 @@ endif
 
 NAME           = lammps_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
 VERSION        = 31Jan14
-RELEASE        = 1
+RELEASE        = 8
 PKGROOT        = /opt/lammps
 
 SRC_SUBDIR     = lammps
