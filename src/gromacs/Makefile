@@ -56,27 +56,38 @@
 #
 # $Log$
 
-ifndef ROLLCOMPILER
-  ROLLCOMPILER = gnu
-endif
-ifndef ROLLNETWORK
-  ROLLNETWORK = eth
-endif
-ifndef ROLLMPI
-  ROLLMPI = openmpi
-endif
-
 REDHAT.ROOT = $(CURDIR)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 include Rules.mk
 include pull.mk
 
-COMPILERSETUP = \
+CC = gcc
+COMPILE_FLAGS = -fPIC -O2
+ifeq ("$(COMPILERNAME)", "intel")
+  CC = icc
+  COMPILE_FLAGS = -fPIC -O2 -xHOST
+else ifeq ("$(COMPILERNAME)", "pgi")
+  CC = pgcc
+  COMPILE_FLAGS = -fPIC -fast
+endif
+
+ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
+  ifeq ("$(COMPILERNAME)", "gnu")
+    COMPILE_FLAGS += -mavx
+  endif
+endif
+
+COMPILERSETUP =  \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
-    module load $(ROLLCOMPILER); \
-  fi
+    module load $(ROLLCOMPILER) || true; \
+    module load cmake || true; \
+  fi; \
+  echo === Compiler and version ===; \
+  $(CC) --version; \
+  echo === cmake version ===; \
+  cmake --version
 
 ifeq ("$(ROLLNETWORK)", "eth")
   MPIMODULE = $(ROLLMPI)
@@ -87,59 +98,41 @@ endif
 MPISETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
-    module load $(MPIMODULE); \
+    module load $(MPIMODULE) || true; \
   fi; \
-  export MPI_HOME=`which mpicxx | perl -pe 's!/bin/.*!!'`; \
-  if test -z "$${MPI_HOME}"; then \
-    export MPI_HOME=/opt/$(ROLLMPI); \
+  if test -z "$${MPIHOME}"; then \
+    export MPIHOME=/opt/$(ROLLMPI); \
   fi; \
-  echo Using MPI from $${MPI_HOME}; \
-  export PATH=$${PATH}:$${MPI_HOME}/bin; \
-  export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
-
-COMPILE_FLAGS = -fPIC -O2
-ifeq ("$(ROLLCOMPILER)", "intel")
-  COMPILE_FLAGS = -fPIC -O2 -xHOST
-else ifeq ("$(ROLLCOMPILER)", "pgi")
-  COMPILE_FLAGS = -fPIC -fast
-else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
-  COMPILE_FLAGS += -mavx
-endif
+  echo === MPIHOME ===; \
+  echo $${MPIHOME}
 
 build: $(SRC_DIRS)
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
-	  mkdir -p $(ROOT)/$(PKGROOT); \
-	  if [ ! -d  $(PKGROOT) ]; then mkdir -p $(PKGROOT); fi; \
 	  cd $(SOURCE_DIR); \
 	  mkdir build; \
 	  cd build; \
-	  mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT); \
 	  export CC=mpicc; \
 	  export CXX=mpicxx; \
-	  CC=mpicc cmake  .. -DGMX_BUILD_OWN_FFTW=ON -DGMX_MPI=ON -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" -DCMAKE_INSTALL_PREFIX=$(PKGROOT); \
-	  $(MAKE); \
-	  umount $(PKGROOT) \
+	  cmake .. -DGMX_BUILD_OWN_FFTW=ON -DGMX_MPI=ON -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" -DCMAKE_INSTALL_PREFIX=$(PKGROOT); \
+	  $(MAKE) \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
-	mkdir -p $(REDHAT.ROOT)/src/build-chemistry-modules
+	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
 	( \
 	  $(COMPILERSETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE_DIR)/build; \
-	  mkdir -p $(ROOT)/$(PKGROOT); \
-	  mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT); \
-	  $(MAKE) install; \
-	  umount $(PKGROOT) \
+	  $(MAKE) prefix=$(ROOT)/$(PKGROOT) install \
 	)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)
+	mkdir -p $(REDHAT.ROOT)/src/build-chemistry-modules
 	cat gromacs.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/gromacs!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g;s!ROLLMPI!$(ROLLMPI)!g;s!ROLLNETWORK!$(ROLLNETWORK)!g" \
-          > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
+	  > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
 	rm -rf $(SRC_DIRS)
-	-umount $(PKGROOT)

@@ -56,71 +56,76 @@
 #
 # $Log$
 
-ifndef ROLLCOMPILER
-  ROLLCOMPILER = gnu
-endif
-ifndef ROLLNETWORK
-  ROLLNETWORK = eth
-endif
-ifndef ROLLMPI
-  ROLLMPI = openmpi
-endif
-
 REDHAT.ROOT = $(CURDIR)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 include Rules.mk
 include pull.mk
 
-COMPILERSETUP = \
+CC = gcc
+FCC = f77
+COMPILE_FLAGS = -O2
+ifeq ("$(ROLLCOMPILER)", "intel")
+  CC = icc        
+  FCC = ifort
+  COMPILE_FLAGS = -ip -fno-rtti -xHOST
+else ifeq ("$(ROLLCOMPILER)", "pgi")
+  CC = pgcc
+  FCC = pgf90
+  COMPILE_FLAGS = -fast
+endif
+
+COMPILERSETUP =  \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
-    module load $(ROLLCOMPILER); \
-    module load cuda; \
-    dir=`which nvcc`; \
-    export CUDAPATH="`dirname $${dir}`/.." ; \
-  fi
+    module load $(ROLLCOMPILER) || true; \
+  fi; \
+  echo === Compiler and version ===; \
+  $(CC) --version
 
-MPIMODULE = $(ROLLMPI)_$(ROLLNETWORK)
+CUDASETUP = \
+  if test -e /etc/profile.d/modules.sh; then \
+    . /etc/profile.d/modules.sh; \
+    module load cuda || true; \
+  fi; \
+  echo === CUDAHOME ===; \
+  echo $${CUDAHOME}
+
+ifeq ("$(ROLLNETWORK)", "eth")
+  MPIMODULE = $(ROLLMPI)
+else
+  MPIMODULE = $(ROLLMPI)_$(ROLLNETWORK)
+endif
 
 MPISETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
-    module load $(MPIMODULE); \
+    module load $(MPIMODULE) || true; \
   fi; \
-  export MPI_HOME=`which mpicxx | perl -pe 's!/bin/.*!!'`; \
-  if test -z "$${MPI_HOME}"; then \
-    export MPI_HOME=/opt/$(ROLLMPI); \
+  if test -z "$${MPIHOME}"; then \
+    export MPIHOME=/opt/$(ROLLMPI); \
   fi; \
-  echo Using MPI from $${MPI_HOME}; \
-  export PATH=$${PATH}:$${MPI_HOME}/bin; \
-  export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
+  echo === MPIHOME ===; \
+  echo $${MPIHOME}
 
-CXX = g++
-CC = gcc
-FCC = f77
-COMPILER_FLAGS = -O2
 CHARMARCH = mpi-linux-x86_64
 CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
 CUDA = 
 ifeq ("$(ROLLCOMPILER)", "intel")
-  CXX = icpc        
-  CC = icc
-  FCC = ifort
   CHARMARCH = mpi-linux-x86_64-$(FCC)-mpicxx
   CHARMBUILDOPTS = mpicxx $(FCC) -j16 -O2  -xHOST
-  COMPILER_FLAGS = -ip -fno-rtti -xHOST
 else ifeq ("$(ROLLCOMPILER)", "pgi")
-  CXX = pgCC
-  CC = pgcc
-  FCC = pgf90
   CHARMARCH = mpi-linux-x86_64-$(FCC)-mpicxx
   CHARMBUILDOPTS = mpicxx $(FCC) -j16 -O2  -fast
-  COMPILER_FLAGS = -fast
-else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
-  CHARMBUILDOPTS += -mavx
-  COMPILER_FLAGS += -mavx
 endif
+
+ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
+  ifeq ("$(COMPILERNAME)", "gnu")
+    CHARMBUILDOPTS += -mavx
+    COMPILE_FLAGS += -mavx
+  endif
+endif
+
 ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
   CUDA = --with-cuda
 endif
@@ -132,12 +137,13 @@ build: $(SRC_DIRS)
 	patch $(SOURCE_DIR)/arch/Linux-x86_64.cuda patch-files/Linux-x86_64.cuda.patch
 	cp Linux-x86_64* $(SOURCE_DIR)/arch
 	perl -pi -e "s!ROOTDIR!`pwd`/$(SOURCE_DIR)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
-	perl -pi -e "s!COMPILER_FLAGS!$(COMPILER_FLAGS)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
+	perl -pi -e "s!COMPILE_FLAGS!$(COMPILE_FLAGS)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
 	( \
 	  $(COMPILERSETUP); \
+	  $(CUDASETUP); \
 	  $(MPISETUP); \
           mv linux-$(ARCH) $(SOURCE_DIR); \
-	  perl -pi -e "s!ROLLCUDA!$${CUDAPATH}!g" $(SOURCE_DIR)/arch/Linux-x86_64.cuda; \
+	  perl -pi -e "s!ROLLCUDA!$${CUDAHOME}!g" $(SOURCE_DIR)/arch/Linux-x86_64.cuda; \
 	  cd $(SOURCE_DIR); \
 	  cd charm-*[0-9]; \
 	  ./build charm++ mpi-linux-x86_64 $(CHARMBUILDOPTS); \
@@ -150,14 +156,14 @@ build: $(SRC_DIRS)
 
 install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/bin
-	mkdir -p $(REDHAT.ROOT)/src/build-chemistry-modules
 	cp $(SOURCE_DIR)/*/{charmrun,flipbinpdb,flipdcd,namd2,psfgen} \
 	   $(ROOT)/$(PKGROOT)/bin
 	cp -r tiny $(ROOT)/$(PKGROOT)
+	mkdir -p $(REDHAT.ROOT)/src/build-chemistry-modules
 	cat namd.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/namd!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g;s!ROLLMPI!$(ROLLMPI)!g;s!ROLLNETWORK!$(ROLLNETWORK)!g" \
-          > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
+	  > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SRC_DIRS)
+	rm -rf $(SRC_DIRS) _arch
 

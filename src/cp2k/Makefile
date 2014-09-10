@@ -56,30 +56,57 @@
 #
 # $Log$
 
-ifndef ROLLCOMPILER
-  ROLLCOMPILER = gnu
-endif
-ifndef ROLLNETWORK
-  ROLLNETWORK = eth
-endif
-ifndef ROLLMPI
-  ROLLMPI = openmpi
-endif
-
 REDHAT.ROOT = $(CURDIR)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 include Rules.mk
 include pull.mk
 
+CC = gcc
+CXX = g++
+FC = gcc
+COMPILE_FLAGS = -O2
+ifeq ("$(COMPILERNAME)", "intel")
+  CC = icc
+  CXX = icpc
+  FC = ifort
+else ifeq ("$(COMPILERNAME)", "pgi")
+  CC = pgcc
+  CXX = pgCC
+  FC = pgf90
+  COMPILE_FLAGS = -fast
+endif
+
+ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
+  ifeq ("$(COMPILERNAME)", "gnu")
+    COMPILE_FLAGS += -mavx
+  endif
+endif
+
 COMPILERSETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
-    module load intel; \
-    export MKL_HOME=$${MKL_ROOT}; \
-    module unload intel; \
-    module load $(ROLLCOMPILER); \
-  fi
+    module load $(ROLLCOMPILER) || true; \
+  fi; \
+  echo === Compiler and version ===; \
+  $(CC) --version
+
+FFTWSETUP = \
+  if test -e /etc/profile.d/modules.sh; then \
+    . /etc/profile.d/modules.sh; \
+    module load fftw || true; \
+  fi; \
+  echo === FFTWHOME ===; \
+  echo $${FFTWHOME}
+
+MKLSETUP = \
+  if test -e /etc/profile.d/modules.sh; then \
+    . /etc/profile.d/modules.sh; \
+    module load mkl || true; \
+  fi; \
+  echo === MKL_ROOT ===; \
+  echo $${MKL_ROOT}; \
+  export MKLLIB=`find $${MKL_ROOT}/lib/* -maxdepth 0 | head -1`
 
 ifeq ("$(ROLLNETWORK)", "eth")
   MPIMODULE = $(ROLLMPI)
@@ -87,22 +114,16 @@ else
   MPIMODULE = $(ROLLMPI)_$(ROLLNETWORK)
 endif
 
-OMPI_CFLAGS=
-OMPI_CXXFLAGS=
-OMPI_FFLAGS=
-OMPI_FCFLAGS=
 MPISETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
-    module load $(MPIMODULE); \
+    module load $(MPIMODULE) || true; \
   fi; \
-  export MPI_HOME=`which mpicxx | perl -pe 's!/bin/.*!!'`; \
-  if test -z "$${MPI_HOME}"; then \
-    export MPI_HOME=/opt/$(ROLLMPI); \
+  if test -z "$${MPIHOME}"; then \
+    export MPIHOME=/opt/$(ROLLMPI); \
   fi; \
-  echo Using MPI from $${MPI_HOME}; \
-  export PATH=$${PATH}:$${MPI_HOME}/bin; \
-  export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
+  echo === MPIHOME ===; \
+  echo $${MPIHOME}
 
 ROLLTYPEMKL = _openmpi_
 ifeq ("$(ROLLMPI)", "mvapich")
@@ -113,43 +134,34 @@ else ifeq ("$(ROLLMPI)", "mvapich2")
   ROLLTYPEMKL = _intelmpi_
 endif
 
-CXX = g++
-CC = gcc
-FC = gcc
-ROLLMAKEFILE = Linux-x86-64-$(ROLLCOMPILER)
-COMPILE_FLAGS = -O2
-ifeq ("$(ROLLCOMPILER)", "intel")
-  CXX = icpc
-  CC = icc
-  FC = ifort
-  COMPILE_FLAGS = -O2
+ROLLMAKEFILE = Linux-x86-64-$(COMPILERNAME)
+OMPI_CFLAGS=
+OMPI_CXXFLAGS=
+OMPI_FFLAGS=
+OMPI_FCFLAGS=
+ifeq ("$(COMPILERNAME)", "intel")
   OMPI_CFLAGS=-pthread
   OMPI_CXXFLAGS=-pthread
   OMPI_FFLAGS=-pthread
   OMPI_FCFLAGS=-pthread
-else ifeq ("$(ROLLCOMPILER)", "pgi")
-  CXX = pgCC
-  CC = pgcc
-  FC = pgf90
-  COMPILE_FLAGS = -fast
-else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
-  COMPILE_FLAGS += -mavx
 endif
-COMPILE_FLAGS += -I$(REDHAT.ROOT)/src/cp2k/$(CP2K_DIR)/obj/$(ROLLMAKEFILE)/popt
+
+COMPILE_FLAGS += -I$(REDHAT.ROOT)/src/cp2k/$(SOURCE_DIR)/obj/$(ROLLMAKEFILE)/popt
 
 build: $(SRC_DIRS)
-	cp Linux-x86-64-gnu.popt $(CP2K_DIR)/arch
-	patch $(CP2K_DIR)/arch/Linux-x86-64-intel.popt patch-files/Linux-x86-64-intel.popt.patch
-	patch $(CP2K_DIR)/arch/Linux-x86-64-pgi.popt patch-files/Linux-x86-64-pgi.popt.patch
+	cp Linux-x86-64-gnu.popt $(SOURCE_DIR)/arch
+	patch $(SOURCE_DIR)/arch/Linux-x86-64-intel.popt patch-files/Linux-x86-64-intel.popt.patch
+	patch $(SOURCE_DIR)/arch/Linux-x86-64-pgi.popt patch-files/Linux-x86-64-pgi.popt.patch
 	( \
 	  $(COMPILERSETUP); \
+	  $(MKLSETUP); \
 	  $(MPISETUP); \
-	  fftwHome=`find /opt/fftw/3* -maxdepth 0`/$(ROLLCOMPILER)/$(ROLLMPI)/$(ROLLNETWORK); \
-	  perl -pi -e "s!MKL_ROOT!$${MKL_HOME}!" $(CP2K_DIR)/arch/$(ROLLMAKEFILE).popt; \
-	  perl -pi -e "s!ROLLTYPEMKL!$(ROLLTYPEMKL)!g" $(CP2K_DIR)/arch/$(ROLLMAKEFILE).popt; \
-	  perl -pi -e "s!ROLLFFTW!$$fftwHome!" $(CP2K_DIR)/arch/$(ROLLMAKEFILE).popt; \
-	  perl -pi -e "s!ROLLLIBINT!$(PWD)/$(CP2K_DIR)/libint/lib!" $(CP2K_DIR)/arch/$(ROLLMAKEFILE).popt; \
-	  perl -pi -e "s!ROLLWRAPPER!$(PWD)/$(CP2K_DIR)/tools/hfx_tools/libint_tools!" $(CP2K_DIR)/arch/$(ROLLMAKEFILE).popt; \
+	  $(FFTWSETUP); \
+	  perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!ROLLTYPEMKL!$(ROLLTYPEMKL)!g" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!ROLLFFTW!$${FFTWHOME}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!ROLLLIBINT!$(PWD)/$(SOURCE_DIR)/libint/lib!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!ROLLWRAPPER!$(PWD)/$(SOURCE_DIR)/tools/hfx_tools/libint_tools!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  export CC=$(CC); \
 	  export CFLAGS="$(COMPILE_FLAGS)"; \
 	  export FC=$(FC); \
@@ -161,8 +173,7 @@ build: $(SRC_DIRS)
 	  export OMPI_CXXFLAGS="$(OMPI_CXXFLAGS)"; \
 	  export OMPI_FFLAGS="$(OMPI_FFLAGS)"; \
 	  export OMPI_FCFLAGS="$(OMPI_FCFLAGS)"; \
-	  cd $(CP2K_DIR); \
-	  mkdir $(LIBINT_DIR); \
+	  cd $(SOURCE_DIR); \
           mv ../$(LIBINT_DIR) .; \
 	  cd $(LIBINT_DIR); \
 	  ./configure --with-cc-optflags="$(COMPILE_FLAGS)" \
@@ -180,12 +191,12 @@ build: $(SRC_DIRS)
 install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/bin
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/test
+	cp $(SOURCE_DIR)/exe/$(ROLLMAKEFILE)/cp2k.popt $(ROOT)/$(PKGROOT)/bin
+	cp -r $(SOURCE_DIR)/tests/EP/* $(ROOT)/$(PKGROOT)/test/
 	mkdir -p $(REDHAT.ROOT)/src/build-chemistry-modules
-	cp $(CP2K_DIR)/exe/$(ROLLMAKEFILE)/cp2k.popt $(ROOT)/$(PKGROOT)/bin
-	cp -r $(CP2K_DIR)/tests/EP/* $(ROOT)/$(PKGROOT)/test/
-	cat cp2k.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/cp2k!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g;s!ROLLMPI!$(ROLLMPI)!g;s!ROLLNETWORK!$(ROLLNETWORK)!g" \
-          > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
+	cat cp2k.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/cp2k!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(COMPILERNAME)!g;s!ROLLMPI!$(ROLLMPI)!g;s!ROLLNETWORK!$(ROLLNETWORK)!g" \
+	  > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(CP2K_DIR)
+	rm -rf $(SOURCE_DIR)

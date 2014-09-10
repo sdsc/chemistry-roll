@@ -55,64 +55,71 @@
 #
 # $Log$
 
-ifndef ROLLCOMPILER
-  ROLLCOMPILER = gnu
-endif
-ifndef ROLLNETWORK
-  ROLLNETWORK = eth
-endif
-ifndef ROLLMPI
-  ROLLMPI = openmpi
-endif
-
 REDHAT.ROOT = $(CURDIR)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 include Rules.mk
 include pull.mk
 
+FC=gfortran
+ROLLWARNINGS=
+LINK_LIBS := -lstdc++
+ifeq ("$(COMPILERNAME)","gnu")
+  LINK_LIBS += -L$${MKLLIB} -lmkl_gf_ilp64 -lmkl_gnu_thread -lmkl_core -lpthread -lgomp
+else ifeq ("$(COMPILERNAME)","intel")
+  LINK_LIBS += `find $${INTELHOME} -name libifcore.a | grep intel64` -mkl=sequential
+  FC=ifort
+  ROLLWARNINGS=-Wall -Wcheck -wd869,981,1572
+else ifeq ("$(COMPILERNAME)","pgi")
+  LINK_LIBS += -lpgf90 -lpgf90_rpm1 -lpgf902 -lpgf90rtl -lpgftnrtl -lrt
+  FC=pgf90
+endif
+
 COMPILERSETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
-    module load intel; \
-    export MKL_HOME=$${MKL_ROOT}; \
-    module unload intel; \
-    module load $(ROLLCOMPILER); \
+    module load $(ROLLCOMPILER) || true; \
+  fi; \
+  echo === Compiler and version ===; \
+  $(FC) --version
+
+CUDASETUP = \
+  if test -e /etc/profile.d/modules.sh; then \
+    . /etc/profile.d/modules.sh; \
     module load cuda; \
-    export LD_LIBRARY_PATH=/opt/cuda/current/lib64:$${LD_LIBRARY_PATH}; \
-  fi
+  fi; \
+  echo === CUDAHOME ===; \
+  echo $${CUDAHOME}
 
+MKLSETUP = \
+  if test -e /etc/profile.d/modules.sh; then \
+    . /etc/profile.d/modules.sh; \
+    module load mkl || true; \
+  fi; \
+  echo === MKL_ROOT ===; \
+  echo $${MKL_ROOT}; \
+  export MKLLIB=`find $${MKL_ROOT}/lib/* -maxdepth 0 | head -1`
 
-ROLLFORT=gfortran
-ROLLWARNINGS=
-ifeq ("$(ROLLCOMPILER)","pgi")
-  ROLLFLAGS = -lpgf90 -lpgf90_rpm1 -lpgf902 -lpgf90rtl -lpgftnrtl -lrt
-  ROLLFORT=pgf90
+ifeq ("$(ROLLNETWORK)", "eth")
+  MPIMODULE = $(ROLLMPI)
+else
+  MPIMODULE = $(ROLLMPI)_$(ROLLNETWORK)
 endif
-ifeq ("$(ROLLCOMPILER)","intel")
-  ROLLFLAGS = `find $${INTELHOME} -name libifcore.a | grep intel64`
-  ROLLFORT=ifort
-  ROLLWARNINGS=-Wall -Wcheck -wd869,981,1572
-endif
-
-MPIMODULE = $(ROLLMPI)_$(ROLLNETWORK)
 
 MPISETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
-    module load $(MPIMODULE); \
+    module load $(MPIMODULE) || true; \
   fi; \
-  export MPI_HOME=`which mpicxx | perl -pe 's!/bin/.*!!'`; \
-  if test -z "$${MPI_HOME}"; then \
-    export MPI_HOME=/opt/$(ROLLMPI); \
+  if test -z "$${MPIHOME}"; then \
+    export MPIHOME=/opt/$(ROLLMPI); \
   fi; \
-  echo Using MPI from $${MPI_HOME}; \
-  export PATH=$${PATH}:$${MPI_HOME}/bin; \
-  export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
+  echo === MPIHOME ===; \
+  echo $${MPIHOME}
 
 CUDABUILD = no
 ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
-   CUDABUILD = yes
+  CUDABUILD = yes
 endif
 
 build: $(SRC_DIRS)
@@ -123,23 +130,25 @@ build: $(SRC_DIRS)
 	patch -o $(SOURCE_DIR)/lib/meam/Makefile.meam  $(SOURCE_DIR)/lib/meam/Makefile.ifort patch-files/Makefile.ifort.meam.patch
 	patch -o $(SOURCE_DIR)/lib/meam/Makefile.lammps $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort patch-files/Makefile.lammps.meam.patch
 	cp $(SOURCE_DIR)/lib/meam/Makefile.lammps $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort
-
+	
 	perl -pi -e "s!ROLLCUDA!/opt/cuda/current!" $(SOURCE_DIR)/lib/gpu/Makefile.linux
 	perl -pi -e "s!ROLLCUDA!/opt/cuda/current!" $(SOURCE_DIR)/lib/cuda/Makefile.common
-	perl -pi -e "s!ROLLCOMPILER!$(ROLLFORT)!" $(SOURCE_DIR)/lib/meam/Makefile.meam
-
+	perl -pi -e "s!ROLLCOMPILER!$(FC)!" $(SOURCE_DIR)/lib/meam/Makefile.meam
+	
 	cp $(SOURCE_DIR)/lib/awpmd/Makefile.openmpi $(SOURCE_DIR)/lib/awpmd/Makefile.awpmd
 	patch -o $(SOURCE_DIR)/lib/poems/Makefile.poems $(SOURCE_DIR)/lib/poems/Makefile.icc patch-files/Makefile.poems.patch
 	perl -pi -e "s!ROLLWARNINGS!$(ROLLWARNINGS)!" $(SOURCE_DIR)/lib/poems/Makefile.poems
 	patch -o $(SOURCE_DIR)/lib/reax/Makefile.reax $(SOURCE_DIR)/lib/reax/Makefile.ifort patch-files/Makefile.ifort.reax.patch
 	patch -o $(SOURCE_DIR)/lib/reax/Makefile.lammps $(SOURCE_DIR)/lib/reax/Makefile.lammps.ifort patch-files/Makefile.lammps.reax.patch
 	cp $(SOURCE_DIR)/lib/reax/Makefile.lammps $(SOURCE_DIR)/lib/reax/Makefile.lammps.ifort
-	perl -pi -e "s!ROLLCOMPILER!$(ROLLFORT)!" $(SOURCE_DIR)/lib/reax/Makefile.reax
+	perl -pi -e "s!ROLLCOMPILER!$(FC)!" $(SOURCE_DIR)/lib/reax/Makefile.reax
 	( \
 	  $(COMPILERSETUP); \
+	  $(MKLSETUP); \
 	  $(MPISETUP); \
+	  $(CUDASETUP); \
 	  cd $(SOURCE_DIR)/src; \
-	  perl -pi -e "s!ROLLFLAGS!$(ROLLFLAGS)!" MAKE/Makefile.linux; \
+	  perl -pi -e "s!LINK_LIBS!$(LINK_LIBS)!" MAKE/Makefile.linux; \
 	  perl -pi -e "s!MKL_HOME!$${MKL_HOME}!" MAKE/Makefile.linux; \
 	  $(MAKE) yes-class2; \
 	  $(MAKE) yes-colloid; \
@@ -177,30 +186,30 @@ build: $(SRC_DIRS)
 	  cd ../reax; \
 	  $(MAKE) -f Makefile.reax; \
 	  cp *.a ../../src; \
-          if test "$(CUDABUILD)" == "yes"; then \
-             cd ../gpu; \
-             $(MAKE) -f Makefile.linux; \
-	     cp *.a ../../src; \
-             cd ../../src; \
-             make yes-asphere; \
-             make yes-kspace; \
-             make yes-gpu; \
-             cd ../lib/cuda; \
-             $(MAKE); \
-	     cp *.a ../../src; \
-          fi; \
+	  if test "$(CUDABUILD)" == "yes"; then \
+	    cd ../gpu; \
+	    $(MAKE) -f Makefile.linux; \
+	    cp *.a ../../src; \
+	    cd ../../src; \
+	    make yes-asphere; \
+	    make yes-kspace; \
+	    make yes-gpu; \
+	    cd ../lib/cuda; \
+	    $(MAKE); \
+	    cp *.a ../../src; \
+	  fi; \
 	  cd ../../src; \
-	  $(MAKE) -j 16 ROOT=lmp linux; \
+	  $(MAKE) -j 16 ROOT=lmp linux \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
 	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
-	mkdir -p $(REDHAT.ROOT)/src/build-chemistry-modules
 	cp $(SOURCE_DIR)/src/lmp_linux $(ROOT)/$(PKGROOT)/bin/lammps
-	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)/examples
+	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)/
+	mkdir -p $(REDHAT.ROOT)/src/build-chemistry-modules
 	cat lammps.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/lammps!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g;s!ROLLMPI!$(ROLLMPI)!g;s!ROLLNETWORK!$(ROLLNETWORK)!g" \
-          > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
+	  > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::

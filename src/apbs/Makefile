@@ -56,39 +56,44 @@
 #
 # $Log$
 
-ifndef ROLLCOMPILER
-  ROLLCOMPILER = gnu
-endif
-ifndef ROLLNETWORK
-  ROLLNETWORK = eth
-endif
-ifndef ROLLMPI
-  ROLLMPI = openmpi
-endif
-
-COMPILE_FLAGS = -O2 
-ifeq ("$(ROLLCOMPILER)","intel")
-  COMPILE_FLAGS = -O2 -xHOST
-else ifeq ("$(ROLLCOMPILER)","pgi")
-  COMPILE_FLAGS = -fast
-else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
-  COMPILE_FLAGS += -mavx 
-endif
-
 REDHAT.ROOT = $(CURDIR)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 include Rules.mk
 include pull.mk
 
-COMPILERSETUP = \
+CC = gcc
+COMPILE_FLAGS = -O2 
+ifeq ("$(COMPILERNAME)","intel")
+  CC = icc
+  COMPILE_FLAGS = -O2 -xHOST
+else ifeq ("$(COMPILERNAME)","pgi")
+  CC = pgcc
+  COMPILE_FLAGS = -fast
+endif
+
+ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
+  ifeq ("$(COMPILERNAME)", "gnu")
+    COMPILE_FLAGS += -mavx
+  endif
+endif
+
+COMPILERSETUP =  \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
-    module load intel; \
-    export MKL_HOME=$${MKL_ROOT}; \
-    module unload intel; \
-    module load $(ROLLCOMPILER)/; \
-  fi
+    module load $(ROLLCOMPILER) || true; \
+  fi; \
+  echo === Compiler and version ===; \
+  $(CC) --version
+
+MKLSETUP = \
+  if test -e /etc/profile.d/modules.sh; then \
+    . /etc/profile.d/modules.sh; \
+    module load mkl || true; \
+  fi; \
+  echo === MKL_ROOT ===; \
+  echo $${MKL_ROOT}; \
+  export MKLLIB=`find $${MKL_ROOT}/lib/* -maxdepth 0 | head -1`
 
 ifeq ("$(ROLLNETWORK)", "eth")
   MPIMODULE = $(ROLLMPI)
@@ -99,49 +104,56 @@ endif
 MPISETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
-    module load $(MPIMODULE); \
+    module load $(MPIMODULE) || true; \
   fi; \
-  export MPI_HOME=`which mpicxx | perl -pe 's!/bin/.*!!'`; \
-  if test -z "$${MPI_HOME}"; then \
-    export MPI_HOME=/opt/$(ROLLMPI); \
+  if test -z "$${MPIHOME}"; then \
+    export MPIHOME=/opt/$(ROLLMPI); \
   fi; \
-  echo Using MPI from $${MPI_HOME}; \
-  export PATH=$${PATH}:$${MPI_HOME}/bin; \
-  export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$${MPI_HOME}/lib
+  echo === MPIHOME ===; \
+  echo $${MPIHOME}
 
 build: $(SRC_DIRS)
 	cp test.sh $(SOURCE_DIR)/examples/actin-dimer
 	( \
 	  $(COMPILERSETUP); \
+	  $(MKLSETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE_DIR); \
 	  export CFLAGS="$(COMPILE_FLAGS)"; \
 	  export CXXFLAGS="$(COMPILE_FLAGS)"; \
 	  export FFLAGS="$(COMPILE_FLAGS)"; \
 	  if test "$(ROLLMPI)" = "openmpi"; then \
-	    ./configure CC=mpicc F77=mpif77 --prefix=$(PKGROOT) $(OPT) \
-		--with-openmpi=$${MPI_HOME} --with-blas="-L$${MKL_HOME}/lib/intel64 -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm" --with-blas-name="mkl_core" ; \
+	    MPIFLAVOR=openmpi; \
 	  else \
-	    ./configure CC=mpicc F77=mpif77 --prefix=$(PKGROOT) $(OPT) \
-		--with-mpich2=$${MPI_HOME} --with-blas="-L$${MKL_HOME}/lib/intel64 -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm" --with-blas-name="mkl_core"; \
+	    MPIFLAVOR=mpich2; \
 	  fi; \
+	  ./configure CC=mpicc F77=mpif77 \
+	              --prefix=$(PKGROOT) --with-$${MPIFLAVOR}=$${MPIHOME} \
+	              --with-blas="-L$${MKLLIB} -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm" --with-blas-name=mkl_core; \
 	  $(MAKE)  \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
-	mkdir -p $(ROOT)/$(PKGROOT)/bin
-	mkdir -p $(REDHAT.ROOT)/src/build-chemistry-modules
+	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
+	# Bind mount appears to be required to avoid binaries that include
+	# $(ROOT) and creation of /opt/apbs on build machine.
+	-mkdir -p -m 755 $(PKGROOT)
+	mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT)
 	( \
 	  $(COMPILERSETUP); \
+	  $(MKLSETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE_DIR); \
-	  $(MAKE) prefix=$(ROOT)/$(PKGROOT) install; \
-	  cp -r examples $(ROOT)/$(PKGROOT); \
-	  cp tools/manip/psize.py $(ROOT)/$(PKGROOT)/examples/actin-dimer/ \
+	  $(MAKE) install \
 	)
-	 cat apbs.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/apbs!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g;s!ROLLMPI!$(ROLLMPI)!g;s!ROLLNETWORK!$(ROLLNETWORK)!g" \
-          > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
+	umount $(PKGROOT)
+	-rmdir -p $(PKGROOT)
+	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)
+	cp $(SOURCE_DIR)/tools/manip/psize.py $(ROOT)/$(PKGROOT)/examples/actin-dimer/
+	mkdir -p $(REDHAT.ROOT)/src/build-chemistry-modules
+	cat apbs.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/apbs!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g;s!ROLLMPI!$(ROLLMPI)!g;s!ROLLNETWORK!$(ROLLNETWORK)!g" \
+	  > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
