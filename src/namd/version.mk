@@ -1,3 +1,6 @@
+# Note: normally this package is built with a single compiler and mpi flavor;
+# the rpms from multiple builds will overwrite each other.
+
 ifndef ROLLCOMPILER
   ROLLCOMPILER = gnu
 endif

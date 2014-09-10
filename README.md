@@ -68,7 +68,7 @@ for openmpi ethernet.  To build for a different configuration, use the
 make ROLLCOMPILER=intel ROLLMPI=mpich2 ROLLNETWORK=mx 
 ```
 
-The build process currently supports one or more of the values "intel", "pgi",
+The build process currently supports one of the values "intel", "pgi",
 and "gnu" for the `ROLLCOMPILER` variable, defaulting to "gnu".  It supports
 `ROLLMPI` values "openmpi" and "mvapich2", defaulting to "openmpi".
 It uses any `ROLLNETWORK` variable value(s) to load appropriate mpi modules,
