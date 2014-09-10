@@ -11,7 +11,7 @@
 ---
 > LINK =		mpicxx
 > LINKFLAGS =	-O2
-> LIB =           -lstdc++ ROLLFLAGS  -mkl=sequential
+> LIB =           LINK_LIBS
 40c40
 < MPI_INC =       -DMPICH_SKIP_MPICXX 
 ---
