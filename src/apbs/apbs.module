@@ -68,6 +68,7 @@ setenv APBSHOME /opt/apbs
 prepend-path PATH /opt/apbs/bin
 setenv APBSHOME /opt/apbs
 prepend-path PATH /opt/apbs/bin
+module load mkl
 END
 
 chmod 0644  ROOT_PKGROOTMODULEROOT/VERSION

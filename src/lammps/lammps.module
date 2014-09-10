@@ -66,6 +66,7 @@ if { \$loadApps  }  {
 }
 setenv LAMMPSHOME /opt/lammps
 prepend-path PATH /opt/lammps/bin
+module load mkl
 END
 
 chmod 0644  ROOT_PKGROOTMODULEROOT/VERSION
