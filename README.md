@@ -27,9 +27,21 @@ development machine.
 
 
 ## Dependencies
-compiler (intel recommended),  mpi, and fftw  rolls
 
+Intel MKL libraries.  If you're building with the Intel compiler or there is
+an mkl modulefile present (the mkl-roll provides this), then the build process
+will pick these up automatically.  Otherwise, you'll need to set the MKL_ROOT
+environment variable to the library location.
 
+FFTW libraries.  If there is
+an fftw modulefile present (the fftw-roll provides this), then the build process
+will pick these up automatically.  Otherwise, you'll need to set the FFTWHOME
+environment variable to the library location.
+
+CUDA libraries.  If there is
+a cuda modulefile present, then the build process
+will pick these up automatically.  Otherwise, you'll need to set the CUDAHOME
+environment variable to the library location.
 
 ## Building
 
@@ -58,19 +70,26 @@ make ROLLCOMPILER=intel ROLLMPI=mpich2 ROLLNETWORK=mx
 
 The build process currently supports one or more of the values "intel", "pgi",
 and "gnu" for the `ROLLCOMPILER` variable, defaulting to "gnu".  It supports
-`ROLLMPI` values "openmpi", "mpich2", and "mvapich2", defaulting to "openmpi".
+`ROLLMPI` values "openmpi" and "mvapich2", defaulting to "openmpi".
 It uses any `ROLLNETWORK` variable value(s) to load appropriate mpi modules,
 assuming that there are modules named `$(ROLLMPI)_$(ROLLNETWORK)` available
-(e.g., `openmpi_ib`, `mpich2_mx`, etc.).
+(e.g., `openmpi_mx`, `mvapich2_ib`, etc.).
+If possible,
+the build process uses the ROLLCOMPILER value to load an environment module,
+and it supports using the ROLLCOMPILER value to specify a particular compiler
+version, e.g.,
+
+```shell
+% make ROLLCOMPILER=gnu/4.8.1
+```
 
 If the `ROLLCOMPILER`, `ROLLNETWORK` and/or `ROLLMPI` variables are specified,
-their values are incorporated into the names of the produced roll and rpms, e.g.,
+their values are incorporated into the names of the produced rpms, e.g.,
 
 ```shell
 make ROLLCOMPILER=intel ROLLMPI=mvapich2 ROLLNETWORK=ib
 ```
-produces a roll with a name that begins "`chemistry_intel_mvapich2_ib`"; it
-contains and installs similarly-named rpms.
+produces an rpm with a name that begins "`chemistry_intel_mvapich2_ib`".
 
 For gnu compilers, the roll also supports a `ROLLOPTS` make variable value of
 'avx', indicating that the target architecture supports AVX instructions.
