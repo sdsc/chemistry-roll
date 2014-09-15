@@ -23,11 +23,4 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
   <tail>chemistry-install</tail>
 </order>
 
-<edge from="server">
-  <to>chemistry-doc</to>
-</edge>
-<order head="server">
-  <tail>chemistry-doc</tail>
-</order>
-
 </graph>
