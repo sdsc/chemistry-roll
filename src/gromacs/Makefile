@@ -78,16 +78,15 @@ ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
   endif
 endif
 
-COMPILERSETUP =  \
-  if test -e /etc/profile.d/modules.sh; then \
-    . /etc/profile.d/modules.sh; \
-    module load $(ROLLCOMPILER) || true; \
-    module load cmake || true; \
-  fi; \
-  echo === Compiler and version ===; \
-  $(CC) --version; \
+CMAKESETUP = \
+  module load cmake || true; \
   echo === cmake version ===; \
   cmake --version
+
+COMPILERSETUP =  \
+  module load $(ROLLCOMPILER) || true; \
+  echo === Compiler and version ===; \
+  $(CC) --version
 
 ifeq ("$(ROLLNETWORK)", "eth")
   MPIMODULE = $(ROLLMPI)
@@ -96,19 +95,14 @@ else
 endif
 
 MPISETUP = \
-  if test -e /etc/profile.d/modules.sh; then \
-    . /etc/profile.d/modules.sh; \
-    module load $(MPIMODULE) || true; \
-  fi; \
-  if test -z "$${MPIHOME}"; then \
-    export MPIHOME=/opt/$(ROLLMPI); \
-  fi; \
+  module load $(MPIMODULE) || true; \
   echo === MPIHOME ===; \
   echo $${MPIHOME}
 
 build: $(SRC_DIRS)
 	( \
 	  $(COMPILERSETUP); \
+	  $(CMAKESETUP); \
 	  $(MPISETUP); \
 	  cd $(SOURCE_DIR); \
 	  mkdir build; \
@@ -124,6 +118,7 @@ install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
 	( \
 	  $(COMPILERSETUP); \
+	  $(CMAKESETUP); \
 	  $(MPISETUP); \
           module load cmake; \
 	  cd $(SOURCE_DIR)/build; \

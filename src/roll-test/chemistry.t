@@ -16,13 +16,6 @@ my @packages = ('apbs', 'cp2k', 'gromacs', 'lammps', 'namd');
 my $output;
 my $TESTFILE = 'tmpchemistry';
 
-# chemistry_doc.xml
-if ($appliance eq 'Frontend') {
-  ok(-d '/var/www/html/roll-documentation/6.1/chemistry', 'doc installed');
-} else {
-  ok(! -d '/var/www/html/roll-documentation/6.1/chemistry', 'doc not installed');
-}
-
 # chemistry-install.xml
 foreach my $package(@packages) {
   if($appliance =~ /$installedOnAppliancesPattern/) {
@@ -41,10 +34,7 @@ SKIP: {
   skip 'apbs test not installed', 1 if ! -d $testDir;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
-if test -f /etc/profile.d/modules.sh; then
-  . /etc/profile.d/modules.sh
-  module load $compiler ${mpi}_${network} apbs
-fi
+module load $compiler ${mpi}_${network} apbs
 cd $packageHome/examples/actin-dimer
 $packageHome/bin/apbs apbs-smol-auto.in
 END
@@ -63,10 +53,7 @@ SKIP: {
   skip 'cp2k test not installed', 1 if ! -d $testDir;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
-if test -f /etc/profile.d/modules.sh; then
-  . /etc/profile.d/modules.sh
-  module load $compiler ${mpi}_${network} cp2k fftw
-fi
+module load $compiler ${mpi}_${network} cp2k fftw
 mkdir $TESTFILE.dir
 cd $TESTFILE.dir
 cp $testDir/* .
@@ -88,10 +75,7 @@ SKIP: {
   skip 'gromacs test not installed', 1 if ! -d $testDir;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
-if test -f /etc/profile.d/modules.sh; then
-  . /etc/profile.d/modules.sh
-  module load $compiler ${mpi}_${network} gromacs
-fi
+module load $compiler ${mpi}_${network} gromacs
 cd $testDir
 rm -f md.log
 $packageHome/bin/grompp_mpi
@@ -112,10 +96,7 @@ SKIP: {
   skip 'lammps test not installed', 1 if ! -d $testDir;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
-if test -f /etc/profile.d/modules.sh; then
-  . /etc/profile.d/modules.sh
-  module load $compiler ${mpi}_${network} lammps
-fi
+module load $compiler ${mpi}_${network} lammps
 cd $packageHome/examples/colloid
 mpirun -np 1  $packageHome/bin/lammps < in.colloid
 END
@@ -134,10 +115,7 @@ SKIP: {
   skip 'namd test not installed', 1 if ! -d $testDir;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
-if test -f /etc/profile.d/modules.sh; then
-  . /etc/profile.d/modules.sh
-  module load $compiler ${mpi}_${network}  namd
-fi
+module load $compiler ${mpi}_${network}  namd
 cd $testDir
 $packageHome/bin/namd2 tiny.namd
 END
@@ -152,7 +130,6 @@ SKIP: {
 
   skip 'chemistry not installed', 1
     if $appliance !~ /$installedOnAppliancesPattern/;
-  skip 'modules not installed', 1 if ! -f '/etc/profile.d/modules.sh';
   foreach my $package(@packages) {
     my ($noVersion) = $package =~ m#([^/]+)#;
     `/bin/ls /opt/modulefiles/applications/$noVersion/[0-9]* 2>&1`;

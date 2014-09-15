@@ -76,18 +76,12 @@ else ifeq ("$(ROLLCOMPILER)", "pgi")
 endif
 
 COMPILERSETUP =  \
-  if test -e /etc/profile.d/modules.sh; then \
-    . /etc/profile.d/modules.sh; \
-    module load $(ROLLCOMPILER) || true; \
-  fi; \
+  module load $(ROLLCOMPILER) || true; \
   echo === Compiler and version ===; \
   $(CC) --version
 
 CUDASETUP = \
-  if test -e /etc/profile.d/modules.sh; then \
-    . /etc/profile.d/modules.sh; \
-    module load cuda || true; \
-  fi; \
+  module load cuda || true; \
   echo === CUDAHOME ===; \
   echo $${CUDAHOME}
 
@@ -98,13 +92,7 @@ else
 endif
 
 MPISETUP = \
-  if test -e /etc/profile.d/modules.sh; then \
-    . /etc/profile.d/modules.sh; \
-    module load $(MPIMODULE) || true; \
-  fi; \
-  if test -z "$${MPIHOME}"; then \
-    export MPIHOME=/opt/$(ROLLMPI); \
-  fi; \
+  module load $(MPIMODULE) || true; \
   echo === MPIHOME ===; \
   echo $${MPIHOME}
 

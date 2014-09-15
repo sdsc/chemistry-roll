@@ -16,7 +16,7 @@ endif
 
 NAME           = apbs_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
 VERSION        = 1.3
-RELEASE        = 8
+RELEASE        = 9
 PKGROOT        = /opt/apbs
 
 SRC_SUBDIR     = apbs

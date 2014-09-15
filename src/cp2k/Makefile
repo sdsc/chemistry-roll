@@ -84,26 +84,17 @@ ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
 endif
 
 COMPILERSETUP = \
-  if test -e /etc/profile.d/modules.sh; then \
-    . /etc/profile.d/modules.sh; \
-    module load $(ROLLCOMPILER) || true; \
-  fi; \
+  module load $(ROLLCOMPILER) || true; \
   echo === Compiler and version ===; \
   $(CC) --version
 
 FFTWSETUP = \
-  if test -e /etc/profile.d/modules.sh; then \
-    . /etc/profile.d/modules.sh; \
-    module load fftw || true; \
-  fi; \
+  module load fftw || true; \
   echo === FFTWHOME ===; \
   echo $${FFTWHOME}
 
 MKLSETUP = \
-  if test -e /etc/profile.d/modules.sh; then \
-    . /etc/profile.d/modules.sh; \
-    module load mkl || true; \
-  fi; \
+  module load mkl || true; \
   echo === MKL_ROOT ===; \
   echo $${MKL_ROOT}; \
   export MKLLIB=`find $${MKL_ROOT}/lib/* -maxdepth 0 | head -1`
@@ -115,13 +106,7 @@ else
 endif
 
 MPISETUP = \
-  if test -e /etc/profile.d/modules.sh; then \
-    . /etc/profile.d/modules.sh; \
-    module load $(MPIMODULE) || true; \
-  fi; \
-  if test -z "$${MPIHOME}"; then \
-    export MPIHOME=/opt/$(ROLLMPI); \
-  fi; \
+  module load $(MPIMODULE) || true; \
   echo === MPIHOME ===; \
   echo $${MPIHOME}
 
