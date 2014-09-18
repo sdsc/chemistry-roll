@@ -15,7 +15,7 @@ ifndef ROLLNETWORK
 endif
 
 NAME           = gromacs_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
-VERSION        = 4.6.5
+VERSION        = 5.0
 RELEASE        = 9
 PKGROOT        = /opt/gromacs
 
