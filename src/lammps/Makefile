@@ -146,6 +146,7 @@ build: $(SRC_DIRS)
 	  $(MAKE) yes-mc; \
 	  $(MAKE) yes-meam; \
 	  $(MAKE) yes-user-atc; \
+	  $(MAKE) yes-user-awpmd; \
 	  $(MAKE) yes-molecule; \
 	  $(MAKE) yes-opt; \
 	  $(MAKE) yes-peri; \
