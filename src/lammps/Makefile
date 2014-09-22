@@ -128,6 +128,7 @@ build: $(SRC_DIRS)
 	perl -pi -e "s!ROLLCOMPILER!$(FC)!" $(SOURCE_DIR)/lib/reax/Makefile.reax
 	patch $(SOURCE_DIR)/lib/awpmd/Makefile.lammps.installed patch-files/Makefile.lammps.awpmd.installed.patch
 	patch $(SOURCE_DIR)/lib/atc/Makefile.lammps.installed patch-files/Makefile.lammps.atc.installed.patch
+	patch -o $(SOURCE_DIR)/lib/colvars/Makefile.colvars $(SOURCE_DIR)/lib/colvars/Makefile.g++ patch-files/Makefile.colvars.patch
 	( \
 	  $(COMPILERSETUP); \
 	  $(MKLSETUP); \
@@ -142,11 +143,22 @@ build: $(SRC_DIRS)
 	  $(MAKE) yes-fld; \
 	  $(MAKE) yes-granular; \
 	  $(MAKE) yes-kspace; \
+	  $(MAKE) yes-body; \
+	  $(MAKE) yes-kokkos; \
 	  $(MAKE) yes-manybody; \
 	  $(MAKE) yes-mc; \
 	  $(MAKE) yes-meam; \
 	  $(MAKE) yes-user-atc; \
+	  $(MAKE) yes-user-colvars; \
+	  $(MAKE) yes-user-misc; \
+	  $(MAKE) yes-misc; \
 	  $(MAKE) yes-user-awpmd; \
+	  $(MAKE) yes-user-eff; \
+	  $(MAKE) yes-user-fep; \
+	  $(MAKE) yes-user-lb; \
+	  $(MAKE) yes-user-molfile; \
+	  $(MAKE) yes-user-phonon; \
+	  $(MAKE) yes-user-sph; \
 	  $(MAKE) yes-molecule; \
 	  $(MAKE) yes-opt; \
 	  $(MAKE) yes-peri; \
@@ -154,12 +166,15 @@ build: $(SRC_DIRS)
 	  $(MAKE) yes-reax; \
 	  $(MAKE) yes-replica; \
 	  $(MAKE) yes-shock; \
+	  $(MAKE) yes-snap; \
 	  $(MAKE) yes-srd; \
 	  $(MAKE) yes-xtc; \
 	  $(MAKE) yes-rigid; \
 	  $(MAKE) yes-user-reaxc; \
 	  $(MAKE) yes-user-cg-cmm; \
-	  cd ../lib/atc; \
+	  $(MAKE) yes-asphere; \
+	  $(MAKE) yes-kspace; \
+          cd ../lib/atc; \
 	  $(MAKE) -f Makefile.atc; \
 	  cp *.a ../../src; \
 	  cd ../awpmd; \
@@ -174,13 +189,14 @@ build: $(SRC_DIRS)
 	  cd ../reax; \
 	  $(MAKE) -f Makefile.reax; \
 	  cp *.a ../../src; \
+	  cd ../colvars; \
+	  $(MAKE) -f Makefile.colvars; \
+	  cp *.a ../../src; \
 	  if test "$(CUDABUILD)" == "yes"; then \
 	    cd ../gpu; \
 	    $(MAKE) -f Makefile.linux; \
 	    cp *.a ../../src; \
 	    cd ../../src; \
-	    make yes-asphere; \
-	    make yes-kspace; \
 	    make yes-gpu; \
 	    cd ../lib/cuda; \
 	    $(MAKE); \
