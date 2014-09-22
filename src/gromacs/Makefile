@@ -116,14 +116,17 @@ build: $(SRC_DIRS)
 
 install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
+	mkdir -p -m 755 $(PKGROOT)
+	mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT)
 	( \
 	  $(COMPILERSETUP); \
 	  $(CMAKESETUP); \
 	  $(MPISETUP); \
           module load cmake; \
 	  cd $(SOURCE_DIR)/build; \
-	  $(MAKE) prefix=$(ROOT)/$(PKGROOT) install \
+	  $(MAKE) prefix=$(PKGROOT) install \
 	)
+	-umount $(PKGROOT)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)
 	mkdir -p $(REDHAT.ROOT)/src/build-chemistry-modules
 	cat gromacs.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/gromacs!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g;s!ROLLMPI!$(ROLLMPI)!g;s!ROLLNETWORK!$(ROLLNETWORK)!g" \
