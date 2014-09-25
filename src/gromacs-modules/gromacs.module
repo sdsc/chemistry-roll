@@ -1,0 +1,8 @@
+#%Module1.0
+setenv GROMACSHOME /opt/gromacs
+setenv GMXBIN /opt/gromacs/bin
+setenv GMXDATA /opt/gromacs/share
+setenv GMXLDLIB /opt/gromacs/lib
+setenv GMXMAN /opt/gromacs/share/man
+prepend-path PATH /opt/gromacs/bin
+prepend-path LD_LIBRARY_PATH /opt/gromacs/lib

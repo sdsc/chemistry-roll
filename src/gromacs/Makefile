@@ -125,9 +125,6 @@ install::
 	  $(MAKE) prefix=$(ROOT)/$(PKGROOT) install \
 	)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)
-	mkdir -p $(REDHAT.ROOT)/src/build-chemistry-modules
-	cat gromacs.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/gromacs!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g;s!ROLLMPI!$(ROLLMPI)!g;s!ROLLNETWORK!$(ROLLNETWORK)!g" \
-	  > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::

@@ -194,9 +194,6 @@ install::
 	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
 	cp $(SOURCE_DIR)/src/lmp_linux $(ROOT)/$(PKGROOT)/bin/lammps
 	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)/
-	mkdir -p $(REDHAT.ROOT)/src/build-chemistry-modules
-	cat lammps.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/lammps!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(ROLLCOMPILER)!g;s!ROLLMPI!$(ROLLMPI)!g;s!ROLLNETWORK!$(ROLLNETWORK)!g" \
-	  > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::

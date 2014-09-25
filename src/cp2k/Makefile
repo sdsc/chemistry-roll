@@ -178,9 +178,6 @@ install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/test
 	cp $(SOURCE_DIR)/exe/$(ROLLMAKEFILE)/cp2k.popt $(ROOT)/$(PKGROOT)/bin
 	cp -r $(SOURCE_DIR)/tests/EP/* $(ROOT)/$(PKGROOT)/test/
-	mkdir -p $(REDHAT.ROOT)/src/build-chemistry-modules
-	cat cp2k.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/cp2k!g;s!VERSION!$(VERSION)!g;s!ROLLCOMPILER!$(COMPILERNAME)!g;s!ROLLMPI!$(ROLLMPI)!g;s!ROLLNETWORK!$(ROLLNETWORK)!g" \
-	  > $(REDHAT.ROOT)/src/build-chemistry-modules/$(NAME).module
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
