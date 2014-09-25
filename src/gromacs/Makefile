@@ -116,14 +116,17 @@ build: $(SRC_DIRS)
 
 install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
+	mkdir -p -m 755 $(PKGROOT)
+	mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT)
 	( \
 	  $(COMPILERSETUP); \
 	  $(CMAKESETUP); \
 	  $(MPISETUP); \
           module load cmake; \
 	  cd $(SOURCE_DIR)/build; \
-	  $(MAKE) prefix=$(ROOT)/$(PKGROOT) install \
+	  $(MAKE) prefix=$(PKGROOT) install \
 	)
+	-umount $(PKGROOT)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)
 	@echo "::: Package $(NAME) install complete :::"
 

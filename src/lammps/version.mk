@@ -16,7 +16,7 @@ endif
 
 NAME           = lammps_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
 VERSION        := $(shell date -d "$(SOURCE_VERSION)" +%Y%m%d)
-RELEASE        = 1
+RELEASE        = 0
 PKGROOT        = /opt/lammps
 
 SRC_SUBDIR     = lammps
