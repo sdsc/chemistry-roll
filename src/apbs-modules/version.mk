@@ -1,8 +1,11 @@
-NAME        = apbs-modules
-RELEASE     = 0
-PKGROOT     = /opt/modulefiles/applications/apbs
+PACKAGE     = apbs
+CATEGORY    = applications
 
-VERSION_SRC = $(REDHAT.ROOT)/src/apbs/version.mk
+NAME        = $(PACKAGE)-modules
+RELEASE     = 0
+PKGROOT     = /opt/modulefiles/$(CATEGORY)/$(PACKAGE)
+
+VERSION_SRC = $(REDHAT.ROOT)/src/$(PACKAGE)/version.mk
 VERSION_INC = version.inc
 include $(VERSION_INC)
 

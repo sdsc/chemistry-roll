@@ -1,8 +1,11 @@
-NAME        = cp2k-modules
-RELEASE     = 0
-PKGROOT     = /opt/modulefiles/applications/cp2k
+PACKAGE     = cp2k
+CATEGORY    = applications
 
-VERSION_SRC = $(REDHAT.ROOT)/src/cp2k/version.mk
+NAME        = $(PACKAGE)-modules
+RELEASE     = 1
+PKGROOT     = /opt/modulefiles/$(CATEGORY)/$(PACKAGE)
+
+VERSION_SRC = $(REDHAT.ROOT)/src/$(PACKAGE)/version.mk
 VERSION_INC = version.inc
 include $(VERSION_INC)
 

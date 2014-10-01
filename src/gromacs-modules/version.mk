@@ -1,8 +1,11 @@
-NAME        = gromacs-modules
-RELEASE     = 0
-PKGROOT     = /opt/modulefiles/applications/gromacs
+PACKAGE     = gromacs
+CATEGORY    = applications
 
-VERSION_SRC = $(REDHAT.ROOT)/src/gromacs/version.mk
+NAME        = $(PACKAGE)-modules
+RELEASE     = 2
+PKGROOT     = /opt/modulefiles/$(CATEGORY)/$(PACKAGE)
+
+VERSION_SRC = $(REDHAT.ROOT)/src/$(PACKAGE)/version.mk
 VERSION_INC = version.inc
 include $(VERSION_INC)
 
