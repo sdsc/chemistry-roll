@@ -78,16 +78,15 @@ ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
   endif
 endif
 
+CMAKESETUP = \
+  module load cmake || true; \
+  echo === cmake version ===; \
+  cmake --version
+
 COMPILERSETUP =  \
   module load $(ROLLCOMPILER) || true; \
   echo === Compiler and version ===; \
   $(CC) --version
-
-MKLSETUP = \
-  module load mkl || true; \
-  echo === MKL_ROOT ===; \
-  echo $${MKL_ROOT}; \
-  export MKLLIB=`find $${MKL_ROOT}/lib/* -maxdepth 0 | head -1`
 
 ifeq ("$(ROLLNETWORK)", "eth")
   MPIMODULE = $(ROLLMPI)
@@ -104,39 +103,25 @@ build: $(SRC_DIRS)
 	cp test.sh $(SOURCE_DIR)/examples/actin-dimer
 	( \
 	  $(COMPILERSETUP); \
-	  $(MKLSETUP); \
 	  $(MPISETUP); \
-	  cd $(SOURCE_DIR); \
+	  $(CMAKESETUP); \
+	  cd $(SOURCE_DIR)/build; \
 	  export CFLAGS="$(COMPILE_FLAGS)"; \
 	  export CXXFLAGS="$(COMPILE_FLAGS)"; \
 	  export FFLAGS="$(COMPILE_FLAGS)"; \
-	  if test "$(ROLLMPI)" = "openmpi"; then \
-	    MPIFLAVOR=openmpi; \
-	  else \
-	    MPIFLAVOR=mpich2; \
-	  fi; \
-	  ./configure CC=mpicc F77=mpif77 \
-	              --prefix=$(PKGROOT) --with-$${MPIFLAVOR}=$${MPIHOME} \
-	              --with-blas="-L$${MKLLIB} -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm" --with-blas-name=mkl_core; \
-	  $(MAKE)  \
+	  cmake -DCMAKE_INSTALL_PREFIX=$(ROOT)/$(PKGROOT) ..; \
+	  $(MAKE) \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
-	# Bind mount appears to be required to avoid binaries that include
-	# $(ROOT) and creation of /opt/apbs on build machine.
-	-mkdir -p -m 755 $(PKGROOT)
-	mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT)
 	( \
 	  $(COMPILERSETUP); \
-	  $(MKLSETUP); \
 	  $(MPISETUP); \
-	  cd $(SOURCE_DIR); \
+	  cd $(SOURCE_DIR)/build; \
 	  $(MAKE) install \
 	)
-	umount $(PKGROOT)
-	-rmdir -p $(PKGROOT)
 	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)
 	cp $(SOURCE_DIR)/tools/manip/psize.py $(ROOT)/$(PKGROOT)/examples/actin-dimer/
 	@echo "::: Package $(NAME) install complete :::"

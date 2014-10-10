@@ -1,4 +1,4 @@
 #%Module1.0
 setenv APBSHOME /opt/apbs
 prepend-path PATH /opt/apbs/bin
-module load mkl
+prepend-path LD_LIBRARY_PATH /opt/apbs/lib
