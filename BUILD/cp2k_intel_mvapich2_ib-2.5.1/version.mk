@@ -14,19 +14,26 @@ ifndef ROLLNETWORK
   ROLLNETWORK = eth
 endif
 
-NAME           = lammps_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
-VERSION        := $(shell date -d "$(SOURCE_VERSION)" +%Y%m%d)
+NAME           = cp2k_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
+VERSION        = 2.5.1
 RELEASE        = 0
-PKGROOT        = /opt/lammps
+PKGROOT        = /opt/cp2k
 
-SRC_SUBDIR     = lammps
+SRC_SUBDIR     = cp2k
 
-SOURCE_NAME    = lammps
-SOURCE_SUFFIX  = tar.gz
-SOURCE_VERSION = 1Aug14
+SOURCE_NAME    = cp2k
+SOURCE_SUFFIX  = tar.bz2
+SOURCE_VERSION = $(VERSION)
 SOURCE_PKG     = $(SOURCE_NAME)-$(SOURCE_VERSION).$(SOURCE_SUFFIX)
 SOURCE_DIR     = $(SOURCE_PKG:%.$(SOURCE_SUFFIX)=%)
 
-TAR_GZ_PKGS    = $(SOURCE_PKG)
+LIBINT_NAME    = libint
+LIBINT_SUFFIX  = tar.gz
+LIBINT_VERSION = 1.1.4
+LIBINT_PKG     = $(LIBINT_NAME)-$(LIBINT_VERSION).$(LIBINT_SUFFIX)
+LIBINT_DIR     = $(LIBINT_PKG:%.$(LIBINT_SUFFIX)=%)
+
+TAR_BZ2_PKGS   = $(SOURCE_PKG)
+TAR_GZ_PKGS    = $(LIBINT_PKG)
 
 RPM.EXTRAS     = AutoReq:No

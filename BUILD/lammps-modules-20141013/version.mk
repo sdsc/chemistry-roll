@@ -1,8 +1,8 @@
-PACKAGE     = apbs
+PACKAGE     = lammps
 CATEGORY    = applications
 
 NAME        = $(PACKAGE)-modules
-RELEASE     = 10
+RELEASE     = 1
 PKGROOT     = /opt/modulefiles/$(CATEGORY)/$(PACKAGE)
 
 VERSION_SRC = $(REDHAT.ROOT)/src/$(PACKAGE)/version.mk

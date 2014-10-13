@@ -14,19 +14,24 @@ ifndef ROLLNETWORK
   ROLLNETWORK = eth
 endif
 
-NAME           = lammps_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
-VERSION        := $(shell date -d "$(SOURCE_VERSION)" +%Y%m%d)
+NAME           = gromacs_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
+VERSION        = 5.0.2
 RELEASE        = 0
-PKGROOT        = /opt/lammps
+PKGROOT        = /opt/gromacs
 
-SRC_SUBDIR     = lammps
+SRC_SUBDIR     = gromacs
 
-SOURCE_NAME    = lammps
+SOURCE_NAME    = gromacs
 SOURCE_SUFFIX  = tar.gz
-SOURCE_VERSION = 1Aug14
+SOURCE_VERSION = $(VERSION)
 SOURCE_PKG     = $(SOURCE_NAME)-$(SOURCE_VERSION).$(SOURCE_SUFFIX)
 SOURCE_DIR     = $(SOURCE_PKG:%.$(SOURCE_SUFFIX)=%)
 
-TAR_GZ_PKGS    = $(SOURCE_PKG)
+GMXTEST_NAME   = gmxtest
+GMXTEST_SUFFIX = tar.gz
+GMXTEST_PKG    = $(GMXTEST_NAME).$(GMXTEST_SUFFIX)
+GMXTEST_DIR    = $(GMXTEST_PKG:%.$(GMXTEST_SUFFIX)=%)
+
+TAR_GZ_PKGS    = $(SOURCE_PKG) $(GMXTEST_PKG)
 
 RPM.EXTRAS     = AutoReq:No

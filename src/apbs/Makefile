@@ -111,7 +111,7 @@ build: $(SRC_DIRS)
 	  export FFLAGS="$(COMPILE_FLAGS)"; \
           export CC=mpicc; \
           export CXX=mpicxx; \
-	  cmake -DENEABLE_MPI=ON -DCMAKE_INSTALL_PREFIX=$(ROOT)/$(PKGROOT) ..; \
+	  cmake -DENABLE_MPI=ON -DCMAKE_INSTALL_PREFIX=$(ROOT)/$(PKGROOT) ..; \
 	  $(MAKE) \
 	)
 	@echo "::: Package $(NAME) build complete :::"

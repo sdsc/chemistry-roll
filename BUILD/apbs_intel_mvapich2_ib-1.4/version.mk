@@ -14,18 +14,18 @@ ifndef ROLLNETWORK
   ROLLNETWORK = eth
 endif
 
-NAME           = lammps_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
-VERSION        := $(shell date -d "$(SOURCE_VERSION)" +%Y%m%d)
+NAME           = apbs_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
+VERSION        = 1.4
 RELEASE        = 0
-PKGROOT        = /opt/lammps
+PKGROOT        = /opt/apbs
 
-SRC_SUBDIR     = lammps
+SRC_SUBDIR     = apbs
 
-SOURCE_NAME    = lammps
+SOURCE_NAME    = APBS
 SOURCE_SUFFIX  = tar.gz
-SOURCE_VERSION = 1Aug14
+SOURCE_VERSION = $(VERSION)-source
 SOURCE_PKG     = $(SOURCE_NAME)-$(SOURCE_VERSION).$(SOURCE_SUFFIX)
-SOURCE_DIR     = $(SOURCE_PKG:%.$(SOURCE_SUFFIX)=%)
+SOURCE_DIR     = apbs
 
 TAR_GZ_PKGS    = $(SOURCE_PKG)
 
