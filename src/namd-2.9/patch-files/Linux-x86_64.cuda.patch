@@ -1,0 +1,14 @@
+--- namd-2.9/arch/Linux-x86_64.cuda	2012-03-20 17:59:59.000000000 -0700
++++ patch-files/Linux-x86_64.cuda	2014-01-23 17:04:23.000000000 -0800
+@@ -1,9 +1,9 @@
+ 
+-CUDADIR=/usr/local/encap/cuda-4.0
++CUDADIR=ROLLCUDA
+ CUDAINCL=-I$(CUDADIR)/include
+ CUDALIB=-L$(CUDADIR)/lib64 -lcudart
+ CUDASODIR=$(CUDADIR)/lib64
+-LIBCUDARTSO=libcudart.so.4
++LIBCUDARTSO=libcudart.so
+ CUDAFLAGS=-DNAMD_CUDA
+ CUDAOBJS=$(CUDAOBJSRAW)
+ CUDA=$(CUDAFLAGS) -I. $(CUDAINCL)

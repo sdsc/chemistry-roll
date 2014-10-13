@@ -63,30 +63,27 @@ include Rules.mk
 include pull.mk
 
 CC = gcc
-COMPILE_FLAGS = -O2 
-ifeq ("$(COMPILERNAME)","intel")
-  CC = icc
-  COMPILE_FLAGS = -O2 -xHOST
-else ifeq ("$(COMPILERNAME)","pgi")
+FCC = f77
+COMPILE_FLAGS = -O2
+ifeq ("$(ROLLCOMPILER)", "intel")
+  CC = icc        
+  FCC = ifort
+  COMPILE_FLAGS = -ip -fno-rtti -xHOST
+else ifeq ("$(ROLLCOMPILER)", "pgi")
   CC = pgcc
+  FCC = pgf90
   COMPILE_FLAGS = -fast
 endif
-
-ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
-  ifeq ("$(COMPILERNAME)", "gnu")
-    COMPILE_FLAGS += -mavx
-  endif
-endif
-
-CMAKESETUP = \
-  module load cmake || true; \
-  echo === cmake version ===; \
-  cmake --version
 
 COMPILERSETUP =  \
   module load $(ROLLCOMPILER) || true; \
   echo === Compiler and version ===; \
   $(CC) --version
+
+CUDASETUP = \
+  module load cuda || true; \
+  echo === CUDAHOME ===; \
+  echo $${CUDAHOME}
 
 ifeq ("$(ROLLNETWORK)", "eth")
   MPIMODULE = $(ROLLMPI)
@@ -99,34 +96,59 @@ MPISETUP = \
   echo === MPIHOME ===; \
   echo $${MPIHOME}
 
+CHARMARCH = mpi-linux-x86_64
+CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
+CUDA = 
+ifeq ("$(ROLLCOMPILER)", "intel")
+  CHARMARCH = mpi-linux-x86_64-$(FCC)-mpicxx
+  CHARMBUILDOPTS = mpicxx $(FCC) -j16 -O2  -xHOST
+else ifeq ("$(ROLLCOMPILER)", "pgi")
+  CHARMARCH = mpi-linux-x86_64-$(FCC)-mpicxx
+  CHARMBUILDOPTS = mpicxx $(FCC) -j16 -O2  -fast
+endif
+
+ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
+  ifeq ("$(COMPILERNAME)", "gnu")
+    CHARMBUILDOPTS += -mavx
+    COMPILE_FLAGS += -mavx
+  endif
+endif
+
+ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
+  CUDA = --with-cuda
+endif
+
 build: $(SRC_DIRS)
-	cp test.sh $(SOURCE_DIR)/examples/actin-dimer
+	cd $(SOURCE_DIR) && tar xvf charm-*.tar
+	patch $(SOURCE_DIR)/arch/Linux-x86_64.fftw patch-files/Linux-x86_64.fftw.patch
+	patch $(SOURCE_DIR)/arch/Linux-x86_64.tcl patch-files/Linux-x86_64.tcl.patch
+	patch $(SOURCE_DIR)/arch/Linux-x86_64.cuda patch-files/Linux-x86_64.cuda.patch
+	cp Linux-x86_64* $(SOURCE_DIR)/arch
+	perl -pi -e "s!ROOTDIR!`pwd`/$(SOURCE_DIR)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
+	perl -pi -e "s!COMPILE_FLAGS!$(COMPILE_FLAGS)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
 	( \
 	  $(COMPILERSETUP); \
+	  $(CUDASETUP); \
 	  $(MPISETUP); \
-	  $(CMAKESETUP); \
-	  cd $(SOURCE_DIR)/build; \
-	  export CFLAGS="$(COMPILE_FLAGS)"; \
-	  export CXXFLAGS="$(COMPILE_FLAGS)"; \
-	  export FFLAGS="$(COMPILE_FLAGS)"; \
-          export CC=mpicc; \
-          export CXX=mpicxx; \
-	  cmake -DENEABLE_MPI=ON -DCMAKE_INSTALL_PREFIX=$(ROOT)/$(PKGROOT) ..; \
-	  $(MAKE) \
+          mv linux-$(ARCH) $(SOURCE_DIR); \
+	  perl -pi -e "s!ROLLCUDA!$${CUDAHOME}!g" $(SOURCE_DIR)/arch/Linux-x86_64.cuda; \
+	  cd $(SOURCE_DIR); \
+	  cd charm-*[0-9]; \
+	  ./build charm++ mpi-linux-x86_64 $(CHARMBUILDOPTS); \
+	  cd ..; \
+	  ./config Linux-x86_64-MPI-$(CC) --charm-arch $(CHARMARCH) $(CUDA); \
+	  cd Linux-x86_64-MPI-$(CC); \
+	  $(MAKE) -j 16 \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
-	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
-	( \
-	  $(COMPILERSETUP); \
-	  $(MPISETUP); \
-	  cd $(SOURCE_DIR)/build; \
-	  $(MAKE) install \
-	)
-	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)
-	cp $(SOURCE_DIR)/tools/manip/psize.py $(ROOT)/$(PKGROOT)/examples/actin-dimer/
+	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/bin
+	cp $(SOURCE_DIR)/*/{charmrun,flipbinpdb,flipdcd,namd2,psfgen} \
+	   $(ROOT)/$(PKGROOT)/bin
+	cp -r tiny $(ROOT)/$(PKGROOT)
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SOURCE_DIR)
+	rm -rf $(SRC_DIRS) _arch
+
