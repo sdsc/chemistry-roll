@@ -112,6 +112,7 @@ build: $(SRC_DIRS)
           export CC=mpicc; \
           export CXX=mpicxx; \
 	  cmake -DENABLE_MPI=ON -DCMAKE_INSTALL_PREFIX=$(ROOT)/$(PKGROOT) ..; \
+          echo "define HAVE_MPI_H" >> $(SOURCE_DIR)/src/apbscfg.h; \
 	  $(MAKE) \
 	)
 	@echo "::: Package $(NAME) build complete :::"
