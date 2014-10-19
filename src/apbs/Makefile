@@ -63,12 +63,15 @@ include Rules.mk
 include pull.mk
 
 CC = gcc
+CXX = g++
 COMPILE_FLAGS = -O2 
 ifeq ("$(COMPILERNAME)","intel")
   CC = icc
+  CXX = icc
   COMPILE_FLAGS = -O2 -xHOST
 else ifeq ("$(COMPILERNAME)","pgi")
   CC = pgcc
+  CXX = pgCC
   COMPILE_FLAGS = -fast
 endif
 
@@ -110,6 +113,8 @@ build: $(SRC_DIRS)
 	  export CFLAGS="$(COMPILE_FLAGS)"; \
 	  export CXXFLAGS="$(COMPILE_FLAGS)"; \
 	  export FFLAGS="$(COMPILE_FLAGS)"; \
+          export  CC=$(CC); \
+          export  CXX=$(CXX); \
 	  if test "$(ROLLMPI)" = "openmpi"; then \
 	    MPIFLAVOR=openmpi; \
 	  else \
