@@ -7,7 +7,7 @@ endif
 COMPILERNAME := $(firstword $(subst /, ,$(ROLLCOMPILER)))
 
 ifndef ROLLMPI
-  ROLLMPI = openmpi
+  ROLLMPI = rocks-openmpi
 endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
