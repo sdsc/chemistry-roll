@@ -7,16 +7,13 @@ endif
 COMPILERNAME := $(firstword $(subst /, ,$(ROLLCOMPILER)))
 
 ifndef ROLLMPI
-  ROLLMPI = openmpi
+  ROLLMPI = rocks-openmpi
 endif
+MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
-ifndef ROLLNETWORK
-  ROLLNETWORK = eth
-endif
-
-NAME           = apbs_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
+NAME           = apbs_$(COMPILERNAME)_$(ROLLMPI)
 VERSION        = 1.4
-RELEASE        = 0
+RELEASE        = 1
 PKGROOT        = /opt/apbs
 
 SRC_SUBDIR     = apbs

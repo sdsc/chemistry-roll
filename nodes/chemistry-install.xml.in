@@ -16,15 +16,15 @@ Copyright (c) 2000 - 2014 The Regents of the University of California.
 All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 </copyright>
 
-<package>apbs_COMPILERNAME_ROLLMPI_ROLLNETWORK</package>
+<package>apbs_COMPILERNAME_MPINAME</package>
 <package>apbs-modules</package>
-<package>cp2k_COMPILERNAME_ROLLMPI_ROLLNETWORK</package>
+<package>cp2k_COMPILERNAME_MPINAME</package>
 <package>cp2k-modules</package>
-<package>gromacs_COMPILERNAME_ROLLMPI_ROLLNETWORK</package>
+<package>gromacs_COMPILERNAME_MPINAME</package>
 <package>gromacs-modules</package>
-<package>lammps_COMPILERNAME_ROLLMPI_ROLLNETWORK</package>
+<package>lammps_COMPILERNAME_MPINAME</package>
 <package>lammps-modules</package>
-<package>namd_COMPILERNAME_ROLLMPI_ROLLNETWORK</package>
+<package>namd_COMPILERNAME_MPINAME</package>
 <package>namd-modules</package>
 <package>chemistry-roll-test</package>
 

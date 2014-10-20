@@ -99,23 +99,17 @@ MKLSETUP = \
   echo $${MKL_ROOT}; \
   export MKLLIB=`find $${MKL_ROOT}/lib/* -maxdepth 0 | head -1`
 
-ifeq ("$(ROLLNETWORK)", "eth")
-  MPIMODULE = $(ROLLMPI)
-else
-  MPIMODULE = $(ROLLMPI)_$(ROLLNETWORK)
-endif
-
 MPISETUP = \
-  module load $(MPIMODULE) || true; \
+  module load $(ROLLMPI) || true; \
   echo === MPIHOME ===; \
   echo $${MPIHOME}
 
-ROLLTYPEMKL = _openmpi_
-ifeq ("$(ROLLMPI)", "mvapich")
-  ROLLTYPEMKL = _
-else ifeq ("$(ROLLMPI)", "mpich2")
+ROLLTYPEMKL = _
+ifneq ("$(MPINAME)", "$(subst openmpi,,$(ROLLOPTS))")
+  ROLLTYPEMKL = _openmpi_
+else ifneq ("$(MPINAME)", "$(subst mpich,,$(ROLLOPTS))")
   ROLLTYPEMKL = _intelmpi_
-else ifeq ("$(ROLLMPI)", "mvapich2")
+else ifneq ("$(MPINAME)", "$(subst mvapich,,$(ROLLOPTS))")
   ROLLTYPEMKL = _intelmpi_
 endif
 

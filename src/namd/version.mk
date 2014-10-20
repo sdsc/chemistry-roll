@@ -9,14 +9,11 @@ COMPILERNAME := $(firstword $(subst /, ,$(ROLLCOMPILER)))
 ifndef ROLLMPI
   ROLLMPI = openmpi
 endif
+MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
-ifndef ROLLNETWORK
-  ROLLNETWORK = eth
-endif
-
-NAME           = namd_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
+NAME           = namd_$(COMPILERNAME)_$(ROLLMPI)
 VERSION        = 2.9
-RELEASE        = 9
+RELEASE        = 10
 PKGROOT        = /opt/namd
 
 SRC_SUBDIR     = namd

@@ -1,3 +1,4 @@
 #%Module1.0
 setenv NAMDHOME /opt/namd
 prepend-path PATH /opt/namd/bin
+module load ROLLCOMPILER ROLLMPI

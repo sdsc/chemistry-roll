@@ -5,7 +5,6 @@
 #   if not specified, the test assumes either Compute or Frontend
 my $compiler="ROLLCOMPILER";
 my $mpi="ROLLMPI";
-my $network="ROLLNETWORK";
 
 use Test::More qw(no_plan);
 
@@ -34,7 +33,7 @@ SKIP: {
   skip 'apbs test not installed', 1 if ! -d $testDir;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
-module load $compiler ${mpi}_${network} apbs
+module load apbs
 cd $packageHome/examples/actin-dimer
 $packageHome/bin/apbs apbs-smol-auto.in
 END
@@ -53,7 +52,7 @@ SKIP: {
   skip 'cp2k test not installed', 1 if ! -d $testDir;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
-module load $compiler ${mpi}_${network} cp2k fftw
+module load cp2k
 mkdir $TESTFILE.dir
 cd $TESTFILE.dir
 cp $testDir/* .
@@ -75,7 +74,7 @@ SKIP: {
   skip 'gromacs test not installed', 1 if ! -d $testDir;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
-module load $compiler ${mpi}_${network} gromacs
+module load gromacs
 cd $testDir
 rm -f md.log
 $packageHome/bin/grompp_mpi
@@ -97,7 +96,7 @@ SKIP: {
   skip 'lammps test not installed', 1 if ! -d $testDir;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
-module load $compiler ${mpi}_${network} lammps
+module load lammps
 cd $packageHome/examples/colloid
 mpirun -np 1  $packageHome/bin/lammps < in.colloid
 END
@@ -116,7 +115,7 @@ SKIP: {
   skip 'namd test not installed', 1 if ! -d $testDir;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
-module load $compiler ${mpi}_${network}  namd
+module load namd
 cd $testDir
 $packageHome/bin/namd2 tiny.namd
 END
