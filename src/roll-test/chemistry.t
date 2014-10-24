@@ -78,7 +78,12 @@ module load gromacs
 cd $testDir
 rm -f md.log
 $packageHome/bin/grompp_mpi
-mpirun -np 1  $packageHome/bin/mdrun_mpi
+output=`mpirun -np 1 $packageHome/bin/mdrun_mpi 2>&1`
+if [[ "\$output" =~ "run-as-root" ]]; then
+  # Recent openmpi requires special option for root user
+  output=`mpirun -np 1 --allow-run-as-root $packageHome/bin/mdrun_mpi 2>&1`
+fi
+echo \$output
 cat md.log
 END
   close(OUT);
@@ -98,7 +103,12 @@ SKIP: {
   print OUT <<END;
 module load lammps
 cd $packageHome/examples/colloid
-mpirun -np 1  $packageHome/bin/lammps < in.colloid
+output=`mpirun -np 1 $packageHome/bin/lammps < in.colloid 2>&1`
+if [[ "\$output" =~ "run-as-root" ]]; then
+  # Recent openmpi requires special option for root user
+  output=`mpirun -np 1 --allow-run-as-root $packageHome/bin/lammps < in.colloid 2>&1`
+fi
+echo \$output
 END
   close(OUT);
   $output = `/bin/bash $TESTFILE.sh`;
@@ -128,9 +138,8 @@ END
 
 SKIP: {
 
-  skip 'chemistry not installed', 1
-    if $appliance !~ /$installedOnAppliancesPattern/;
   foreach my $package(@packages) {
+    skip "$package not installed", 3 if ! -d "/opt/$package";
     my ($noVersion) = $package =~ m#([^/]+)#;
     `/bin/ls /opt/modulefiles/applications/$noVersion/[0-9]* 2>&1`;
     ok($? == 0, "$package module installed");
