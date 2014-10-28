@@ -7,15 +7,12 @@ endif
 COMPILERNAME := $(firstword $(subst /, ,$(ROLLCOMPILER)))
 
 ifndef ROLLMPI
-  ROLLMPI = openmpi
+  ROLLMPI = rocks-openmpi
 endif
-
-ifndef ROLLNETWORK
-  ROLLNETWORK = eth
-endif
+MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 VERSION        = 2.9
-NAME           = namd-$(VERSION)_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
+NAME           = namd-$(VERSION)_$(COMPILERNAME)_$(MPINAME)
 RELEASE        = 10
 PKGROOT        = /opt/namd/$(VERSION)
 
