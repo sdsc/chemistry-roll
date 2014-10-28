@@ -2,7 +2,7 @@ PACKAGE     = namd
 CATEGORY    = applications
 
 NAME        = $(PACKAGE)-modules
-RELEASE     = 1
+RELEASE     = 2
 PKGROOT     = /opt/modulefiles/$(CATEGORY)/$(PACKAGE)
 
 VERSION_SRC = $(REDHAT.ROOT)/src/$(PACKAGE)/version.mk

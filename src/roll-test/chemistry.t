@@ -117,15 +117,36 @@ END
 }
 
 # namd
-$packageHome = '/opt/namd';
-$testDir = '/opt/namd/tiny';
+$packageHome = '/opt/namd/2.10b1';
+$testDir = '/opt/namd/2.10b1/tiny';
 SKIP: {
 
   skip 'namd not installed', 1 if ! -d $packageHome;
   skip 'namd test not installed', 1 if ! -d $testDir;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
-module load namd
+module load $compiler ${mpi}_${network}  namd/2.10b1
+cd $testDir
+$packageHome/bin/namd2 tiny.namd
+END
+  close(OUT);
+  $output = `/bin/bash $TESTFILE.sh`;
+  ok($output =~ /WRITING VELOCITIES/, 'namd 2.10 sample run');
+  `/bin/rm $testDir/FFTW*`;
+
+}
+
+
+# namd
+$packageHome = '/opt/namd/2.9';
+$testDir = '/opt/namd/2.9/tiny';
+SKIP: {
+
+  skip 'namd not installed', 1 if ! -d $packageHome;
+  skip 'namd test not installed', 1 if ! -d $testDir;
+  open(OUT, ">$TESTFILE.sh");
+  print OUT <<END;
+module load $compiler ${mpi}_${network}  namd/2.9
 cd $testDir
 $packageHome/bin/namd2 tiny.namd
 END
@@ -135,7 +156,6 @@ END
   `/bin/rm $testDir/FFTW*`;
 
 }
-
 SKIP: {
 
   foreach my $package(@packages) {

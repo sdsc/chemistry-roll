@@ -63,22 +63,16 @@ include Rules.mk
 include pull.mk
 
 CC = gcc
-CXX = g++
-COMPILE_FLAGS = -O2 
-ifeq ("$(COMPILERNAME)","intel")
-  CC = icc
-  CXX = icc
-  COMPILE_FLAGS = -O2 -xHOST
-else ifeq ("$(COMPILERNAME)","pgi")
+FCC = f77
+COMPILE_FLAGS = -O2
+ifeq ("$(ROLLCOMPILER)", "intel")
+  CC = icc        
+  FCC = ifort
+  COMPILE_FLAGS = -ip -fno-rtti -xHOST
+else ifeq ("$(ROLLCOMPILER)", "pgi")
   CC = pgcc
-  CXX = pgCC
+  FCC = pgf90
   COMPILE_FLAGS = -fast
-endif
-
-ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
-  ifeq ("$(COMPILERNAME)", "gnu")
-    COMPILE_FLAGS += -mavx
-  endif
 endif
 
 COMPILERSETUP =  \
@@ -86,59 +80,75 @@ COMPILERSETUP =  \
   echo === Compiler and version ===; \
   $(CC) --version
 
-MKLSETUP = \
-  module load mkl || true; \
-  echo === MKL_ROOT ===; \
-  echo $${MKL_ROOT}; \
-  export MKLLIB=`find $${MKL_ROOT}/lib/* -maxdepth 0 | head -1`
+CUDASETUP = \
+  module load cuda || true; \
+  echo === CUDAHOME ===; \
+  echo $${CUDAHOME}
+
+ifeq ("$(ROLLNETWORK)", "eth")
+  MPIMODULE = $(ROLLMPI)
+else
+  MPIMODULE = $(ROLLMPI)_$(ROLLNETWORK)
+endif
 
 MPISETUP = \
-  module load $(ROLLMPI) || true; \
+  module load $(MPIMODULE) || true; \
   echo === MPIHOME ===; \
   echo $${MPIHOME}
 
+CHARMARCH = mpi-linux-x86_64
+CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
+CUDA = 
+ifeq ("$(ROLLCOMPILER)", "intel")
+  CHARMARCH = mpi-linux-x86_64-$(FCC)-mpicxx
+  CHARMBUILDOPTS = mpicxx $(FCC) -j16 -O2  -xHOST
+else ifeq ("$(ROLLCOMPILER)", "pgi")
+  CHARMARCH = mpi-linux-x86_64-$(FCC)-mpicxx
+  CHARMBUILDOPTS = mpicxx $(FCC) -j16 -O2  -fast
+endif
+
+ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
+  ifeq ("$(COMPILERNAME)", "gnu")
+    CHARMBUILDOPTS += -mavx
+    COMPILE_FLAGS += -mavx
+  endif
+endif
+
+ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
+  CUDA = --with-cuda
+endif
+
 build: $(SRC_DIRS)
-	cp test.sh $(SOURCE_DIR)/examples/actin-dimer
+	cd $(SOURCE_DIR) && tar xvf charm-*.tar
+	patch $(SOURCE_DIR)/arch/Linux-x86_64.fftw patch-files/Linux-x86_64.fftw.patch
+	patch $(SOURCE_DIR)/arch/Linux-x86_64.tcl patch-files/Linux-x86_64.tcl.patch
+	patch $(SOURCE_DIR)/arch/Linux-x86_64.cuda patch-files/Linux-x86_64.cuda.patch
+	cp Linux-x86_64* $(SOURCE_DIR)/arch
+	perl -pi -e "s!ROOTDIR!`pwd`/$(SOURCE_DIR)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
+	perl -pi -e "s!COMPILE_FLAGS!$(COMPILE_FLAGS)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
 	( \
 	  $(COMPILERSETUP); \
-	  $(MKLSETUP); \
+	  $(CUDASETUP); \
 	  $(MPISETUP); \
+          mv linux-$(ARCH) $(SOURCE_DIR); \
+	  perl -pi -e "s!ROLLCUDA!$${CUDAHOME}!g" $(SOURCE_DIR)/arch/Linux-x86_64.cuda; \
 	  cd $(SOURCE_DIR); \
-	  export CFLAGS="$(COMPILE_FLAGS)"; \
-	  export CXXFLAGS="$(COMPILE_FLAGS)"; \
-	  export FFLAGS="$(COMPILE_FLAGS)"; \
-	  export  CC=$(CC); \
-	  export  CXX=$(CXX); \
-	  if test -d "$${MPIHOME}/include/openmpi"; then \
-	    MPIFLAVOR=openmpi; \
-	  else \
-	    MPIFLAVOR=mpich2; \
-	  fi; \
-	  ./configure CC=mpicc F77=mpif77 \
-	              --prefix=$(PKGROOT) --with-$${MPIFLAVOR}=$${MPIHOME} \
-	              --with-blas="-L$${MKLLIB} -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm" --with-blas-name=mkl_core; \
-	  $(MAKE) \
+	  cd charm-*[0-9]; \
+	  ./build charm++ mpi-linux-x86_64 $(CHARMBUILDOPTS); \
+	  cd ..; \
+	  ./config Linux-x86_64-MPI-$(CC) --charm-arch $(CHARMARCH) $(CUDA); \
+	  cd Linux-x86_64-MPI-$(CC); \
+	  $(MAKE) -j 16 \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
-	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
-	# Bind mount appears to be required to avoid binaries that include
-	# $(ROOT) and creation of /opt/apbs on build machine.
-	-mkdir -p -m 755 $(PKGROOT)
-	mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT)
-	( \
-	  $(COMPILERSETUP); \
-	  $(MKLSETUP); \
-	  $(MPISETUP); \
-	  cd $(SOURCE_DIR); \
-	  $(MAKE) install \
-	)
-	umount $(PKGROOT)
-	-rmdir -p $(PKGROOT)
-	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)
-	cp $(SOURCE_DIR)/tools/manip/psize.py $(ROOT)/$(PKGROOT)/examples/actin-dimer/
+	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/bin
+	cp $(SOURCE_DIR)/*/{charmrun,flipbinpdb,flipdcd,namd2,psfgen} \
+	   $(ROOT)/$(PKGROOT)/bin
+	cp -r tiny $(ROOT)/$(PKGROOT)
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SOURCE_DIR)
+	rm -rf $(SRC_DIRS) _arch
+

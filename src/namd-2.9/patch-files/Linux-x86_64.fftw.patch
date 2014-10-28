@@ -1,0 +1,9 @@
+--- namd-2.9/arch/Linux-x86_64.fftw	2009-02-21 20:16:04.000000000 -0800
++++ patch-files/Linux-x86_64.fftw	2014-01-06 08:55:01.000000000 -0800
+@@ -1,5 +1,4 @@
+-
+-FFTDIR=/Projects/namd2/fftw/linux-x86_64
++FFTDIR=ROOTDIR/linux-x86_64
+ FFTINCL=-I$(FFTDIR)/include
+ FFTLIB=-L$(FFTDIR)/lib -lsrfftw -lsfftw
+ FFTFLAGS=-DNAMD_FFTW

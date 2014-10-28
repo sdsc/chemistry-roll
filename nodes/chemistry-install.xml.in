@@ -24,8 +24,14 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 <package>gromacs-modules</package>
 <package>lammps_COMPILERNAME_MPINAME</package>
 <package>lammps-modules</package>
+<<<<<<< HEAD
+<package>namd-2.9_COMPILERNAME_ROLLMPI_ROLLNETWORK</package>
+<package>namd_COMPILERNAME_ROLLMPI_ROLLNETWORK</package>
+=======
 <package>namd_COMPILERNAME_MPINAME</package>
+>>>>>>> FETCH_HEAD
 <package>namd-modules</package>
+<package>namd-2.9-modules</package>
 <package>chemistry-roll-test</package>
 
 </kickstart>

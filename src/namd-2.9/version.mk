@@ -7,25 +7,24 @@ endif
 COMPILERNAME := $(firstword $(subst /, ,$(ROLLCOMPILER)))
 
 ifndef ROLLMPI
-  ROLLMPI = rocks-openmpi
+  ROLLMPI = openmpi
 endif
-MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 ifndef ROLLNETWORK
   ROLLNETWORK = eth
 endif
 
-NAME           = namd_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
-VERSION        = 2.10b1
-RELEASE        = 0
+VERSION        = 2.9
+NAME           = namd-$(VERSION)_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
+RELEASE        = 10
 PKGROOT        = /opt/namd/$(VERSION)
 
 SRC_SUBDIR     = namd
 
-SOURCE_NAME    = NAMD
-SOURCE_SUFFIX  = tar.gz
+SOURCE_NAME    = namd
+SOURCE_SUFFIX  = tgz
 SOURCE_VERSION = $(VERSION)
-SOURCE_PKG     = $(SOURCE_NAME)_$(SOURCE_VERSION)_Source.$(SOURCE_SUFFIX)
+SOURCE_PKG     = $(SOURCE_NAME)-$(SOURCE_VERSION).$(SOURCE_SUFFIX)
 SOURCE_DIR     = $(SOURCE_PKG:%.$(SOURCE_SUFFIX)=%)
 
 TINY_NAME      = tiny
@@ -45,6 +44,7 @@ FFTW_VERSION   = $(ARCH)
 FFTW_PKG       = $(FFTW_NAME)-$(ARCH).$(FFTW_SUFFIX)
 FFTW_DIR       = $(FFTW_PKG:%.$(FFTW_SUFFIX)=%)
 
-TAR_GZ_PKGS    = $(SOURCE_PKG) $(TINY_PKG) $(TCL_PKG) $(FFTW_PKG)
+TGZ_PKGS       = $(SOURCE_PKG)
+TAR_GZ_PKGS    = $(TINY_PKG) $(TCL_PKG) $(FFTW_PKG)
 
 RPM.EXTRAS     = AutoReq:No
