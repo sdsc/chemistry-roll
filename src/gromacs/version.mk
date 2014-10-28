@@ -11,7 +11,7 @@ ifndef ROLLMPI
 endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
-NAME           = gromacs_$(COMPILERNAME)_$(ROLLMPI)
+NAME           = gromacs_$(COMPILERNAME)_$(MPINAME)
 VERSION        = 5.0.2
 RELEASE        = 1
 PKGROOT        = /opt/gromacs

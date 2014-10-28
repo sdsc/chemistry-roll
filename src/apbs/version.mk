@@ -11,7 +11,7 @@ ifndef ROLLMPI
 endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
-NAME           = apbs_$(COMPILERNAME)_$(ROLLMPI)
+NAME           = apbs_$(COMPILERNAME)_$(MPINAME)
 VERSION        = 1.3
 RELEASE        = 10
 PKGROOT        = /opt/apbs

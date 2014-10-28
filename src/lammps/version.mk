@@ -11,7 +11,7 @@ ifndef ROLLMPI
 endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
-NAME           = lammps_$(COMPILERNAME)_$(ROLLMPI)
+NAME           = lammps_$(COMPILERNAME)_$(MPINAME)
 VERSION        = $(shell date -d "$(SOURCE_VERSION)" +%Y%m%d)
 RELEASE        = 1
 PKGROOT        = /opt/lammps

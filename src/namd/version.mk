@@ -11,11 +11,7 @@ ifndef ROLLMPI
 endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
-ifndef ROLLNETWORK
-  ROLLNETWORK = eth
-endif
-
-NAME           = namd_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
+NAME           = namd_$(COMPILERNAME)_$(MPINAME)
 VERSION        = 2.10b1
 RELEASE        = 0
 PKGROOT        = /opt/namd/$(VERSION)

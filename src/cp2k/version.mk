@@ -11,7 +11,7 @@ ifndef ROLLMPI
 endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
-NAME           = cp2k_$(COMPILERNAME)_$(ROLLMPI)
+NAME           = cp2k_$(COMPILERNAME)_$(MPINAME)
 VERSION        = 2.5.1
 RELEASE        = 2
 PKGROOT        = /opt/cp2k
