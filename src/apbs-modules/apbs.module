@@ -2,4 +2,4 @@
 setenv APBSHOME /opt/apbs
 prepend-path PATH /opt/apbs/bin
 prepend-path LD_LIBRARY_PATH /opt/apbs/lib
-module load ROLLCOMPILER ROLLMPI
+module load ROLLCOMPILER ROLLMPI mkl

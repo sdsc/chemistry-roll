@@ -12,18 +12,18 @@ endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 NAME           = apbs_$(COMPILERNAME)_$(ROLLMPI)
-VERSION        = 1.4
-RELEASE        = 1
+VERSION        = 1.3
+RELEASE        = 10
 PKGROOT        = /opt/apbs
 
 SRC_SUBDIR     = apbs
 
-SOURCE_NAME    = APBS
-SOURCE_SUFFIX  = tar.gz
-SOURCE_VERSION = $(VERSION)-source
+SOURCE_NAME    = apbs
+SOURCE_SUFFIX  = tgz
+SOURCE_VERSION = $(VERSION)
 SOURCE_PKG     = $(SOURCE_NAME)-$(SOURCE_VERSION).$(SOURCE_SUFFIX)
-SOURCE_DIR     = apbs
+SOURCE_DIR     = $(SOURCE_PKG:%.$(SOURCE_SUFFIX)=%)
 
-TAR_GZ_PKGS    = $(SOURCE_PKG)
+TGZ_PKGS       = $(SOURCE_PKG)
 
 RPM.EXTRAS     = AutoReq:No
