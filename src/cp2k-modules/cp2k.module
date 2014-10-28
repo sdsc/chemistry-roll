@@ -1,3 +1,4 @@
 #%Module1.0
 setenv CP2KHOME /opt/cp2k
 prepend-path PATH /opt/cp2k/bin
+module load ROLLCOMPILER ROLLMPI fftw

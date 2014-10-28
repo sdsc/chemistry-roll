@@ -7,16 +7,13 @@ endif
 COMPILERNAME := $(firstword $(subst /, ,$(ROLLCOMPILER)))
 
 ifndef ROLLMPI
-  ROLLMPI = openmpi
+  ROLLMPI = rocks-openmpi
 endif
+MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
-ifndef ROLLNETWORK
-  ROLLNETWORK = eth
-endif
-
-NAME           = lammps_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
-VERSION        = $(shell date -d $(SOURCE_VERSION) +%Y%m%d)
-RELEASE        = 0
+NAME           = lammps_$(COMPILERNAME)_$(ROLLMPI)
+VERSION        = $(shell date -d "$(SOURCE_VERSION)" +%Y%m%d)
+RELEASE        = 1
 PKGROOT        = /opt/lammps
 
 SRC_SUBDIR     = lammps

@@ -7,16 +7,13 @@ endif
 COMPILERNAME := $(firstword $(subst /, ,$(ROLLCOMPILER)))
 
 ifndef ROLLMPI
-  ROLLMPI = openmpi
+  ROLLMPI = rocks-openmpi
 endif
+MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
-ifndef ROLLNETWORK
-  ROLLNETWORK = eth
-endif
-
-NAME           = cp2k_$(COMPILERNAME)_$(ROLLMPI)_$(ROLLNETWORK)
+NAME           = cp2k_$(COMPILERNAME)_$(ROLLMPI)
 VERSION        = 2.5.1
-RELEASE        = 0
+RELEASE        = 2
 PKGROOT        = /opt/cp2k
 
 SRC_SUBDIR     = cp2k

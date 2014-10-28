@@ -92,14 +92,8 @@ MKLSETUP = \
   echo $${MKL_ROOT}; \
   export MKLLIB=`find $${MKL_ROOT}/lib/* -maxdepth 0 | head -1`
 
-ifeq ("$(ROLLNETWORK)", "eth")
-  MPIMODULE = $(ROLLMPI)
-else
-  MPIMODULE = $(ROLLMPI)_$(ROLLNETWORK)
-endif
-
 MPISETUP = \
-  module load $(MPIMODULE) || true; \
+  module load $(ROLLMPI) || true; \
   echo === MPIHOME ===; \
   echo $${MPIHOME}
 
@@ -113,9 +107,9 @@ build: $(SRC_DIRS)
 	  export CFLAGS="$(COMPILE_FLAGS)"; \
 	  export CXXFLAGS="$(COMPILE_FLAGS)"; \
 	  export FFLAGS="$(COMPILE_FLAGS)"; \
-          export  CC=$(CC); \
-          export  CXX=$(CXX); \
-	  if test "$(ROLLMPI)" = "openmpi"; then \
+	  export  CC=$(CC); \
+	  export  CXX=$(CXX); \
+	  if test -d "$${MPIHOME}/include/openmpi"; then \
 	    MPIFLAVOR=openmpi; \
 	  else \
 	    MPIFLAVOR=mpich2; \
@@ -123,7 +117,7 @@ build: $(SRC_DIRS)
 	  ./configure CC=mpicc F77=mpif77 \
 	              --prefix=$(PKGROOT) --with-$${MPIFLAVOR}=$${MPIHOME} \
 	              --with-blas="-L$${MKLLIB} -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm" --with-blas-name=mkl_core; \
-	  $(MAKE)  \
+	  $(MAKE) \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
