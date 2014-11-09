@@ -16,17 +16,17 @@ Copyright (c) 2000 - 2014 The Regents of the University of California.
 All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 </copyright>
 
-<package>apbs_COMPILERNAME_MPINAME</package>
-<package>apbs-modules</package>
-<package>cp2k_COMPILERNAME_MPINAME</package>
-<package>cp2k-modules</package>
-<package>gromacs_COMPILERNAME_MPINAME</package>
-<package>gromacs-modules</package>
-<package>lammps_COMPILERNAME_MPINAME</package>
-<package>lammps-modules</package>
-<package>namd-2.9_COMPILERNAME_MPINAME</package>
-<package>namd_COMPILERNAME_MPINAME</package>
-<package>namd-modules</package>
-<package>chemistry-roll-test</package>
+<package>sdsc-apbs</package>
+<package>sdsc-apbs-modules</package>
+<package>sdsc-cp2k</package>
+<package>sdsc-cp2k-modules</package>
+<package>sdsc-gromacs</package>
+<package>sdsc-gromacs-modules</package>
+<package>sdsc-lammps</package>
+<package>sdsc-lammps-modules</package>
+<package>sdsc-namd-2.9</package>
+<package>sdsc-namd</package>
+<package>sdsc-namd-modules</package>
+<package>sdsc-chemistry-roll-test</package>
 
 </kickstart>

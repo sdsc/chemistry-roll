@@ -59,47 +59,46 @@ REDHAT.ROOT = $(CURDIR)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 include Rules.mk
-include pull.mk
+include $(SDSCDEVEL)/Pull.mk
+include $(SDSCDEVEL)/Rules.mk
 
-FC=gfortran
 ROLLWARNINGS=
 LINK_LIBS := -lstdc++
 ifeq ("$(COMPILERNAME)","gnu")
   LINK_LIBS += -L$${MKLLIB} -lmkl_gf_ilp64 -lmkl_gnu_thread -lmkl_core -lpthread -lgomp
 else ifeq ("$(COMPILERNAME)","intel")
   LINK_LIBS += `find $${INTELHOME} -name libifcore.a | grep intel64` -mkl=sequential
-  FC=ifort
   ROLLWARNINGS=-Wall -Wcheck -wd869,981,1572
 else ifeq ("$(COMPILERNAME)","pgi")
   LINK_LIBS += -lpgf90 -lpgf90_rpm1 -lpgf902 -lpgf90rtl -lpgftnrtl -lrt
-  FC=pgf90
 endif
-
-COMPILERSETUP = \
-  module load $(ROLLCOMPILER) || true; \
-  echo === Compiler and version ===; \
-  $(FC) --version
-
-CUDASETUP = \
-  module load cuda || true; \
-  echo === CUDAHOME ===; \
-  echo $${CUDAHOME}
-
-MKLSETUP = \
-  module load mkl || true; \
-  echo === MKL_ROOT ===; \
-  echo $${MKL_ROOT}; \
-  export MKLLIB=`find $${MKL_ROOT}/lib/* -maxdepth 0 | head -1`
-
-MPISETUP = \
-  module load $(ROLLMPI) || true; \
-  echo === MPIHOME ===; \
-  echo $${MPIHOME}
 
 CUDABUILD = no
 ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
   CUDABUILD = yes
 endif
+
+LICENSE_FILES = $(SOURCE_DIR)/{LICENSE,README}
+
+$(NAME).spec: DESCRIPTION LICENSE
+
+DESCRIPTION:
+	$(MODULE_LOAD_CC); \
+	( \
+	  $(DESCRIBE_PKG); \
+	  $(DESCRIBE_CC); \
+	  $(DESCRIBE_MKL); \
+	  $(DESCRIBE_MPI); \
+	  if test "$(CUDABUILD)" = "yes"; then \
+	    $(DESCRIBE_CUDA); \
+	  fi \
+	) > $@
+
+LICENSE: $(SRC_DIRS)
+	if ! grep -qF "GNU General Public License" $(SOURCE_DIR)/README; then \
+	  exit 2; \
+	fi
+	echo GPL > $@
 
 build: $(SRC_DIRS)
 	patch $(SOURCE_DIR)/lib/gpu/Makefile.linux patch-files/Makefile.gpu.patch
@@ -124,13 +123,14 @@ build: $(SRC_DIRS)
 	patch $(SOURCE_DIR)/lib/atc/Makefile.lammps.installed patch-files/Makefile.lammps.atc.installed.patch
 	patch -o $(SOURCE_DIR)/lib/colvars/Makefile.colvars $(SOURCE_DIR)/lib/colvars/Makefile.g++ patch-files/Makefile.colvars.patch
 	( \
-	  $(COMPILERSETUP); \
-	  $(MKLSETUP); \
-	  $(MPISETUP); \
-	  $(CUDASETUP); \
+	  $(MODULE_LOAD_CC); \
+	  $(MODULE_LOAD_MKL); \
+	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
+	  $(MODULE_LOAD_MPI); \
+	  $(MODULE_LOAD_CUDA); \
 	  cd $(SOURCE_DIR)/src; \
 	  perl -pi -e "s!LINK_LIBS!$(LINK_LIBS)!" MAKE/Makefile.linux; \
-	  perl -pi -e "s!MKL_HOME!$${MKL_HOME}!" MAKE/Makefile.linux; \
+	  perl -pi -e "s!MKL_HOME!$${MKLHOME}!" MAKE/Makefile.linux; \
 	  $(MAKE) yes-class2; \
 	  $(MAKE) yes-colloid; \
 	  $(MAKE) yes-dipole; \
@@ -205,7 +205,8 @@ install::
 	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
 	cp $(SOURCE_DIR)/src/lmp_linux $(ROOT)/$(PKGROOT)/bin/lammps
 	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)/
+	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SOURCE_DIR)
+	rm -rf $(SOURCE_DIR) DESCRIPTION LICENSE

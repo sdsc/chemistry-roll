@@ -1,6 +1,3 @@
-# Note: normally this package is built with a single compiler and mpi flavor;
-# the rpms from multiple builds will overwrite each other.
-
 ifndef ROLLCOMPILER
   ROLLCOMPILER = gnu
 endif
@@ -12,8 +9,8 @@ endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 VERSION        = 2.9
-NAME           = namd-$(VERSION)_$(COMPILERNAME)_$(MPINAME)
-RELEASE        = 10
+NAME           = sdsc-namd-$(VERSION)
+RELEASE        = 11
 PKGROOT        = /opt/namd/$(VERSION)
 
 SRC_SUBDIR     = namd

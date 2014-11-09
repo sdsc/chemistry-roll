@@ -1,6 +1,3 @@
-# Note: normally this package is built with a single compiler and mpi flavor;
-# the rpms from multiple builds will overwrite each other.
-
 ifndef ROLLCOMPILER
   ROLLCOMPILER = gnu
 endif
@@ -11,9 +8,9 @@ ifndef ROLLMPI
 endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
-NAME           = lammps_$(COMPILERNAME)_$(MPINAME)
+NAME           = sdsc-lammps
 VERSION        = $(shell date -d "$(SOURCE_VERSION)" +%Y%m%d)
-RELEASE        = 1
+RELEASE        = 2
 PKGROOT        = /opt/lammps
 
 SRC_SUBDIR     = lammps

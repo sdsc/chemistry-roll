@@ -1,6 +1,3 @@
-# Note: normally this package is built with a single compiler and mpi flavor;
-# the rpms from multiple builds will overwrite each other.
-
 ifndef ROLLCOMPILER
   ROLLCOMPILER = gnu
 endif
@@ -11,9 +8,9 @@ ifndef ROLLMPI
 endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
-NAME           = cp2k_$(COMPILERNAME)_$(MPINAME)
+NAME           = sdsc-cp2k
 VERSION        = 2.5.1
-RELEASE        = 2
+RELEASE        = 3
 PKGROOT        = /opt/cp2k
 
 SRC_SUBDIR     = cp2k

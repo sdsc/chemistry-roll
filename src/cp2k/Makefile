@@ -60,20 +60,13 @@ REDHAT.ROOT = $(CURDIR)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 include Rules.mk
-include pull.mk
+include $(SDSCDEVEL)/Pull.mk
+include $(SDSCDEVEL)/Rules.mk
 
-CC = gcc
-CXX = g++
-FC = gcc
 COMPILE_FLAGS = -O2
 ifeq ("$(COMPILERNAME)", "intel")
-  CC = icc
-  CXX = icpc
-  FC = ifort
+  COMPILE_FLAGS = -O2
 else ifeq ("$(COMPILERNAME)", "pgi")
-  CC = pgcc
-  CXX = pgCC
-  FC = pgf90
   COMPILE_FLAGS = -fast
 endif
 
@@ -82,27 +75,6 @@ ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
     COMPILE_FLAGS += -mavx
   endif
 endif
-
-COMPILERSETUP = \
-  module load $(ROLLCOMPILER) || true; \
-  echo === Compiler and version ===; \
-  $(CC) --version
-
-FFTWSETUP = \
-  module load fftw || true; \
-  echo === FFTWHOME ===; \
-  echo $${FFTWHOME}
-
-MKLSETUP = \
-  module load mkl || true; \
-  echo === MKL_ROOT ===; \
-  echo $${MKL_ROOT}; \
-  export MKLLIB=`find $${MKL_ROOT}/lib/* -maxdepth 0 | head -1`
-
-MPISETUP = \
-  module load $(ROLLMPI) || true; \
-  echo === MPIHOME ===; \
-  echo $${MPIHOME}
 
 ROLLTYPEMKL = _
 ifneq ("$(MPINAME)", "$(subst openmpi,,$(ROLLOPTS))")
@@ -127,15 +99,36 @@ endif
 
 COMPILE_FLAGS += -I$(REDHAT.ROOT)/src/cp2k/$(SOURCE_DIR)/obj/$(ROLLMAKEFILE)/popt
 
+LICENSE_FILES = $(SOURCE_DIR)/COPYRIGHT
+
+$(NAME).spec: DESCRIPTION LICENSE
+
+DESCRIPTION:
+	$(MODULE_LOAD_CC); \
+	$(MODULE_LOAD_MPI); \
+	( \
+	  $(DESCRIBE_PKG); \
+	  $(DESCRIBE_CC); \
+	  $(DESCRIBE_MKL); \
+	  $(DESCRIBE_MPI); \
+	  $(DESCRIBE_FFTW) \
+	) > $@
+
+LICENSE: $(SRC_DIRS)
+	if ! grep -q "GNU General Public License" $(LICENSE_FILES); then \
+	  exit 2; \
+	fi
+	echo -e GPLv2+ > $@
+
 build: $(SRC_DIRS)
 	cp Linux-x86-64-gnu.popt $(SOURCE_DIR)/arch
 	patch $(SOURCE_DIR)/arch/Linux-x86-64-intel.popt patch-files/Linux-x86-64-intel.popt.patch
 	patch $(SOURCE_DIR)/arch/Linux-x86-64-pgi.popt patch-files/Linux-x86-64-pgi.popt.patch
 	( \
-	  $(COMPILERSETUP); \
-	  $(MKLSETUP); \
-	  $(MPISETUP); \
-	  $(FFTWSETUP); \
+	  $(MODULE_LOAD_CC); \
+	  $(MODULE_LOAD_MKL); \
+	  $(MODULE_LOAD_MPI); \
+	  $(MODULE_LOAD_FFTW); \
 	  perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLTYPEMKL!$(ROLLTYPEMKL)!g" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLFFTW!$${FFTWHOME}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
@@ -172,7 +165,8 @@ install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/test
 	cp $(SOURCE_DIR)/exe/$(ROLLMAKEFILE)/cp2k.popt $(ROOT)/$(PKGROOT)/bin
 	cp -r $(SOURCE_DIR)/tests/EP/* $(ROOT)/$(PKGROOT)/test/
+	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SOURCE_DIR)
+	rm -rf $(SOURCE_DIR) DESCRIPTION LICENSE

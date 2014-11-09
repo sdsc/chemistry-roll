@@ -60,18 +60,13 @@ REDHAT.ROOT = $(CURDIR)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 include Rules.mk
-include pull.mk
+include $(SDSCDEVEL)/Pull.mk
+include $(SDSCDEVEL)/Rules.mk
 
-CC = gcc
-CXX = g++
 COMPILE_FLAGS = -O2 
 ifeq ("$(COMPILERNAME)","intel")
-  CC = icc
-  CXX = icc
   COMPILE_FLAGS = -O2 -xHOST
 else ifeq ("$(COMPILERNAME)","pgi")
-  CC = pgcc
-  CXX = pgCC
   COMPILE_FLAGS = -fast
 endif
 
@@ -81,28 +76,32 @@ ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
   endif
 endif
 
-COMPILERSETUP =  \
-  module load $(ROLLCOMPILER) || true; \
-  echo === Compiler and version ===; \
-  $(CC) --version
+LICENSE_FILES = $(SOURCE_DIR)/COPYING
 
-MKLSETUP = \
-  module load mkl || true; \
-  echo === MKL_ROOT ===; \
-  echo $${MKL_ROOT}; \
-  export MKLLIB=`find $${MKL_ROOT}/lib/* -maxdepth 0 | head -1`
+$(NAME).spec: DESCRIPTION LICENSE
 
-MPISETUP = \
-  module load $(ROLLMPI) || true; \
-  echo === MPIHOME ===; \
-  echo $${MPIHOME}
+DESCRIPTION:
+	$(MODULE_LOAD_CC); \
+	( \
+	  $(DESCRIBE_PKG); \
+	  $(DESCRIBE_CC); \
+	  $(DESCRIBE_MKL); \
+	  $(DESCRIBE_MPI) \
+	) > $@
+
+LICENSE: $(SRC_DIRS)
+	if ! grep -qF "2010, Pacific Northwest" $(LICENSE_FILES); then \
+	  exit 2; \
+	fi
+	echo BSD and MIT > $@
 
 build: $(SRC_DIRS)
 	cp test.sh $(SOURCE_DIR)/examples/actin-dimer
 	( \
-	  $(COMPILERSETUP); \
-	  $(MKLSETUP); \
-	  $(MPISETUP); \
+	  $(MODULE_LOAD_CC); \
+	  $(MODULE_LOAD_MKL); \
+	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
+	  $(MODULE_LOAD_MPI); \
 	  cd $(SOURCE_DIR); \
 	  export CFLAGS="$(COMPILE_FLAGS)"; \
 	  export CXXFLAGS="$(COMPILE_FLAGS)"; \
@@ -125,20 +124,19 @@ install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
 	# Bind mount appears to be required to avoid binaries that include
 	# $(ROOT) and creation of /opt/apbs on build machine.
-	-mkdir -p -m 755 $(PKGROOT)
-	mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT)
+	$(PKGROOT_BIND_MOUNT)
 	( \
-	  $(COMPILERSETUP); \
-	  $(MKLSETUP); \
-	  $(MPISETUP); \
+	  $(MODULE_LOAD_CC); \
+	  $(MODULE_LOAD_MKL); \
+	  $(MODULE_LOAD_MPI); \
 	  cd $(SOURCE_DIR); \
 	  $(MAKE) install \
 	)
-	umount $(PKGROOT)
-	-rmdir -p $(PKGROOT)
+	$(INSTALL_LICENSE_FILES)
+	$(PKGROOT_BIND_UMOUNT)
 	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)
 	cp $(SOURCE_DIR)/tools/manip/psize.py $(ROOT)/$(PKGROOT)/examples/actin-dimer/
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SOURCE_DIR)
+	rm -rf $(SOURCE_DIR) DESCRIPTION LICENSE

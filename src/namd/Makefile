@@ -60,35 +60,15 @@ REDHAT.ROOT = $(CURDIR)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 include Rules.mk
-include pull.mk
+include $(SDSCDEVEL)/Pull.mk
+include $(SDSCDEVEL)/Rules.mk
 
-CC = gcc
-FCC = f77
 COMPILE_FLAGS = -O2
 ifeq ("$(COMPILERNAME)", "intel")
-  CC = icc        
-  FCC = ifort
   COMPILE_FLAGS = -ip -fno-rtti -xHOST
 else ifeq ("$(COMPILERNAME)", "pgi")
-  CC = pgcc
-  FCC = pgf90
   COMPILE_FLAGS = -fast
 endif
-
-COMPILERSETUP =  \
-  module load $(ROLLCOMPILER) || true; \
-  echo === Compiler and version ===; \
-  $(CC) --version
-
-CUDASETUP = \
-  module load cuda || true; \
-  echo === CUDAHOME ===; \
-  echo $${CUDAHOME}
-
-MPISETUP = \
-  module load $(ROLLMPI) || true; \
-  echo === MPIHOME ===; \
-  echo $${MPIHOME}
 
 CHARMARCH = mpi-linux-x86_64
 CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
@@ -112,6 +92,25 @@ ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
   CUDA = --with-cuda
 endif
 
+LICENSE_FILES = $(SOURCE_DIR)/license.txt
+
+$(NAME).spec: DESCRIPTION LICENSE
+
+DESCRIPTION:
+	$(MODULE_LOAD_CC); \
+	( \
+	  $(DESCRIBE_PKG); \
+	  $(DESCRIBE_CC); \
+	  $(DESCRIBE_MPI); \
+	  $(DESCRIBE_CUDA) \
+	) > $@
+
+LICENSE: $(SRC_DIRS)
+	if ! grep -qF "University of Illinois" $(LICENSE_FILES); then \
+	  exit 2; \
+	fi
+	echo University of Illinois > $@
+
 build: $(SRC_DIRS)
 	cd $(SOURCE_DIR) && tar xvf charm-*.tar
 	patch $(SOURCE_DIR)/arch/Linux-x86_64.fftw patch-files/Linux-x86_64.fftw.patch
@@ -121,9 +120,9 @@ build: $(SRC_DIRS)
 	perl -pi -e "s!ROOTDIR!`pwd`/$(SOURCE_DIR)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
 	perl -pi -e "s!COMPILE_FLAGS!$(COMPILE_FLAGS)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
 	( \
-	  $(COMPILERSETUP); \
-	  $(CUDASETUP); \
-	  $(MPISETUP); \
+	  $(MODULE_LOAD_CC); \
+	  $(MODULE_LOAD_MPI); \
+	  $(MODULE_LOAD_CUDA); \
           mv linux-$(ARCH) $(SOURCE_DIR); \
 	  perl -pi -e "s!ROLLCUDA!$${CUDAHOME}!g" $(SOURCE_DIR)/arch/Linux-x86_64.cuda; \
 	  cd $(SOURCE_DIR); \
@@ -141,8 +140,9 @@ install::
 	cp $(SOURCE_DIR)/*/{charmrun,flipbinpdb,flipdcd,namd2,psfgen} \
 	   $(ROOT)/$(PKGROOT)/bin
 	cp -r tiny $(ROOT)/$(PKGROOT)
+	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SRC_DIRS) _arch
+	rm -rf $(SRC_DIRS) _arch DESCRIPTION LICENSE
 

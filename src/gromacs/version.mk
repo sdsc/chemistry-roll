@@ -1,6 +1,3 @@
-# Note: normally this package is built with a single compiler and mpi flavor;
-# the rpms from multiple builds will overwrite each other.
-
 ifndef ROLLCOMPILER
   ROLLCOMPILER = gnu
 endif
@@ -11,9 +8,9 @@ ifndef ROLLMPI
 endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
-NAME           = gromacs_$(COMPILERNAME)_$(MPINAME)
+NAME           = sdsc-gromacs
 VERSION        = 5.0.2
-RELEASE        = 1
+RELEASE        = 2
 PKGROOT        = /opt/gromacs
 
 SRC_SUBDIR     = gromacs
