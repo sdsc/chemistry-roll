@@ -76,8 +76,6 @@ ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
   endif
 endif
 
-LICENSE_FILES = $(SOURCE_DIR)/{COPYING,README}
-
 $(NAME).spec: DESCRIPTION LICENSE
 
 DESCRIPTION:
@@ -89,9 +87,7 @@ DESCRIPTION:
 	) > $@
 
 LICENSE: $(SRC_DIRS)
-	if ! grep -qF "(LGPL) Version 2.1" $(SOURCE_DIR)/COPYING; then \
-	  exit 2; \
-	fi
+	$(CHECK_LICENSE_FILES)
 	echo LGPLv2 > $@
 
 build: $(SRC_DIRS)

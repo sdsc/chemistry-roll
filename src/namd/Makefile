@@ -92,8 +92,6 @@ ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
   CUDA = --with-cuda
 endif
 
-LICENSE_FILES = $(SOURCE_DIR)/license.txt
-
 $(NAME).spec: DESCRIPTION LICENSE
 
 DESCRIPTION:
@@ -106,9 +104,7 @@ DESCRIPTION:
 	) > $@
 
 LICENSE: $(SRC_DIRS)
-	if ! grep -qF "University of Illinois" $(LICENSE_FILES); then \
-	  exit 2; \
-	fi
+	$(CHECK_LICENSE_FILES)
 	echo University of Illinois > $@
 
 build: $(SRC_DIRS)
