@@ -1,0 +1,28 @@
+--- Makefile.mpi	2015-01-05 12:26:28.721378160 -0800
++++ patch-files/Makefile.mpi	2015-01-05 12:32:30.945564111 -0800
+@@ -7,13 +7,13 @@
+ # specify flags and libraries needed for your compiler
+ 
+ CC =		mpicxx
+-CCFLAGS =	-g -O3 
++CCFLAGS =	-O2 
+ SHFLAGS =	-fPIC
+ DEPFLAGS =	-M
+ 
+ LINK =		mpicxx
+-LINKFLAGS =	-g -O
+-LIB = 
++LINKFLAGS =	-O2
++LIB = 		LINK_LIBS
+ SIZE =		size
+ 
+ ARCHIVE =	ar
+@@ -50,7 +50,7 @@
+ # PATH = path for FFT library
+ # LIB = name of FFT library
+ 
+-FFT_INC =    	
++FFT_INC =    	-DFFT_MKL -IMKL_HOME/include 
+ FFT_PATH = 
+ FFT_LIB =	
+ 

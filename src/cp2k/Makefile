@@ -144,6 +144,10 @@ build: $(SRC_DIRS)
 	  cd $(SOURCE_DIR); \
           mv ../$(LIBINT_DIR) .; \
 	  cd $(LIBINT_DIR); \
+	  if test ! -f configure; then \
+	    aclocal -I lib/autoconf; \
+	    autoconf; \
+	  fi; \
 	  ./configure --with-cc-optflags="$(COMPILE_FLAGS)" \
 	    --with-cxx-optflags="$(COMPILE_FLAGS)" --with-libint-max-am=5 \
 	    --with-libderiv-max-am1=4 --prefix=`pwd`/../libint; \

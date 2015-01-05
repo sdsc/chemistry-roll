@@ -9,8 +9,8 @@ endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 NAME           = sdsc-gromacs
-VERSION        = 5.0.2
-RELEASE        = 2
+VERSION        = 5.0.4
+RELEASE        = 0
 PKGROOT        = /opt/gromacs
 
 SRC_SUBDIR     = gromacs

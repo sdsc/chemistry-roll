@@ -99,7 +99,7 @@ LICENSE: $(SRC_DIRS)
 build: $(SRC_DIRS)
 	patch $(SOURCE_DIR)/lib/gpu/Makefile.linux patch-files/Makefile.gpu.patch
 	patch $(SOURCE_DIR)/lib/cuda/Makefile.common patch-files/Makefile.cuda.patch
-	patch $(SOURCE_DIR)/src/MAKE/Makefile.linux patch-files/Makefile.linux.patch
+	patch $(SOURCE_DIR)/src/MAKE/Makefile.mpi patch-files/Makefile.mpi.patch
 	patch -o $(SOURCE_DIR)/lib/meam/Makefile.meam  $(SOURCE_DIR)/lib/meam/Makefile.ifort patch-files/Makefile.ifort.meam.patch
 	patch -o $(SOURCE_DIR)/lib/meam/Makefile.lammps $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort patch-files/Makefile.lammps.meam.patch
 	cp $(SOURCE_DIR)/lib/meam/Makefile.lammps $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort
@@ -109,7 +109,7 @@ build: $(SRC_DIRS)
 	perl -pi -e "s!ROLLCUDA!/opt/cuda/current!" $(SOURCE_DIR)/lib/cuda/Makefile.common
 	perl -pi -e "s!ROLLCOMPILER!$(FC)!" $(SOURCE_DIR)/lib/meam/Makefile.meam
 	
-	cp $(SOURCE_DIR)/lib/awpmd/Makefile.openmpi $(SOURCE_DIR)/lib/awpmd/Makefile.awpmd
+	cp $(SOURCE_DIR)/lib/awpmd/Makefile.mpicc $(SOURCE_DIR)/lib/awpmd/Makefile.awpmd
 	patch -o $(SOURCE_DIR)/lib/poems/Makefile.poems $(SOURCE_DIR)/lib/poems/Makefile.icc patch-files/Makefile.poems.patch
 	perl -pi -e "s!ROLLWARNINGS!$(ROLLWARNINGS)!" $(SOURCE_DIR)/lib/poems/Makefile.poems
 	patch -o $(SOURCE_DIR)/lib/reax/Makefile.reax $(SOURCE_DIR)/lib/reax/Makefile.ifort patch-files/Makefile.ifort.reax.patch
@@ -125,8 +125,8 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_MPI); \
 	  $(MODULE_LOAD_CUDA); \
 	  cd $(SOURCE_DIR)/src; \
-	  perl -pi -e "s!LINK_LIBS!$(LINK_LIBS)!" MAKE/Makefile.linux; \
-	  perl -pi -e "s!MKL_HOME!$${MKLHOME}!" MAKE/Makefile.linux; \
+	  perl -pi -e "s!LINK_LIBS!$(LINK_LIBS)!" MAKE/Makefile.mpi; \
+	  perl -pi -e "s!MKL_HOME!$${MKLHOME}!" MAKE/Makefile.mpi; \
 	  $(MAKE) yes-class2; \
 	  $(MAKE) yes-colloid; \
 	  $(MAKE) yes-dipole; \
@@ -184,7 +184,7 @@ build: $(SRC_DIRS)
 	  cp *.a ../../src; \
 	  if test "$(CUDABUILD)" == "yes"; then \
 	    cd ../gpu; \
-	    $(MAKE) -f Makefile.linux; \
+	    $(MAKE) -f Makefile.mpi; \
 	    cp *.a ../../src; \
 	    cd ../../src; \
 	    make yes-gpu; \
@@ -193,13 +193,13 @@ build: $(SRC_DIRS)
 	    cp *.a ../../src; \
 	  fi; \
 	  cd ../../src; \
-	  $(MAKE) -j 16 ROOT=lmp linux \
+	  $(MAKE) -j 16 ROOT=lmp mpi \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
 	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
-	cp $(SOURCE_DIR)/src/lmp_linux $(ROOT)/$(PKGROOT)/bin/lammps
+	cp $(SOURCE_DIR)/src/lmp_mpi $(ROOT)/$(PKGROOT)/bin/lammps
 	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)/
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
