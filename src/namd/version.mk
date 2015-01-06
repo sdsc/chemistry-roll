@@ -9,8 +9,8 @@ endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 NAME           = sdsc-namd
-VERSION        = 2.10b1
-RELEASE        = 1
+VERSION        = 2.10
+RELEASE        = 0
 PKGROOT        = /opt/namd/$(VERSION)
 
 SRC_SUBDIR     = namd
@@ -26,17 +26,17 @@ TINY_SUFFIX    = tar.gz
 TINY_PKG       = $(TINY_NAME).$(TINY_SUFFIX)
 TINY_DIR       = $(TINY_PKG:%.$(TINY_SUFFIX)=%)
 
-TCL_NAME       = tcl-linux
+TCL_NAME       = tcl
 TCL_SUFFIX     = tar.gz
-TCL_VERSION    = $(ARCH)
-TCL_PKG        = $(TCL_NAME)-$(ARCH).$(TCL_SUFFIX)
+TCL_VERSION    = 8.5.9
+TCL_PKG        = $(TCL_NAME)$(TCL_VERSION)-linux-$(ARCH).$(TCL_SUFFIX)
 TCL_DIR        = $(TCL_PKG:%.$(TCL_SUFFIX)=%)
 
 FFTW_NAME      = fftw-linux
 FFTW_SUFFIX    = tar.gz
 FFTW_VERSION   = $(ARCH)
 FFTW_PKG       = $(FFTW_NAME)-$(ARCH).$(FFTW_SUFFIX)
-FFTW_DIR       = $(FFTW_PKG:%.$(FFTW_SUFFIX)=%)
+FFTW_DIR       = linux-$(ARCH)
 
 TAR_GZ_PKGS    = $(SOURCE_PKG) $(TINY_PKG) $(TCL_PKG) $(FFTW_PKG)
 

@@ -117,8 +117,8 @@ END
 }
 
 # namd
-$packageHome = '/opt/namd/2.10b1';
-$testDir = '/opt/namd/2.10b1/tiny';
+$packageHome = '/opt/namd/2.10';
+$testDir = '/opt/namd/2.10/tiny';
 SKIP: {
 
   skip 'namd not installed', 1 if ! -d $packageHome;
