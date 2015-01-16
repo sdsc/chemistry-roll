@@ -100,7 +100,12 @@ build: $(SRC_DIRS)
 	  cd build; \
 	  export CC=mpicc; \
 	  export CXX=mpicxx; \
-	  cmake .. -DGMX_BUILD_OWN_FFTW=ON -DGMX_MPI=ON -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" -DCMAKE_INSTALL_PREFIX=$(PKGROOT); \
+	  cmake .. -DGMX_BUILD_OWN_FFTW=ON \
+	           -DGMX_BUILD_OWN_FFTW_URL="../../$(FFTW_PKG)" \
+	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
+	           -DGMX_MPI=ON \
+	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
+	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT); \
 	  $(MAKE) \
 	)
 	@echo "::: Package $(NAME) build complete :::"
