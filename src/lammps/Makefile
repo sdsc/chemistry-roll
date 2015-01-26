@@ -118,6 +118,7 @@ build: $(SRC_DIRS)
 	patch -o $(SOURCE_DIR)/lib/poems/Makefile.poems $(SOURCE_DIR)/lib/poems/Makefile.icc patch-files/Makefile.poems.patch
 	perl -pi -e "s!ROLLWARNINGS!$(ROLLWARNINGS)!" $(SOURCE_DIR)/lib/poems/Makefile.poems
 	patch -o $(SOURCE_DIR)/lib/reax/Makefile.reax $(SOURCE_DIR)/lib/reax/Makefile.ifort patch-files/Makefile.ifort.reax.patch
+	patch $(SOURCE_DIR)/lib/reax/reax_defs.h patch-files/reax_defs.h.patch
 	cp $(SOURCE_DIR)/lib/reax/Makefile.lammps.ifort $(SOURCE_DIR)/lib/reax/Makefile.lammps
 	perl -pi -e "s!ROLLCOMPILER!$(FC)!" $(SOURCE_DIR)/lib/reax/Makefile.reax
 	patch $(SOURCE_DIR)/lib/awpmd/Makefile.lammps.installed patch-files/Makefile.lammps.awpmd.installed.patch
