@@ -1,4 +1,0 @@
-#%Module1.0
-setenv NAMDHOME /opt/namd/VERSION
-prepend-path PATH /opt/namd/VERSION/bin
-module load ROLLCOMPILER ROLLMPI

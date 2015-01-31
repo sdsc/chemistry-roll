@@ -1,6 +1,3 @@
-# Note: normally this package is built with a single compiler and mpi flavor;
-# the rpms from multiple builds will overwrite each other.
-
 ifndef ROLLCOMPILER
   ROLLCOMPILER = gnu
 endif
@@ -11,12 +8,19 @@ ifndef ROLLMPI
 endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
-NAME           = gromacs_$(COMPILERNAME)_$(ROLLMPI)
-VERSION        = 5.0.2
+NAME           = sdsc-gromacs
+VERSION        = 5.0.4
 RELEASE        = 1
 PKGROOT        = /opt/gromacs
 
 SRC_SUBDIR     = gromacs
+
+FFTW_NAME      = fftw
+FFTW_SUFFIX    = tar.gz
+FFTW_VERSION   = 3.3.4
+FFTW_PKG       = $(FFTW_NAME)-$(FFTW_VERSION).$(FFTW_SUFFIX)
+FFTW_DIR       = $(FFTW_PKG:%.$(FFTW_SUFFIX)=%)
+FFTW_MD5       = 2edab8c06b24feeb3b82bbb3ebf3e7b3
 
 SOURCE_NAME    = gromacs
 SOURCE_SUFFIX  = tar.gz
@@ -29,6 +33,6 @@ GMXTEST_SUFFIX = tar.gz
 GMXTEST_PKG    = $(GMXTEST_NAME).$(GMXTEST_SUFFIX)
 GMXTEST_DIR    = $(GMXTEST_PKG:%.$(GMXTEST_SUFFIX)=%)
 
-TAR_GZ_PKGS    = $(SOURCE_PKG) $(GMXTEST_PKG)
+TAR_GZ_PKGS    = $(SOURCE_PKG) $(FFTW_PKG) $(GMXTEST_PKG)
 
 RPM.EXTRAS     = AutoReq:No

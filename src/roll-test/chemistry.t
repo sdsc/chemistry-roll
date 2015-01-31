@@ -117,15 +117,15 @@ END
 }
 
 # namd
-$packageHome = '/opt/namd/2.10b1';
-$testDir = '/opt/namd/2.10b1/tiny';
+$packageHome = '/opt/namd/2.10';
+$testDir = '/opt/namd/2.10/tiny';
 SKIP: {
 
   skip 'namd not installed', 1 if ! -d $packageHome;
   skip 'namd test not installed', 1 if ! -d $testDir;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
-module load $compiler ${mpi}_${network}  namd/2.10b1
+module load namd
 cd $testDir
 $packageHome/bin/namd2 tiny.namd
 END
@@ -146,7 +146,7 @@ SKIP: {
   skip 'namd test not installed', 1 if ! -d $testDir;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
-module load $compiler ${mpi}_${network}  namd/2.9
+module load namd/2.9
 cd $testDir
 $packageHome/bin/namd2 tiny.namd
 END

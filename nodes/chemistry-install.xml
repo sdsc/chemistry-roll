@@ -1,0 +1,32 @@
+<?xml version="1.0" standalone="no"?>
+
+<kickstart>
+
+<description>
+Chemistry-related application codes
+apbs http://www.poissonboltzmann.org/apbs
+cp2k http://www.cp2k.org
+gromacs http://www.gromacs.org
+lammps http://lammps.sandia.gov
+namd http://www.ks.uiuc.edu/Research/namd
+</description>
+
+<copyright>
+Copyright (c) 2000 - 2014 The Regents of the University of California.
+All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
+</copyright>
+
+<package>sdsc-apbs</package>
+<package>sdsc-apbs-modules</package>
+<package>sdsc-cp2k</package>
+<package>sdsc-cp2k-modules</package>
+<package>sdsc-gromacs</package>
+<package>sdsc-gromacs-modules</package>
+<package>sdsc-lammps</package>
+<package>sdsc-lammps-modules</package>
+<package>sdsc-namd-2.9</package>
+<package>sdsc-namd</package>
+<package>sdsc-namd-modules</package>
+<package>sdsc-chemistry-roll-test</package>
+
+</kickstart>

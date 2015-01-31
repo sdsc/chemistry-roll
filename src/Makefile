@@ -1,14 +1,12 @@
-#
 # $Id$
 #
 # @Copyright@
 # 
-# 				Rocks(r)
+# 				Rocks(tm)
 # 		         www.rocksclusters.org
-# 		         version 5.6 (Emerald Boa)
-# 		         version 6.1 (Emerald Boa)
+# 		        version 4.3 (Mars Hill)
 # 
-# Copyright (c) 2000 - 2013 The Regents of the University of California.
+# Copyright (c) 2000 - 2011 The Regents of the University of California.
 # All rights reserved.	
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +24,7 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
+# 	"This product includes software developed by the Rocks(tm)
 # 	Cluster Group at the San Diego Supercomputer Center at the
 # 	University of California, San Diego and its contributors."
 # 
@@ -55,7 +53,7 @@
 # 
 # @Copyright@
 #
-# $Log$
+#
 #
 
 -include $(shell ${ROCKSROOT}/bin/arch).mk
@@ -66,21 +64,5 @@ default:
 
 copyright rpm pkg clean::
 	for i in $(SRCDIRS); do \
-	  grep -q ROLLCOMPILER $$i/version.mk; \
-	  if test $$? -eq 0; then \
-	    for c in $(ROLLCOMPILER); do \
-	      grep -q ROLLMPI $$i/version.mk; \
-	      if test $$? -eq 0; then \
-	        for m in $(ROLLMPI); do \
-	          echo make $@ in $$i with ROLLCOMPILER=$$c ROLLMPI=$$m; \
-	          (cd $$i && $(MAKE) ROLLCOMPILER=$$c ROLLMPI=$$m $@) || exit 2; \
-	        done; \
-	      else \
-	        echo make $@ in $$i with ROLLCOMPILER=$$c; \
-	        (cd $$i && $(MAKE) ROLLCOMPILER=$$c $@) || exit 2; \
-	      fi; \
-	    done; \
-	  else \
-	    (cd $$i && $(MAKE) ROLLCOMPILER="$(ROLLCOMPILER)" ROLLMPI="$(ROLLMPI)" $@) || exit 2; \
-	  fi; \
+	  (cd $$i && $(MAKE) ROLLCOMPILER="$(ROLLCOMPILER)" ROLLMPI="$(ROLLMPI)" $@) || exit 2; \
 	done

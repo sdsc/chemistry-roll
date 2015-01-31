@@ -2,7 +2,7 @@
 
 ## Overview
 
-This roll bundles a collection of chemistry packages: ABPS, CP2K, GROMACS,
+This roll bundles a collection of chemistry packages: APBS, CP2K, GROMACS,
 LAMMPS, and NAMD.
 
 For more information about the various packages included in the chemistry roll
@@ -28,20 +28,18 @@ development machine.
 
 ## Dependencies
 
-Intel MKL libraries.  If you're building with the Intel compiler or there is
-an mkl modulefile present (the mkl-roll provides this), then the build process
-will pick these up automatically.  Otherwise, you'll need to set the MKL_ROOT
-environment variable to the library location.
+The sdsc-roll must be installed on the build machine, since the build process
+depends on make include files provided by that roll.
 
-FFTW libraries.  If there is
-an fftw modulefile present (the fftw-roll provides this), then the build process
-will pick these up automatically.  Otherwise, you'll need to set the FFTWHOME
-environment variable to the library location.
+The roll sources assume that modulefiles provided by SDSC compiler
+rolls are available, but it will build without them as long as the environment
+variables they provide are otherwise defined.
 
-CUDA libraries.  If there is
-a cuda modulefile present, then the build process
-will pick these up automatically.  Otherwise, you'll need to set the CUDAHOME
-environment variable to the library location.
+The build process requires the MLK, fftw, and cuda libraries and assumes that
+the modulefiles provided by the corresponding SDSC rolls are available.  It
+will build without the modulefiles as long as the environment variables they
+provide are otherwise defined.
+
 
 ## Building
 
@@ -70,16 +68,6 @@ The build process recognizes "gnu", "intel" or "pgi" as the value for the
 `ROLLCOMPILER` variable; any MPI modulefile name may be used as the value of
 the `ROLLMPI` variable.  The default values are "gnu" and "rocks-openmpi".
 
-The values of the `ROLLCOMPILER` and `ROLLMPI` variables are incorporated into
-the names of the produced rpms.  For example,
-
-```shell
-make ROLLCOMPILER=intel ROLLMPI=mvapich2_ib 2>&1 | tee build.log
-```
-
-produces a roll containing an rpm with a name that begins
-`namd_intel_mvapich2_ib`.
-
 For gnu compilers, the roll also supports a `ROLLOPTS` make variable value of
 'avx', indicating that the target architecture supports AVX instructions.
 
@@ -100,7 +88,7 @@ In addition to the software itself, the roll installs package environment
 module files in:
 
 ```shell
-/opt/modulefiles/applications/(package)
+/opt/modulefiles/applications/{apbs,cp2k,gromacs,lammps,namd}
 ```
 
 

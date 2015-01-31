@@ -60,15 +60,13 @@ REDHAT.ROOT = $(CURDIR)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 include Rules.mk
-include pull.mk
+include $(SDSCDEVEL)/Pull.mk
+include $(SDSCDEVEL)/Rules.mk
 
-CC = gcc
 COMPILE_FLAGS = -fPIC -O2
 ifeq ("$(COMPILERNAME)", "intel")
-  CC = icc
   COMPILE_FLAGS = -fPIC -O2 -xHOST
 else ifeq ("$(COMPILERNAME)", "pgi")
-  CC = pgcc
   COMPILE_FLAGS = -fPIC -fast
 endif
 
@@ -78,51 +76,54 @@ ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
   endif
 endif
 
-CMAKESETUP = \
-  module load cmake || true; \
-  echo === cmake version ===; \
-  cmake --version
+$(NAME).spec: DESCRIPTION LICENSE
 
-COMPILERSETUP =  \
-  module load $(ROLLCOMPILER) || true; \
-  echo === Compiler and version ===; \
-  $(CC) --version
+DESCRIPTION:
+	$(MODULE_LOAD_CC); \
+	( \
+	  $(DESCRIBE_PKG); \
+	  $(DESCRIBE_CC); \
+	  $(DESCRIBE_MPI) \
+	) > $@
 
-MPISETUP = \
-  module load $(ROLLMPI) || true; \
-  echo === MPIHOME ===; \
-  echo $${MPIHOME}
+LICENSE: $(SRC_DIRS)
+	$(CHECK_LICENSE_FILES)
+	echo LGPLv2 > $@
 
 build: $(SRC_DIRS)
 	( \
-	  $(COMPILERSETUP); \
-	  $(CMAKESETUP); \
-	  $(MPISETUP); \
+	  $(MODULE_LOAD_CC); \
+	  $(MODULE_LOAD_CMAKE); \
+	  $(MODULE_LOAD_MPI); \
 	  cd $(SOURCE_DIR); \
 	  mkdir build; \
 	  cd build; \
 	  export CC=mpicc; \
 	  export CXX=mpicxx; \
-	  cmake .. -DGMX_BUILD_OWN_FFTW=ON -DGMX_MPI=ON -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" -DCMAKE_INSTALL_PREFIX=$(PKGROOT); \
+	  cmake .. -DGMX_BUILD_OWN_FFTW=ON \
+	           -DGMX_BUILD_OWN_FFTW_URL="../../$(FFTW_PKG)" \
+	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
+	           -DGMX_MPI=ON \
+	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
+	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT); \
 	  $(MAKE) \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
-	mkdir -p -m 755 $(PKGROOT)
-	mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT)
+	$(PKGROOT_BIND_MOUNT)
 	( \
-	  $(COMPILERSETUP); \
-	  $(CMAKESETUP); \
-	  $(MPISETUP); \
-          module load cmake; \
+	  $(MODULE_LOAD_CC); \
+	  $(MODULE_LOAD_CMAKE); \
+	  $(MODULE_LOAD_MPI); \
 	  cd $(SOURCE_DIR)/build; \
 	  $(MAKE) prefix=$(PKGROOT) install \
 	)
-	-umount $(PKGROOT)
+	$(PKGROOT_BIND_UMOUNT)
+	$(INSTALL_LICENSE_FILES)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SRC_DIRS)
+	rm -rf $(SRC_DIRS) DESCRIPTION LICENSE

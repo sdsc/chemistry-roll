@@ -60,39 +60,18 @@ REDHAT.ROOT = $(CURDIR)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 include Rules.mk
-include pull.mk
+include $(SDSCDEVEL)/Pull.mk
+include $(SDSCDEVEL)/Rules.mk
 
-CC = gcc
-FCC = f77
 COMPILE_FLAGS = -O2
 ifeq ("$(COMPILERNAME)", "intel")
-  CC = icc        
-  FCC = ifort
   COMPILE_FLAGS = -ip -fno-rtti -xHOST
 else ifeq ("$(COMPILERNAME)", "pgi")
-  CC = pgcc
-  FCC = pgf90
   COMPILE_FLAGS = -fast
 endif
 
-COMPILERSETUP =  \
-  module load $(ROLLCOMPILER) || true; \
-  echo === Compiler and version ===; \
-  $(CC) --version
-
-CUDASETUP = \
-  module load cuda || true; \
-  echo === CUDAHOME ===; \
-  echo $${CUDAHOME}
-
-MPISETUP = \
-  module load $(ROLLMPI) || true; \
-  echo === MPIHOME ===; \
-  echo $${MPIHOME}
-
 CHARMARCH = mpi-linux-x86_64
 CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
-CUDA = 
 ifeq ("$(COMPILERNAME)", "intel")
   CHARMARCH = mpi-linux-x86_64-$(FCC)-mpicxx
   CHARMBUILDOPTS = mpicxx $(FCC) -j16 -O2  -xHOST
@@ -108,29 +87,43 @@ ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
   endif
 endif
 
+CUDAOPT = --without-cuda
 ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
-  CUDA = --with-cuda
+  CUDAOPT = --with-cuda --cuda-prefix $${CUDAHOME}
 endif
+
+$(NAME).spec: DESCRIPTION LICENSE
+
+DESCRIPTION:
+	$(MODULE_LOAD_CC); \
+	( \
+	  $(DESCRIBE_PKG); \
+	  $(DESCRIBE_CC); \
+	  $(DESCRIBE_MPI); \
+	  $(DESCRIBE_CUDA) \
+	) > $@
+
+LICENSE: $(SRC_DIRS)
+	$(CHECK_LICENSE_FILES)
+	echo University of Illinois > $@
 
 build: $(SRC_DIRS)
 	cd $(SOURCE_DIR) && tar xvf charm-*.tar
-	patch $(SOURCE_DIR)/arch/Linux-x86_64.fftw patch-files/Linux-x86_64.fftw.patch
-	patch $(SOURCE_DIR)/arch/Linux-x86_64.tcl patch-files/Linux-x86_64.tcl.patch
-	patch $(SOURCE_DIR)/arch/Linux-x86_64.cuda patch-files/Linux-x86_64.cuda.patch
 	cp Linux-x86_64* $(SOURCE_DIR)/arch
-	perl -pi -e "s!ROOTDIR!`pwd`/$(SOURCE_DIR)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
 	perl -pi -e "s!COMPILE_FLAGS!$(COMPILE_FLAGS)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
 	( \
-	  $(COMPILERSETUP); \
-	  $(CUDASETUP); \
-	  $(MPISETUP); \
-          mv linux-$(ARCH) $(SOURCE_DIR); \
-	  perl -pi -e "s!ROLLCUDA!$${CUDAHOME}!g" $(SOURCE_DIR)/arch/Linux-x86_64.cuda; \
+	  $(MODULE_LOAD_CC); \
+	  $(MODULE_LOAD_MPI); \
+	  $(MODULE_LOAD_CUDA); \
 	  cd $(SOURCE_DIR); \
 	  cd charm-*[0-9]; \
 	  ./build charm++ mpi-linux-x86_64 $(CHARMBUILDOPTS); \
 	  cd ..; \
-	  ./config Linux-x86_64-MPI-$(CC) --charm-arch $(CHARMARCH) $(CUDA); \
+	  ./config Linux-x86_64-MPI-$(CC) \
+	           --charm-arch $(CHARMARCH) \
+	           --fftw-prefix $(CURDIR)/$(FFTW_DIR) \
+	           --tcl-prefix $(CURDIR)/$(TCL_DIR) \
+	           $(CUDAOPT); \
 	  cd Linux-x86_64-MPI-$(CC); \
 	  $(MAKE) -j 16 \
 	)
@@ -141,8 +134,8 @@ install::
 	cp $(SOURCE_DIR)/*/{charmrun,flipbinpdb,flipdcd,namd2,psfgen} \
 	   $(ROOT)/$(PKGROOT)/bin
 	cp -r tiny $(ROOT)/$(PKGROOT)
+	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SRC_DIRS) _arch
-
+	rm -rf $(SRC_DIRS) $(FFTW_DIR) _arch DESCRIPTION LICENSE
