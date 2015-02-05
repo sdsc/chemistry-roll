@@ -10,7 +10,7 @@ MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 NAME           = sdsc-lammps
 VERSION        = $(shell date -d "$(SOURCE_VERSION)" +%Y%m%d)
-RELEASE        = 0
+RELEASE        = 1
 PKGROOT        = /opt/lammps
 
 SRC_SUBDIR     = lammps

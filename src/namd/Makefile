@@ -77,7 +77,7 @@ ifeq ("$(COMPILERNAME)", "intel")
 else ifeq ("$(COMPILERNAME)", "pgi")
   CHARMBUILDOPTS = mpicxx  -O2  -fast
 else ifeq ("$(COMPILERNAME)", "gnu")
-  CHARMBUILDOPTS = mpicxx  -O2  -fast
+  CHARMBUILDOPTS = mpicxx  -O2
 endif
 
 ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")

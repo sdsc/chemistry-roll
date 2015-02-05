@@ -70,15 +70,15 @@ else ifeq ("$(COMPILERNAME)", "pgi")
   COMPILE_FLAGS = -fast
 endif
 
-CHARMARCH = mpi-linux-x86_64
+CHARMARCH = mpi-linux-x86_64-mpicxx
 CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
 CUDA = 
 ifeq ("$(COMPILERNAME)", "intel")
-  CHARMARCH = mpi-linux-x86_64-$(FCC)-mpicxx
-  CHARMBUILDOPTS = mpicxx $(FCC) -j16 -O2  -xHOST
+  CHARMBUILDOPTS = mpicxx  -O2  -xHOST
 else ifeq ("$(COMPILERNAME)", "pgi")
-  CHARMARCH = mpi-linux-x86_64-$(FCC)-mpicxx
-  CHARMBUILDOPTS = mpicxx $(FCC) -j16 -O2  -fast
+  CHARMBUILDOPTS = mpicxx  -O2  -fast
+else ifeq ("$(COMPILERNAME)", "gnu")
+  CHARMBUILDOPTS = mpicxx  -O2
 endif
 
 ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
