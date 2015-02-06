@@ -1,7 +1,10 @@
---- cp2k-2.4.0/arch/Linux-x86-64-intel.popt	2009-04-14 02:12:54.000000000 -0700
-+++ Linux-x86-64-intel.popt	2014-02-01 13:56:12.000000000 -0800
-@@ -20,15 +20,12 @@
+--- cp2k-2.5.1/arch/Linux-x86-64-intel.popt	2014-02-12 09:29:10.960259000 -0800
++++ patch-files/Linux-x86-64-intel.popt	2015-02-06 14:08:21.703885411 -0800
+@@ -18,19 +18,18 @@
+ FC       = mpif90 
+ LD       = mpif90
  AR       = ar -r
++INTEL_LIB = MKL_ROOT/lib/intel64
  DFLAGS   = -D__INTEL -D__FFTSG -D__parallel -D__BLACS -D__SCALAPACK -D__FFTW3
  CPPFLAGS = 
 -FCFLAGS  = $(DFLAGS) -I$(INTEL_INC) -O3 -xW -heap-arrays 64 -funroll-loops -fpp -free
@@ -13,12 +16,15 @@
 -           $(INTEL_LIB)/libacml.a\
 -           $(INTEL_LIB)/libacml_mv.a \
 -           $(INTEL_LIB)/libfftw3.a
+ 
+ 
 +INTEL_LIB = MKL_ROOT/lib/intel64
 +FFTW_INC = ROLLFFTW/include
 +FCFLAGS  = $(DFLAGS) -I$(FFTW_INC) -O2 -xW -heap-arrays 64 -funroll-loops -fpp -free 
 +FCFLAGS2 = $(DFLAGS) -I$(FFTW_INC) -O1 -xW -heap-arrays 64 -fpp -free 
 +LDFLAGS  = $(FCFLAGS)
-+LIBS     = $(INTEL_LIB)/libmkl_scalapack_lp64.a  -Wl,--start-group $(INTEL_LIB)/libmkl_intel_lp64.a $(INTEL_LIB)/libmkl_sequential.a $(INTEL_LIB)/libmkl_core.a $(INTEL_LIB)/libmkl_blacsROLLTYPEMKLlp64.a -Wl,--end-group -lpthread  -LROLLFFTW/lib -lfftw3 ROLLWRAPPER/libint_cpp_wrapper.o  -LROLLLIBINT -lderiv -lint -lstdc++
++
++LIBS     = -L $(INTEL_LIB) -lmkl_scalapack_lp64 -lmkl_rt  -lmkl_blacsROLLTYPEMKLlp64 -lpthread  -LROLLFFTW/lib -lfftw3 ROLLWRAPPER/libint_cpp_wrapper.o  -LROLLLIBINT -lderiv -lint -lstdc++
  
- OBJECTS_ARCHITECTURE = machine_intel.o
- 
+ graphcon.o: graphcon.F
+ 	$(FC) -c $(FCFLAGS2) $<

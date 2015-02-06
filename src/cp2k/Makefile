@@ -77,11 +77,11 @@ ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
 endif
 
 ROLLTYPEMKL = _
-ifneq ("$(MPINAME)", "$(subst openmpi,,$(ROLLOPTS))")
+ifneq ("$(MPINAME)", "$(subst openmpi,,$(MPINAME))")
   ROLLTYPEMKL = _openmpi_
-else ifneq ("$(MPINAME)", "$(subst mpich,,$(ROLLOPTS))")
+else ifneq ("$(MPINAME)", "$(subst mpich,,$(MPINAME))")
   ROLLTYPEMKL = _intelmpi_
-else ifneq ("$(MPINAME)", "$(subst mvapich,,$(ROLLOPTS))")
+else ifneq ("$(MPINAME)", "$(subst mvapich,,$(MPINAME))")
   ROLLTYPEMKL = _intelmpi_
 endif
 
