@@ -1,6 +1,6 @@
---- lammps-31Jan14/lib/gpu/Makefile.linux	2014-01-28 16:07:38.000000000 -0800
-+++ patch-files/Makefile.gpu	2014-05-14 14:10:26.000000000 -0700
-@@ -7,11 +7,11 @@
+--- lammps-9Dec14/lib/gpu/Makefile.linux	2014-01-28 16:07:38.000000000 -0800
++++ patch-files/Makefile.gpu	2015-02-06 21:59:39.769855201 -0800
+@@ -7,7 +7,7 @@
  
  EXTRAMAKE = Makefile.lammps.standard
  
@@ -9,8 +9,11 @@
  NVCC = nvcc
  
  # Tesla CUDA
--CUDA_ARCH = -arch=sm_21
-+CUDA_ARCH = -arch=sm_30
- # newer CUDA
+@@ -16,6 +16,7 @@
  #CUDA_ARCH = -arch=sm_13
  # older CUDA
+ #CUDA_ARCH = -arch=sm_10 -DCUDA_PRE_THREE
++CUDA_ARCH = -arch=sm_30
+ 
+ # this setting should match LAMMPS Makefile
+ # one of LAMMPS_SMALLBIG (default), LAMMPS_BIGBIG and LAMMPS_SMALLSMALL

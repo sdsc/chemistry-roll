@@ -9,17 +9,18 @@ endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 NAME           = sdsc-namd
-VERSION        = 2.10
-RELEASE        = 1
-PKGROOT        = /opt/namd/$(VERSION)
+VERSION        = 2.10c
+RELEASE        = 2
 
 SRC_SUBDIR     = namd
 
 SOURCE_NAME    = NAMD
 SOURCE_SUFFIX  = tar.gz
-SOURCE_VERSION = $(VERSION)
+SOURCE_VERSION = 2.10
 SOURCE_PKG     = $(SOURCE_NAME)_$(SOURCE_VERSION)_Source.$(SOURCE_SUFFIX)
 SOURCE_DIR     = $(SOURCE_PKG:%.$(SOURCE_SUFFIX)=%)
+
+PKGROOT        = /opt/namd/$(SOURCE_VERSION)
 
 TINY_NAME      = tiny
 TINY_SUFFIX    = tar.gz

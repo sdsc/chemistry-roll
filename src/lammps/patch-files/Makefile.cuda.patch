@@ -1,11 +1,11 @@
---- lammps-31Jan14/lib/cuda/Makefile.common	2012-10-10 08:44:38.000000000 -0700
-+++ patch-files/Makefile.common	2014-03-12 14:11:35.000000000 -0700
+--- lammps-9Dec14/lib/cuda/Makefile.common	2012-10-10 08:44:38.000000000 -0700
++++ patch-files/Makefile.cuda	2015-02-06 22:04:08.441554856 -0800
 @@ -14,7 +14,7 @@
  
  # System-specific settings
  
 -CUDA_INSTALL_PATH = /usr/local/cuda
-+CUDA_INSTALL_PATH = /opt/cuda/current
++CUDA_INSTALL_PATH = ROLLCUDA
  #CUDA_INSTALL_PATH = /home/crtrott/lib/cuda
  # e.g. in Gentoo
  # CUDA_INSTALL_PATH = /opt/cuda

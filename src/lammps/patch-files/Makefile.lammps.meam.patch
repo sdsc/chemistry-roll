@@ -1,5 +1,5 @@
---- lammps-31Jan14/lib/meam/Makefile.lammps.ifort	2011-08-18 10:32:34.000000000 -0700
-+++ patch-files/Makefile.lammps.meam	2014-03-12 10:08:04.000000000 -0700
+--- lammps-9Dec14/lib/meam/Makefile.lammps.ifort	2011-08-18 10:32:34.000000000 -0700
++++ patch-files/Makefile.lammps.ifort	2015-02-07 22:22:45.425652897 -0800
 @@ -1,5 +1,5 @@
  # Settings that the LAMMPS build will import when this package library is used
  
