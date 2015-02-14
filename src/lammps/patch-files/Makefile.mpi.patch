@@ -1,5 +1,5 @@
 --- lammps-9Dec14/src/MAKE/Makefile.mpi	2014-10-06 13:59:58.000000000 -0700
-+++ patch-files/Makefile.mpi	2015-02-08 21:21:13.555090277 -0800
++++ patch-files/Makefile.mpi	2015-02-14 12:39:40.000000000 -0800
 @@ -7,13 +7,13 @@
  # specify flags and libraries needed for your compiler
  
@@ -13,25 +13,16 @@
 -LINKFLAGS =	-g -O
 -LIB = 
 +LINKFLAGS =	-O2
-+LIB = 		LINK_LIBS
++LIB = 		-lstdc++ -L/opt/intel/composer_xe_2013.1.117/mkl/lib/intel64 -lmkl_gf_ilp64 -lmkl_gnu_thread -lmkl_core -lpthread -lgomp
  SIZE =		size
  
  ARCHIVE =	ar
-@@ -28,7 +28,7 @@
- # LAMMPS ifdef settings
- # see possible settings in Section 2.2 (step 4) of manual
- 
--LMP_INC =	-DLAMMPS_GZIP
-+LMP_INC =	-DLAMMPS_GZIP -D__INTEL_COMPILER
- 
- # MPI library
- # see discussion in Section 2.2 (step 5) of manual
 @@ -50,7 +50,7 @@
  # PATH = path for FFT library
  # LIB = name of FFT library
  
 -FFT_INC =    	
-+FFT_INC =    	-DFFT_MKL -IMKL_HOME/include 
++FFT_INC =    	-DFFT_MKL -I/opt/intel/composer_xe_2013.1.117/mkl/include 
  FFT_PATH = 
  FFT_LIB =	
  
