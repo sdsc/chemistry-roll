@@ -63,14 +63,8 @@ include $(SDSCDEVEL)/Pull.mk
 include $(SDSCDEVEL)/Rules.mk
 
 ROLLWARNINGS=
-LINK_LIBS := -lstdc++
-ifeq ("$(COMPILERNAME)","gnu")
-  LINK_LIBS += -L$${MKLLIB} -lmkl_gf_ilp64 -lmkl_gnu_thread -lmkl_core -lpthread -lgomp
-else ifeq ("$(COMPILERNAME)","intel")
-  LINK_LIBS += `find $${INTELHOME} -name libifcore.a | grep intel64` -mkl=sequential
+ifeq ("$(COMPILERNAME)","intel")
   ROLLWARNINGS=-Wall -Wcheck -wd869,981,1572
-else ifeq ("$(COMPILERNAME)","pgi")
-  LINK_LIBS += -lpgf90 -lpgf90_rpm1 -lpgf902 -lpgf90rtl -lpgftnrtl -lrt
 endif
 
 CUDABUILD = no
@@ -126,8 +120,8 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_MPI); \
 	  $(MODULE_LOAD_CUDA); \
 	  cd $(SOURCE_DIR)/src; \
-	  perl -pi -e "s!LINK_LIBS!$(LINK_LIBS)!" MAKE/Makefile.mpi; \
-	  perl -pi -e "s!MKL_HOME!$${MKLHOME}!" MAKE/Makefile.mpi; \
+	  perl -pi -e "s!MKLLIB!$${MKLLIB}!" MAKE/Makefile.mpi; \
+	  perl -pi -e "s!MKL_ROOT$${MKL_ROOT}!" MAKE/Makefile.mpi; \
 	  $(MAKE) yes-class2; \
 	  $(MAKE) yes-colloid; \
 	  $(MAKE) yes-dipole; \
