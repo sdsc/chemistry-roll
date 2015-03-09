@@ -70,9 +70,18 @@ else ifeq ("$(COMPILERNAME)","pgi")
   COMPILE_FLAGS = -fast
 endif
 
-ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
+AVX_FLAG=
+ifneq ("$(ROLLOPTS)", "$(subst avx2,,$(ROLLOPTS))")
   ifeq ("$(COMPILERNAME)", "gnu")
-    COMPILE_FLAGS += -mavx
+    AVX_FLAG = -mavx2
+  else ifeq ("$(COMPILERNAME)", "intel")
+    AVX_FLAG = -xcore-avx2
+  endif
+else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
+  ifeq ("$(COMPILERNAME)", "gnu")
+    AVX_FLAG = -mavx
+  else ifeq ("$(COMPILERNAME)", "intel")
+    AVX_FLAG = -xavx
   endif
 endif
 
@@ -99,9 +108,9 @@ build: $(SRC_DIRS)
 	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
 	  $(MODULE_LOAD_MPI); \
 	  cd $(SOURCE_DIR); \
-	  export CFLAGS="$(COMPILE_FLAGS)"; \
-	  export CXXFLAGS="$(COMPILE_FLAGS)"; \
-	  export FFLAGS="$(COMPILE_FLAGS)"; \
+	  export CFLAGS="$(COMPILE_FLAGS) $(AVX_FLAG)"; \
+	  export CXXFLAGS="$(COMPILE_FLAGS) $(AVX_FLAG)"; \
+	  export FFLAGS="$(COMPILE_FLAGS) $(AVX_FLAG)"; \
 	  export  CC=$(CC); \
 	  export  CXX=$(CXX); \
 	  if test -d "$${MPIHOME}/include/openmpi"; then \

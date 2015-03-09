@@ -5,7 +5,7 @@
  
  CC =		mpicxx
 -CCFLAGS =	-g -O3 
-+CCFLAGS =	-O2 -restrict
++CCFLAGS =	-O2 -restrict ROLLAVX
  SHFLAGS =	-fPIC
  DEPFLAGS =	-M
  

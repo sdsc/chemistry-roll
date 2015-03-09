@@ -7,7 +7,7 @@
 -CC =		icc
 -CCFLAGS =       -O -fPIC -Wall -Wcheck -wd869,981,1572
 +CC =		mpicc
-+CCFLAGS =       -O -fPIC ROLLWARNINGS
++CCFLAGS =       -O -fPIC ROLLWARNINGS ROLLAVX
  ARCHIVE =	ar
  ARCHFLAG =	-rc
  DEPFLAGS =      -M

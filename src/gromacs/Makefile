@@ -70,9 +70,17 @@ else ifeq ("$(COMPILERNAME)", "pgi")
   COMPILE_FLAGS = -fPIC -fast
 endif
 
-ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
+ifneq ("$(ROLLOPTS)", "$(subst avx2,,$(ROLLOPTS))")
+  ifeq ("$(COMPILERNAME)", "gnu")
+    COMPILE_FLAGS += -mavx2
+  else ifeq ("$(COMPILERNAME)", "intel")
+    COMPILE_FLAGS += -xcore-avx2
+  endif
+else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
   ifeq ("$(COMPILERNAME)", "gnu")
     COMPILE_FLAGS += -mavx
+  else ifeq ("$(COMPILERNAME)", "intel")
+    COMPILE_FLAGS += -xavx
   endif
 endif
 

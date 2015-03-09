@@ -1,6 +1,6 @@
-ROLLNAME = chemistry
-RELEASE  = 12
-COLOR    = orange
-RPM.EXTRAS = AutoReq:No
+ROLLNAME        = chemistry
+VERSION        :=$(shell bash version.sh -v)
+RELEASE        :=$(shell bash version.sh -h)
+COLOR           = orange
 
-REDHAT.ROOT = $(PWD)
+REDHAT.ROOT     = $(PWD)

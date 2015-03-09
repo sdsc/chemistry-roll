@@ -1,20 +1,13 @@
 --- lammps-9Dec14/lib/meam/Makefile.ifort	2013-05-30 12:43:25.000000000 -0700
-+++ patch-files/Makefile.ifort	2015-02-07 22:18:16.147985340 -0800
-@@ -11,7 +11,7 @@
- 
- # which file will be copied to Makefile.lammps
- 
--EXTRAMAKE = Makefile.lammps.ifort
-+EXTRAMAKE = Makefile.lammps.ROLLCOMPILER
- 
- # ------ FILES ------
- 
-@@ -26,7 +26,7 @@
++++ patch-files/Makefile.ifort	2015-03-08 16:06:42.947653271 -0700
+@@ -26,8 +26,8 @@
  
  # ------ SETTINGS ------
  
 -F90 =           ifort
+-F90FLAGS =      -O -fPIC
 +F90 =           mpif90
- F90FLAGS =      -O -fPIC
++F90FLAGS =      -O -fPIC ROLLAVX
  ARCHIVE =	ar
  ARCHFLAG =	-rc
+ USRLIB =

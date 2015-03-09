@@ -72,6 +72,22 @@ ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
   CUDABUILD = yes
 endif
 
+
+AVX_FLAG=
+ifneq ("$(ROLLOPTS)", "$(subst avx2,,$(ROLLOPTS))")
+  ifeq ("$(COMPILERNAME)", "gnu")
+    AVX_FLAG = -mavx2
+  else ifeq ("$(COMPILERNAME)", "intel")
+    AVX_FLAG = -xcore-avx2
+  endif
+else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
+  ifeq ("$(COMPILERNAME)", "gnu")
+    AVX_FLAG = -mavx
+  else ifeq ("$(COMPILERNAME)", "intel")
+    AVX_FLAG = -xavx
+  endif
+endif
+
 $(NAME).spec: DESCRIPTION LICENSE
 
 DESCRIPTION:
@@ -94,7 +110,9 @@ build: $(SRC_DIRS)
 	patch $(SOURCE_DIR)/lib/gpu/Makefile.linux patch-files/Makefile.gpu.patch
 	patch $(SOURCE_DIR)/lib/cuda/Makefile.common patch-files/Makefile.cuda.patch
 	patch $(SOURCE_DIR)/src/MAKE/Makefile.mpi patch-files/Makefile.mpi.patch
+	perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/src/MAKE/Makefile.mpi
 	patch -o $(SOURCE_DIR)/lib/meam/Makefile.meam  $(SOURCE_DIR)/lib/meam/Makefile.ifort patch-files/Makefile.ifort.meam.patch
+	perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/meam/Makefile.meam
 	patch -o $(SOURCE_DIR)/lib/meam/Makefile.lammps $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort patch-files/Makefile.lammps.meam.patch
 	cp $(SOURCE_DIR)/lib/meam/Makefile.lammps $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort
 	cp $(SOURCE_DIR)/lib/atc/Makefile.mpic++ $(SOURCE_DIR)/lib/atc/Makefile.atc 
@@ -105,14 +123,17 @@ build: $(SRC_DIRS)
 	
 	cp $(SOURCE_DIR)/lib/awpmd/Makefile.mpicc $(SOURCE_DIR)/lib/awpmd/Makefile.awpmd
 	patch -o $(SOURCE_DIR)/lib/poems/Makefile.poems $(SOURCE_DIR)/lib/poems/Makefile.icc patch-files/Makefile.poems.patch
+	perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/poems/Makefile.poems
 	perl -pi -e "s!ROLLWARNINGS!$(ROLLWARNINGS)!" $(SOURCE_DIR)/lib/poems/Makefile.poems
 	patch -o $(SOURCE_DIR)/lib/reax/Makefile.reax $(SOURCE_DIR)/lib/reax/Makefile.ifort patch-files/Makefile.ifort.reax.patch
+	perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/reax/Makefile.reax
 	patch $(SOURCE_DIR)/lib/reax/reax_defs.h patch-files/reax_defs.h.patch
 	cp $(SOURCE_DIR)/lib/reax/Makefile.lammps.ifort $(SOURCE_DIR)/lib/reax/Makefile.lammps
 	perl -pi -e "s!ROLLCOMPILER!$(FC)!" $(SOURCE_DIR)/lib/reax/Makefile.reax
 	patch $(SOURCE_DIR)/lib/awpmd/Makefile.lammps.installed patch-files/Makefile.lammps.awpmd.installed.patch
 	patch $(SOURCE_DIR)/lib/atc/Makefile.lammps.installed patch-files/Makefile.lammps.atc.installed.patch
 	patch -o $(SOURCE_DIR)/lib/colvars/Makefile.colvars $(SOURCE_DIR)/lib/colvars/Makefile.g++ patch-files/Makefile.colvars.patch
+	perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/colvars/Makefile.colvars
 	( \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \

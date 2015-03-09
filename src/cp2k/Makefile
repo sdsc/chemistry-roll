@@ -70,11 +70,6 @@ else ifeq ("$(COMPILERNAME)", "pgi")
   COMPILE_FLAGS = -fast
 endif
 
-ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
-  ifeq ("$(COMPILERNAME)", "gnu")
-    COMPILE_FLAGS += -mavx
-  endif
-endif
 
 ROLLTYPEMKL = _
 ifneq ("$(MPINAME)", "$(subst openmpi,,$(MPINAME))")
@@ -98,6 +93,20 @@ ifeq ("$(COMPILERNAME)", "intel")
 endif
 
 COMPILE_FLAGS += -I$(REDHAT.ROOT)/src/cp2k/$(SOURCE_DIR)/obj/$(ROLLMAKEFILE)/popt
+
+ifneq ("$(ROLLOPTS)", "$(subst avx2,,$(ROLLOPTS))")
+  ifeq ("$(COMPILERNAME)", "gnu")
+    COMPILE_FLAGS += -mavx2
+  else ifeq ("$(COMPILERNAME)", "intel")
+    COMPILE_FLAGS += -xcore-avx2
+  endif
+else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
+  ifeq ("$(COMPILERNAME)", "gnu")
+    COMPILE_FLAGS += -mavx
+  else ifeq ("$(COMPILERNAME)", "intel")
+    COMPILE_FLAGS += -xavx
+  endif
+endif
 
 $(NAME).spec: DESCRIPTION LICENSE
 
