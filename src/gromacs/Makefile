@@ -65,23 +65,13 @@ include $(SDSCDEVEL)/Rules.mk
 
 COMPILE_FLAGS = -fPIC -O2
 ifeq ("$(COMPILERNAME)", "intel")
-  COMPILE_FLAGS = -fPIC -O2 -xHOST
+  COMPILE_FLAGS = -fPIC -O2 -xHost
 else ifeq ("$(COMPILERNAME)", "pgi")
   COMPILE_FLAGS = -fPIC -fast
 endif
 
-ifneq ("$(ROLLOPTS)", "$(subst avx2,,$(ROLLOPTS))")
-  ifeq ("$(COMPILERNAME)", "gnu")
-    COMPILE_FLAGS += -mavx2
-  else ifeq ("$(COMPILERNAME)", "intel")
-    COMPILE_FLAGS += -xcore-avx2
-  endif
-else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
-  ifeq ("$(COMPILERNAME)", "gnu")
-    COMPILE_FLAGS += -mavx
-  else ifeq ("$(COMPILERNAME)", "intel")
-    COMPILE_FLAGS += -xavx
-  endif
+ifndef ROLLOPTS
+  ROLLOPTS = none
 endif
 
 $(NAME).spec: DESCRIPTION LICENSE
@@ -100,6 +90,11 @@ LICENSE: $(SRC_DIRS)
 
 build: $(SRC_DIRS)
 	( \
+          if [[ $(ROLLOPTS) =~ "gromacs_othermpi" ]];  then \
+              echo "HI"; \
+              make ROLLCOMPILER=$(ROLLCOMPILER) ROLLMPI=$(ROLLOTHERMPI) ROLLOPTS="foo" $@ ; \
+              exit; \
+          fi; \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MPI); \
@@ -135,3 +130,4 @@ install::
 
 clean::
 	rm -rf $(SRC_DIRS) DESCRIPTION LICENSE
+
