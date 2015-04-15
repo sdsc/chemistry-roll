@@ -6,7 +6,11 @@ COMPILERNAME := $(firstword $(subst /, ,$(ROLLCOMPILER)))
 ifndef ROLLMPI
   ROLLMPI = rocks-openmpi
 endif
+ifneq ("$(ROLLOPTS)", "$(subst gromacs_othermpi,,$(ROLLOPTS))")
+MPINAME := $(firstword $(subst /, ,$(ROLLOTHERMPI)))
+else
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
+endif
 
 NAME           = sdsc-gromacs
 VERSION        = 5.0.4
