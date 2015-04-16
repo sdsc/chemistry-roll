@@ -3,7 +3,7 @@ ifndef ROLLCOMPILER
 endif
 COMPILERNAME := $(firstword $(subst /, ,$(ROLLCOMPILER)))
 
-ifndef ROLLMPI
+/fndef ROLLMPI
   ROLLMPI = rocks-openmpi
 endif
 ifneq ("$(ROLLOPTS)", "$(subst gromacs_othermpi,,$(ROLLOPTS))")
@@ -14,7 +14,7 @@ endif
 
 NAME           = sdsc-gromacs
 VERSION        = 5.0.4
-RELEASE        = 1
+RELEASE        = 2
 PKGROOT        = /opt/gromacs
 
 SRC_SUBDIR     = gromacs
