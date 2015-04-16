@@ -1,0 +1,31 @@
+For SLURM:
+
+#!/bin/bash
+#SBATCH -p compute
+#SBATCH --ntasks-per-node=24
+#SBATCH --nodes=1
+#SBATCH -t 01:00:00
+#SBATCH -o test.o
+#SBATCH -e test.e
+#SBATCH -J test
+#SBATCH --export=ALL
+
+module unload mvapich2_ib
+module load gromacs
+ibrun /opt/gromacs/bin/mdrun_mpi -v -s test.tpr -deffnm test.out
+
+For PBS:
+
+#!/bin/bash
+#PBS -q compute
+#PBS -l nodes=1:ppn=24
+#PBS -l walltime=01:00:00
+#PBS -o test.o
+#PBS -e test.e
+#PBS -N test
+#PBS -V
+
+module unload mvapich2_ib
+module load gromacs
+cd $PBS_O_WORKDIR
+ibrun /opt/gromacs/bin/mdrun_mpi -v -s test.tpr -deffnm test.out
