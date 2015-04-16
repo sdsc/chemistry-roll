@@ -3,7 +3,7 @@ ifndef ROLLCOMPILER
 endif
 COMPILERNAME := $(firstword $(subst /, ,$(ROLLCOMPILER)))
 
-/fndef ROLLMPI
+ifndef ROLLMPI
   ROLLMPI = rocks-openmpi
 endif
 ifneq ("$(ROLLOPTS)", "$(subst gromacs_othermpi,,$(ROLLOPTS))")
