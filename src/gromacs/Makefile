@@ -167,7 +167,6 @@ install::
 	$(PKGROOT_BIND_UMOUNT)
 	$(INSTALL_LICENSE_FILES)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)
-	cp SAMPLE_SCRIPT $(ROOT)/$(PKGROOT)
 	@echo "::: Package $(NAME) install complete :::"
 endif
 
