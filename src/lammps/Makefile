@@ -107,31 +107,50 @@ LICENSE: $(SRC_DIRS)
 	echo GPL > $@
 
 build: $(SRC_DIRS)
-	patch $(SOURCE_DIR)/lib/gpu/Makefile.linux patch-files/Makefile.gpu.patch
-	patch $(SOURCE_DIR)/lib/cuda/Makefile.common patch-files/Makefile.cuda.patch
 	patch $(SOURCE_DIR)/src/MAKE/Makefile.mpi patch-files/Makefile.mpi.patch
+	if test "$(COMPILERNAME)" != "intel"; then \
+	  perl -pi -e "s! -restrict!!" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
+	fi
 	perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/src/MAKE/Makefile.mpi
-	patch -o $(SOURCE_DIR)/lib/meam/Makefile.meam  $(SOURCE_DIR)/lib/meam/Makefile.ifort patch-files/Makefile.ifort.meam.patch
-	perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/meam/Makefile.meam
-	patch -o $(SOURCE_DIR)/lib/meam/Makefile.lammps $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort patch-files/Makefile.lammps.meam.patch
-	cp $(SOURCE_DIR)/lib/meam/Makefile.lammps $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort
+	#
+	if test "$(COMPILERNAME)" = "intel"; then \
+	  cp $(SOURCE_DIR)/lib/meam/Makefile.ifort $(SOURCE_DIR)/lib/meam/Makefile.meam; \
+	else \
+	  cp $(SOURCE_DIR)/lib/meam/Makefile.gfortran $(SOURCE_DIR)/lib/meam/Makefile.meam; \
+	fi
+	echo "F90 = mpif90" >> $(SOURCE_DIR)/lib/meam/Makefile.meam
+	echo "F90FLAGS = -O -fPIC $(AVX_FLAG)" >> $(SOURCE_DIR)/lib/meam/Makefile.meam
+	#
+	patch $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort patch-files/Makefile.lammps.meam.patch
+	if test "$(ROLLCOMPILER)" = "intel"; then \
+	  cp $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort $(SOURCE_DIR)/lib/meam/Makefile.lammps; \
+	else \
+	  cp $(SOURCE_DIR)/lib/meam/Makefile.lammps.gfortran $(SOURCE_DIR)/lib/meam/Makefile.lammps; \
+	fi
+	#
 	cp $(SOURCE_DIR)/lib/atc/Makefile.mpic++ $(SOURCE_DIR)/lib/atc/Makefile.atc 
-
-	perl -pi -e "s!ROLLCUDA!/opt/cuda/current!" $(SOURCE_DIR)/lib/gpu/Makefile.linux
-	perl -pi -e "s!ROLLCUDA!/opt/cuda/current!" $(SOURCE_DIR)/lib/cuda/Makefile.common
-	perl -pi -e "s!ROLLCOMPILER!$(FC)!" $(SOURCE_DIR)/lib/meam/Makefile.meam
-	
+	#
 	cp $(SOURCE_DIR)/lib/awpmd/Makefile.mpicc $(SOURCE_DIR)/lib/awpmd/Makefile.awpmd
-	patch -o $(SOURCE_DIR)/lib/poems/Makefile.poems $(SOURCE_DIR)/lib/poems/Makefile.icc patch-files/Makefile.poems.patch
+	#
+	patch $(SOURCE_DIR)/lib/poems/Makefile.icc patch-files/Makefile.poems.patch
+	cp $(SOURCE_DIR)/lib/poems/Makefile.icc $(SOURCE_DIR)/lib/poems/Makefile.poems
 	perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/poems/Makefile.poems
 	perl -pi -e "s!ROLLWARNINGS!$(ROLLWARNINGS)!" $(SOURCE_DIR)/lib/poems/Makefile.poems
-	patch -o $(SOURCE_DIR)/lib/reax/Makefile.reax $(SOURCE_DIR)/lib/reax/Makefile.ifort patch-files/Makefile.ifort.reax.patch
+	#
+	patch $(SOURCE_DIR)/lib/reax/Makefile.ifort patch-files/Makefile.ifort.reax.patch
+	cp $(SOURCE_DIR)/lib/reax/Makefile.ifort $(SOURCE_DIR)/lib/reax/Makefile.reax
 	perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/reax/Makefile.reax
-	patch $(SOURCE_DIR)/lib/reax/reax_defs.h patch-files/reax_defs.h.patch
-	cp $(SOURCE_DIR)/lib/reax/Makefile.lammps.ifort $(SOURCE_DIR)/lib/reax/Makefile.lammps
 	perl -pi -e "s!ROLLCOMPILER!$(FC)!" $(SOURCE_DIR)/lib/reax/Makefile.reax
+	if test "$(COMPILERNAME)" != "intel"; then \
+	  perl -pi -e "s!ifort!gfortran!" $(SOURCE_DIR)/lib/reax/Makefile.reax; \
+	fi
+	#
+	patch $(SOURCE_DIR)/lib/reax/reax_defs.h patch-files/reax_defs.h.patch
+	#
 	patch $(SOURCE_DIR)/lib/awpmd/Makefile.lammps.installed patch-files/Makefile.lammps.awpmd.installed.patch
+	#
 	patch $(SOURCE_DIR)/lib/atc/Makefile.lammps.installed patch-files/Makefile.lammps.atc.installed.patch
+	#
 	patch -o $(SOURCE_DIR)/lib/colvars/Makefile.colvars $(SOURCE_DIR)/lib/colvars/Makefile.g++ patch-files/Makefile.colvars.patch
 	perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/colvars/Makefile.colvars
 	( \
@@ -139,10 +158,9 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_MKL); \
 	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
 	  $(MODULE_LOAD_MPI); \
-	  $(MODULE_LOAD_CUDA); \
 	  cd $(SOURCE_DIR)/src; \
 	  perl -pi -e "s!MKLLIB!$${MKLLIB}!" MAKE/Makefile.mpi; \
-	  perl -pi -e "s!MKL_ROOT$${MKL_ROOT}!" MAKE/Makefile.mpi; \
+	  perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" MAKE/Makefile.mpi; \
 	  $(MAKE) yes-class2; \
 	  $(MAKE) yes-colloid; \
 	  $(MAKE) yes-dipole; \
@@ -199,12 +217,18 @@ build: $(SRC_DIRS)
 	  $(MAKE) -f Makefile.colvars; \
 	  cp *.a ../../src; \
 	  if test "$(CUDABUILD)" == "yes"; then \
+	    $(MODULE_LOAD_CUDA); \
 	    cd ../gpu; \
-	    $(MAKE) -f Makefile.mpi; \
+	    echo CUDA_HOME = $${CUDAHOME} >> Makefile.linux; \
+	    echo CUDA_ARCH = -arch=sm_30 >> Makefile.linux; \
+	    echo gpu_SYSLIB = -lcudart_static >> Makefile.lammps.standard; \
+	    echo gpu_SYSPATH = -L$${CUDAHOME}/lib64 >> Makefile.lammps.standard; \
+	    $(MAKE) -f Makefile.linux; \
 	    cp *.a ../../src; \
 	    cd ../../src; \
 	    make yes-gpu; \
 	    cd ../lib/cuda; \
+	    echo CUDA_INSTALL_PATH = $${CUDAHOME} >> Makefile.common; \
 	    $(MAKE); \
 	    cp *.a ../../src; \
 	  fi; \
