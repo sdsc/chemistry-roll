@@ -86,7 +86,6 @@ DESCRIPTION:
 	  $(DESCRIBE_OTHERMPI) \
 	) > $@
 else
-DESCRIPTION:
 	$(MODULE_LOAD_CC); \
 	( \
 	  $(DESCRIBE_PKG); \
