@@ -118,9 +118,6 @@ build: $(SRC_DIRS)
 	cd $(SOURCE_DIR) && tar xvf charm-*.tar
 	cp Linux-x86_64* $(SOURCE_DIR)/arch
 	perl -pi -e "s!COMPILE_FLAGS!$(COMPILE_FLAGS)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
-	if test "$(COMPILERNAME)" != "intel"; then \
-	  perl -pi -e "s! -auto ! !" $(SOURCE_DIR)/charm*/src/arch/mpi-linux-x86_64/cc-mpicxx.sh; \
-	fi
 	( \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MPI); \
