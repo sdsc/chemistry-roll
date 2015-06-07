@@ -10,7 +10,7 @@ MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 VERSION        = 2.9
 NAME           = sdsc-namd-$(VERSION)
-RELEASE        = 12
+RELEASE        = 11
 PKGROOT        = /opt/namd/$(VERSION)
 
 SRC_SUBDIR     = namd
