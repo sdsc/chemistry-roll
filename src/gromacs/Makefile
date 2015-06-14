@@ -71,21 +71,8 @@ else ifeq ("$(COMPILERNAME)", "pgi")
   COMPILE_FLAGS = -fPIC -fast
 endif
 
-ifndef ROLLOPTS
-  ROLLOPTS = none
-endif
-
 $(NAME).spec: DESCRIPTION LICENSE
 
-ifneq ("$(ROLLOPTS)", "$(subst gromacs_othermpi,,$(ROLLOPTS))")
-DESCRIPTION:
-	$(MODULE_LOAD_CC); \
-	( \
-	  $(DESCRIBE_PKG); \
-	  $(DESCRIBE_CC); \
-	  $(DESCRIBE_OTHERMPI) \
-	) > $@
-else
 DESCRIPTION:
 	$(MODULE_LOAD_CC); \
 	( \
@@ -93,33 +80,11 @@ DESCRIPTION:
 	  $(DESCRIBE_CC); \
 	  $(DESCRIBE_MPI) \
 	) > $@
-endif
 
 LICENSE: $(SRC_DIRS)
 	$(CHECK_LICENSE_FILES)
 	echo LGPLv2 > $@
 
-ifneq ("$(ROLLOPTS)", "$(subst gromacs_othermpi,,$(ROLLOPTS))")
-build: $(SRC_DIRS)
-	( \
-	  $(MODULE_LOAD_CC); \
-	  $(MODULE_LOAD_CMAKE); \
- 	  $(MODULE_LOAD_OTHERMPI); \
-	  cd $(SOURCE_DIR); \
-	  mkdir build; \
-	  cd build; \
-	  export CC=mpicc; \
-	  export CXX=mpicxx; \
-	  cmake .. -DGMX_BUILD_OWN_FFTW=ON \
-	           -DGMX_BUILD_OWN_FFTW_URL="../../$(FFTW_PKG)" \
-	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
-	           -DGMX_MPI=ON \
-	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
-	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT); \
-	  $(MAKE) \
-	)
-	@echo "::: Package $(NAME) build complete :::"
-else
 build: $(SRC_DIRS)
 	( \
 	  $(MODULE_LOAD_CC); \
@@ -138,15 +103,15 @@ build: $(SRC_DIRS)
 	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT); \
 	  $(MAKE) \
 	)
-endif
-ifneq ("$(ROLLOPTS)", "$(subst gromacs_othermpi,,$(ROLLOPTS))")
+	@echo "::: Package $(NAME) build complete :::"
+
 install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
 	$(PKGROOT_BIND_MOUNT)
 	( \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
-	  $(MODULE_LOAD_OTHERMPI); \
+	  $(MODULE_LOAD_MPI); \
 	  cd $(SOURCE_DIR)/build; \
 	  $(MAKE) prefix=$(PKGROOT) install \
 	)
@@ -154,22 +119,6 @@ install::
 	$(INSTALL_LICENSE_FILES)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)
 	@echo "::: Package $(NAME) install complete :::"
-else
-install::
-	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
-	$(PKGROOT_BIND_MOUNT)
-	( \
-	  $(MODULE_LOAD_CC); \
-	  $(MODULE_LOAD_CMAKE); \
-          $(MODULE_LOAD_MPI); \
-	  cd $(SOURCE_DIR)/build; \
-	  $(MAKE) prefix=$(PKGROOT) install \
-	)
-	$(PKGROOT_BIND_UMOUNT)
-	$(INSTALL_LICENSE_FILES)
-	cp -r gmxtest $(ROOT)/$(PKGROOT)
-	@echo "::: Package $(NAME) install complete :::"
-endif
 
 clean::
 	rm -rf $(SRC_DIRS) DESCRIPTION LICENSE
