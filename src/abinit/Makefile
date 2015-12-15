@@ -65,40 +65,14 @@ include $(SDSCDEVEL)/Rules.mk
 
 COMPILE_FLAGS = -O2
 ifeq ("$(COMPILERNAME)", "intel")
-  COMPILE_FLAGS = -ip -fno-rtti -xHOST
+  COMPILE_FLAGS = -O2 -xHOST
 else ifeq ("$(COMPILERNAME)", "pgi")
   COMPILE_FLAGS = -fast
 endif
 
-CHARMARCH = mpi-linux-x86_64-mpicxx
-CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
-CUDA = 
-ifeq ("$(COMPILERNAME)", "intel")
-  CHARMBUILDOPTS = mpicxx  -O2  -xHOST
-else ifeq ("$(COMPILERNAME)", "pgi")
-  CHARMBUILDOPTS = mpicxx  -O2  -fast
-else ifeq ("$(COMPILERNAME)", "gnu")
-  CHARMBUILDOPTS = mpicxx  -O2
-endif
-
-ifneq ("$(ROLLOPTS)", "$(subst avx2,,$(ROLLOPTS))")
-  ifeq ("$(COMPILERNAME)", "gnu")
-    COMPILE_FLAGS += -mavx2
-  else ifeq ("$(COMPILERNAME)", "intel")
-    COMPILE_FLAGS += -xcore-avx2
-  endif
-else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
-  ifeq ("$(COMPILERNAME)", "gnu")
-    COMPILE_FLAGS += -mavx
-  else ifeq ("$(COMPILERNAME)", "intel")
-    COMPILE_FLAGS += -xavx
-  endif
-endif
-
-CUDABUILD = no
+CUDAOPTS = 
 ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
-  CUDA = --with-cuda
-  CUDABUILD = yes
+  CUDAOPTS = --enable-gpu --with-gpu-flavor=cuda-double --with-gpu-prefix=$${CUDAHOME}
 endif
 
 $(NAME).spec: DESCRIPTION LICENSE
@@ -109,59 +83,70 @@ DESCRIPTION:
 	  $(DESCRIBE_PKG); \
 	  $(DESCRIBE_CC); \
 	  $(DESCRIBE_MPI); \
+          $(DESCRIBE_NETCDF); \
+          $(DESCRIBE_MKL); \
 	  $(DESCRIBE_CUDA) \
 	) > $@
 
 LICENSE: $(SRC_DIRS)
 	$(CHECK_LICENSE_FILES)
-	echo University of Illinois > $@
+	echo GPLv3  > $@
+
+CACHE_DIR=$(REDHAT.ROOT)/cache
 
 build: $(SRC_DIRS)
-	cd $(SOURCE_DIR) && tar xvf charm-*.tar
-	patch $(SOURCE_DIR)/arch/Linux-x86_64.fftw patch-files/Linux-x86_64.fftw.patch
-	patch $(SOURCE_DIR)/arch/Linux-x86_64.tcl patch-files/Linux-x86_64.tcl.patch
-	patch $(SOURCE_DIR)/arch/Linux-x86_64.cuda patch-files/Linux-x86_64.cuda.patch
-	cp Linux-x86_64* $(SOURCE_DIR)/arch
-	perl -pi -e "s!ROOTDIR!`pwd`/$(SOURCE_DIR)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
-	perl -pi -e "s!COMPILE_FLAGS!$(COMPILE_FLAGS)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
-	if test "$(COMPILERNAME)" != "intel"; then \
-	  perl -pi -e "s! -auto ! !" $(SOURCE_DIR)/charm*/src/arch/mpi-linux-x86_64/cc-mpicxx.sh; \
-	fi
 	( \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MPI); \
+          $(MODULE_LOAD_NETCDF); \
+          $(MODULE_LOAD_MKL); \
 	  $(MODULE_LOAD_CUDA); \
-          mv linux-$(ARCH) $(SOURCE_DIR); \
-	  perl -pi -e "s!ROLLCUDA!$${CUDAHOME}!g" $(SOURCE_DIR)/arch/Linux-x86_64.cuda; \
-	  cd $(SOURCE_DIR); \
-	  cd charm-*[0-9]; \
-	  ./build charm++ mpi-linux-x86_64 $(CHARMBUILDOPTS); \
-	  cd ..; \
-	  ./config Linux-x86_64-MPI-$(CC) --charm-arch $(CHARMARCH); \
-	  cd Linux-x86_64-MPI-$(CC); \
-	  $(MAKE) -j 16; \
-          mkdir $(PWD)/bin; \
-          cp {charmrun,flipbinpdb,flipdcd,namd2,psfgen} $(PWD)/bin; \
-          if test "$(CUDABUILD)" = "yes"; then \
-             cd .. ; \
-             make  clean; \
-             rm -rf Linux-x86_64-MPI-$(CC); \
-             ./config Linux-x86_64-MPI-$(CC) --charm-arch $(CHARMARCH) $(CUDA); \
-             cd Linux-x86_64-MPI-$(CC); \
-             $(MAKE) -j 16; \
-             cp namd2 $(PWD)/bin/namd2.cuda; \
-          fi \
+          export CC=$(CC); \
+          export CXX=$(CXX); \
+          export FC=$(FC); \
+          export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
+          cd $(LIBXC_DIR); \
+          ./configure --prefix=$(CACHE_DIR)/libxc --enable-fortran --enable-shared; \
+          make; \
+          make install; \
+          cd ../$(ATOMPAW_DIR); \
+          ./configure --prefix=$(CACHE_DIR)/atompaw --with-libxc-incs=-I$(CACHE_DIR)/libxc/include --with-libxc-libs="$(CACHE_DIR)/libxc/lib -lxc" --with-linalg-libs="-L$${MKLLIB} -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lpthread -lm"; \
+          make; \
+          make install; \
+          cd ../$(ETSF_IO_DIR); \
+          ./configure --prefix=$(CACHE_DIR)/etsf_io --with-netcdf-prefix=$${NETCDFHOME}; \
+          make; \
+          make install; \
+          cd ../$(FOX_DIR); \
+          ./configure --prefix=$(CACHE_DIR)/FoX; \
+          make; \
+          make install; \
+          export LD_LIBRARY_PATH=$(CACHE_DIR)/libxc/lib:$${LD_LIBRARY_PATH}; \
+	  cd ../$(SOURCE_DIR); \
+          ./configure --enable-mpi  --enable-mpi_io --with-mpi-prefix=$${MPIHOME} $(CUDAOPTS) --prefix=$(PKGROOT) --with-libxc-incs=-I$(CACHE_DIR)/libxc/include --with-libxc-libs="-L$(CACHE_DIR)/libxc/lib -lxc -lrt" --with-dft-flavor=atompaw+libxc+bigdft+wannier90 --with-atompaw-libs="-L$(CACHE_DIR)/atompaw/lib -latompaw" --with-atompaw-incs=-I$(CACHE_DIR)/atompaw/include --with-atompaw-bins=$(CACHE_DIR)/atompaw/bin --with-netcdf-incs=-I$${NETCDFHOME}/include --with-netcdf-libs="-L$${NETCDFHOME}/lib -lnetcdff -lnetcdf" --with-etsf-io-incs="-I$(CACHE_DIR)/etsf_io/include/intel -I$(CACHE_DIR)/etsf_io/include" --with-etsf-io-libs="-L$(CACHE_DIR)/etsf_io/lib -letsf_io_low_level -letsf_io -letsf_io_utils -letsf_io_low_level" --with-linalg-libs="-L$${MKLLIB} -lmkl_intel_lp64 -lmkl_core -lmkl_sequential" --with-fox-incs=-I$(CACHE_DIR)/FoX/finclude --with-fox-libs=" -L$(CACHE_DIR)/FoX/lib -lFoX_common -lFoX_dom -lFoX_fsys -lFoX_sax -lFoX_utils -lFoX_wcml -lFoX_wkml -lFoX_wxml -lFoX_fsys -lFoX_common" --enable-fallbacks --with-trio-flavor=netcdf+etsf_io+fox --enable-atompaw=yes --enable-bigdft=yes --enable-etsf-io=yes --enable-fox=yes --enable-libxc=yes --enable-linalg=yes --enable-netcdf=yes --enable-wannier90=yes; \
+	 $(MAKE) \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
-	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/bin
-	cp -r tiny $(ROOT)/$(PKGROOT)
-	cp $(PWD)/bin/* $(ROOT)/$(PKGROOT)/bin
-	rm -rf $(PWD)/bin
+	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
+	$(PKGROOT_BIND_MOUNT)
+	( \
+	  $(MODULE_LOAD_CC); \
+	  $(MODULE_LOAD_MPI); \
+          $(MODULE_LOAD_NETCDF); \
+	  $(MODULE_LOAD_CUDA); \
+	  cd $(SOURCE_DIR); \
+          make install; \
+          cd $(CACHE_DIR)/atompaw; \
+          cp -r * $(PKGROOT) \
+          cd $(CACHE_DIR)/libxc/lib; \
+          cp t01.files $(PKGROOT)/share/abinit-test/paral/Input; \
+          cp -r * $(PKGROOT)/lib \
+        ) 
+	$(PKGROOT_BIND_UMOUNT)
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SRC_DIRS) _arch DESCRIPTION LICENSE
-
+	rm -rf $(SRC_DIRS) $(FOX_DIR) _arch DESCRIPTION LICENSE

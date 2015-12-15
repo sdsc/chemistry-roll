@@ -1,6 +1,6 @@
 --- namd-2.9/arch/Linux-x86_64.cuda	2012-03-20 17:59:59.000000000 -0700
-+++ patch-files/Linux-x86_64.cuda	2014-01-23 17:04:23.000000000 -0800
-@@ -1,9 +1,9 @@
++++ patch-files/Linux-x86_64.cuda	2015-12-04 17:32:05.140210903 -0800
+@@ -1,11 +1,11 @@
  
 -CUDADIR=/usr/local/encap/cuda-4.0
 +CUDADIR=ROLLCUDA
@@ -12,3 +12,6 @@
  CUDAFLAGS=-DNAMD_CUDA
  CUDAOBJS=$(CUDAOBJSRAW)
  CUDA=$(CUDAFLAGS) -I. $(CUDAINCL)
+-CUDACC=$(CUDADIR)/bin/nvcc -O3 --maxrregcount 32 -gencode arch=compute_11,code=sm_11 -gencode arch=compute_20,code=sm_20 -gencode arch=compute_20,code=compute_20 -Xcompiler "-m64" $(CUDA)
++CUDACC=$(CUDADIR)/bin/nvcc -O3 --maxrregcount 32 -gencode arch=compute_20,code=sm_20 -gencode arch=compute_20,code=compute_20 -Xcompiler "-m64" $(CUDA)
+ 

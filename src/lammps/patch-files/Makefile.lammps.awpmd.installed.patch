@@ -1,5 +1,5 @@
---- lammps-9Dec14/lib/awpmd/Makefile.lammps.installed	2013-05-30 10:54:44.000000000 -0700
-+++ patch-files/Makefile.lammps.installed	2015-02-08 14:44:16.690497827 -0800
+--- lammps-20Nov15/lib/awpmd/Makefile.lammps.installed	2013-05-30 10:54:44.000000000 -0700
++++ patch-files/Makefile.lammps.installed	2015-12-09 18:18:53.016930214 -0800
 @@ -1,5 +1,5 @@
  # Settings that the LAMMPS build will import when this package library is used
  

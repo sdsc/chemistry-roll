@@ -94,9 +94,10 @@ else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
   endif
 endif
 
-CUDAOPT = --without-cuda
+CUDABUILD = no
 ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
   CUDAOPT = --with-cuda --cuda-prefix $${CUDAHOME}
+  CUDABUILD = yes
 endif
 
 $(NAME).spec: DESCRIPTION LICENSE
@@ -118,6 +119,7 @@ build: $(SRC_DIRS)
 	cd $(SOURCE_DIR) && tar xvf charm-*.tar
 	cp Linux-x86_64* $(SOURCE_DIR)/arch
 	perl -pi -e "s!COMPILE_FLAGS!$(COMPILE_FLAGS)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
+	patch $(SOURCE_DIR)/arch/Linux-x86_64.cuda patch-files/Linux-x86_64.cuda.patch
 	if test "$(COMPILERNAME)" != "intel"; then \
 	  perl -pi -e "s! -auto ! !" $(SOURCE_DIR)/charm*/src/arch/mpi-linux-x86_64/cc-mpicxx.sh; \
 	fi
@@ -132,18 +134,32 @@ build: $(SRC_DIRS)
 	  ./config Linux-x86_64-MPI-$(CC) \
 	           --charm-arch $(CHARMARCH) \
 	           --fftw-prefix $(CURDIR)/$(FFTW_DIR) \
+	           --tcl-prefix $(CURDIR)/$(TCL_DIR) --without-cuda; \
+	 cd Linux-x86_64-MPI-$(CC); \
+	 $(MAKE) -j 16; \
+         mkdir $(PWD)/bin; \
+         cp {charmrun,flipbinpdb,flipdcd,namd2,psfgen} $(PWD)/bin; \
+	 if test "$(CUDABUILD)" = "yes"; then \
+           cd .. ; \
+           make  clean; \
+	   rm -rf Linux-x86_64-MPI-$(CC); \
+	   ./config Linux-x86_64-MPI-$(CC) \
+	           --charm-arch $(CHARMARCH) \
+	           --fftw-prefix $(CURDIR)/$(FFTW_DIR) \
 	           --tcl-prefix $(CURDIR)/$(TCL_DIR) \
 	           $(CUDAOPT); \
-	  cd Linux-x86_64-MPI-$(CC); \
-	  $(MAKE) -j 16 \
+	   cd Linux-x86_64-MPI-$(CC); \
+	   $(MAKE) -j 16; \
+           cp namd2 $(PWD)/bin/namd2.cuda; \
+          fi \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/bin
-	cp $(SOURCE_DIR)/*/{charmrun,flipbinpdb,flipdcd,namd2,psfgen} \
-	   $(ROOT)/$(PKGROOT)/bin
 	cp -r tiny $(ROOT)/$(PKGROOT)
+	cp $(PWD)/bin/* $(ROOT)/$(PKGROOT)/bin
+	rm -rf $(PWD)/bin
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
 

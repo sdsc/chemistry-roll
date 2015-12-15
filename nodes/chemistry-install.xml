@@ -4,6 +4,7 @@
 
 <description>
 Chemistry-related application codes
+abinit http://www.abinit.org
 apbs http://www.poissonboltzmann.org/apbs
 cp2k http://www.cp2k.org
 gromacs http://www.gromacs.org
@@ -16,6 +17,8 @@ Copyright (c) 2000 - 2014 The Regents of the University of California.
 All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 </copyright>
 
+<package>sdsc-abinit</package>
+<package>sdsc-abinit-modules</package>
 <package>sdsc-apbs</package>
 <package>sdsc-apbs-modules</package>
 <package>sdsc-cp2k</package>

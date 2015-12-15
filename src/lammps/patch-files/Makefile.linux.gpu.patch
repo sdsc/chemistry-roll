@@ -1,0 +1,11 @@
+--- lammps-10Aug15/lib/gpu/Makefile.linux	2014-01-28 16:07:38.000000000 -0800
++++ patch-files/Makefile.linux	2015-08-25 11:50:34.558400411 -0700
+@@ -7,7 +7,7 @@
+ 
+ EXTRAMAKE = Makefile.lammps.standard
+ 
+-CUDA_HOME = /usr/local/cuda
++CUDA_HOME = ${CUDAHOME}
+ NVCC = nvcc
+ 
+ # Tesla CUDA

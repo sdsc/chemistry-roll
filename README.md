@@ -2,12 +2,13 @@
 
 ## Overview
 
-This roll bundles a collection of chemistry packages: APBS, CP2K, GROMACS,
-LAMMPS, and NAMD.
+This roll bundles a collection of chemistry packages: ABINIT,APBS, CP2K, GROMACS,
+LAMMPS,and NAMD.
 
 For more information about the various packages included in the chemistry roll
 please visit their official web pages:
 
+- <a href="http://www.abinit.irg" target="_blank">ABINIT</a> is a package whose main program allows one to find the total energy, charge density and electronic structure of systems made of electrons and nuclei (molecules and periodic solids) within Density Functional Theory (DFT), using pseudopotentials and a planewave or wavelet basis.
 - <a href="http://www.poissonboltzmann.org/apbs/" target="_blank">APBS</a> is a software package for modeling biomolecular solvation through solution of the Poisson-Boltzmann equation.
 - <a href="http://www.cp2k.org" target="_blank">CP2K</a> is a program to perform atomistic and molecular simulations of solid state, liquid, molecular, and biological systems.
 - <a href="http://www.gromacs.org" target="_blank">GROMACS</a> is a versatile package to perform molecular dynamics, i.e. simulate the Newtonian equations of motion for systems with hundreds to millions of particles.
@@ -88,7 +89,7 @@ In addition to the software itself, the roll installs package environment
 module files in:
 
 ```shell
-/opt/modulefiles/applications/{apbs,cp2k,gromacs,lammps,namd}
+/opt/modulefiles/applications/{apbs,cp2k,gromacs,lammps,namd,abinit}
 ```
 
 
