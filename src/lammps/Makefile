@@ -157,7 +157,6 @@ build: $(SRC_DIRS)
 	perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/colvars/Makefile.colvars
 	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
 	( \
-          module unload gnutools; \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \
 	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
