@@ -105,14 +105,6 @@ else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
   endif
 endif
 
-INSTALL_LICENSE_FILES = \
-  if test -d license-files; then \
-    mkdir -p -m 755 $(ROOT)/$(PKGROOT)/license-info/$(NAME); \
-    cp -r license-files/* $(ROOT)/$(PKGROOT)/license-info/$(NAME)/; \
-  else \
-    echo WARNING: no license-files directory found; \
-  fi
-
 CACHE_DIR=$(REDHAT.ROOT)/cache
 
 CUDAVARS =  \
