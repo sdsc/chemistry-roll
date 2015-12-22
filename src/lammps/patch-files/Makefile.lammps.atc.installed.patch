@@ -1,9 +1,9 @@
---- lammps-9Dec14/lib/atc/Makefile.lammps.installed	2013-05-30 10:26:11.000000000 -0700
-+++ patch-files/Makefile.lammps.installed	2015-02-08 15:17:15.663190250 -0800
+--- lammps-20Nov15/lib/atc/Makefile.lammps.installed	2013-05-30 10:26:11.000000000 -0700
++++ patch-files/Makefile.lammps.installed	2015-12-09 18:22:48.752854414 -0800
 @@ -1,5 +1,5 @@
  # Settings that the LAMMPS build will import when this package library is used
  
  user-atc_SYSINC =
 -user-atc_SYSLIB = -lblas -llapack
-+user-atc_SYSLIB = 
++user-atc_SYSLIB =
  user-atc_SYSPATH =

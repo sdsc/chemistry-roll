@@ -1,0 +1,19 @@
+--- lammps-20Nov15/src/USER-REAXC/reaxc_defs.h	2014-05-02 14:38:42.000000000 -0700
++++ patch-files/reaxc_defs.h	2015-12-09 18:01:59.116271863 -0800
+@@ -90,13 +90,13 @@
+ #define MIN_NBRS       100
+ #define MIN_HENTRIES   100
+ #define MAX_BONDS      30
+-#define MIN_BONDS      25
++#define MIN_BONDS      100
+ #define MIN_HBONDS     25
+ #define MIN_3BODIES    1000
+ #define MIN_GCELL_POPL 50
+ #define MIN_SEND       100
+-#define SAFE_ZONE      1.2
+-#define SAFER_ZONE     1.4
++#define SAFE_ZONE      1.6
++#define SAFER_ZONE     1.8
+ #define DANGER_ZONE    0.90
+ #define LOOSE_ZONE     0.75
+ #define MAX_3BODY_PARAM     5

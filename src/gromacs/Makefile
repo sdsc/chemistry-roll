@@ -71,6 +71,11 @@ else ifeq ("$(COMPILERNAME)", "pgi")
   COMPILE_FLAGS = -fPIC -fast
 endif
 
+CUDA=-DGMX_GPU=OFF
+ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
+  CUDA = -DGMX_GPU=ON -DCUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME} -DCUDA_HOST_COMPILER=$${MPIHOME}/bin/mpicc
+endif
+
 $(NAME).spec: DESCRIPTION LICENSE
 
 DESCRIPTION:
@@ -79,6 +84,7 @@ DESCRIPTION:
 	  $(DESCRIBE_PKG); \
 	  $(DESCRIBE_CC); \
 	  $(DESCRIBE_MPI) \
+	  $(DESCRIBE_CUDA) \
 	) > $@
 
 LICENSE: $(SRC_DIRS)
@@ -90,6 +96,7 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MPI); \
+	  $(MODULE_LOAD_CUDA); \
 	  cd $(SOURCE_DIR); \
 	  mkdir build; \
 	  cd build; \
@@ -100,7 +107,7 @@ build: $(SRC_DIRS)
 	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
 	           -DGMX_MPI=ON \
 	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
-	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT); \
+	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) $(CUDA); \
 	  $(MAKE) \
 	)
 	@echo "::: Package $(NAME) build complete :::"
@@ -112,6 +119,7 @@ install::
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MPI); \
+	  $(MODULE_LOAD_CUDA); \
 	  cd $(SOURCE_DIR)/build; \
 	  $(MAKE) prefix=$(PKGROOT) install \
 	)

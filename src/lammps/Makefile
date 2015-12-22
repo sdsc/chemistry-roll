@@ -137,7 +137,7 @@ build: $(SRC_DIRS)
 	perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/poems/Makefile.poems
 	perl -pi -e "s!ROLLWARNINGS!$(ROLLWARNINGS)!" $(SOURCE_DIR)/lib/poems/Makefile.poems
 	#
-	patch $(SOURCE_DIR)/lib/reax/Makefile.ifort patch-files/Makefile.ifort.reax.patch
+	patch $(SOURCE_DIR)/lib/reax/Makefile.ifort patch-files/Makefile.lammps.reax.patch
 	cp $(SOURCE_DIR)/lib/reax/Makefile.ifort $(SOURCE_DIR)/lib/reax/Makefile.reax
 	perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/reax/Makefile.reax
 	perl -pi -e "s!ROLLCOMPILER!$(FC)!" $(SOURCE_DIR)/lib/reax/Makefile.reax
@@ -147,12 +147,15 @@ build: $(SRC_DIRS)
 	#
 	patch $(SOURCE_DIR)/lib/reax/reax_defs.h patch-files/reax_defs.h.patch
 	#
+	patch $(SOURCE_DIR)/src/USER-REAXC/reaxc_defs.h patch-files/reaxc_defs.h.patch
+        #
 	patch $(SOURCE_DIR)/lib/awpmd/Makefile.lammps.installed patch-files/Makefile.lammps.awpmd.installed.patch
 	#
 	patch $(SOURCE_DIR)/lib/atc/Makefile.lammps.installed patch-files/Makefile.lammps.atc.installed.patch
 	#
 	patch -o $(SOURCE_DIR)/lib/colvars/Makefile.colvars $(SOURCE_DIR)/lib/colvars/Makefile.g++ patch-files/Makefile.colvars.patch
 	perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/colvars/Makefile.colvars
+	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
 	( \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \
@@ -216,31 +219,32 @@ build: $(SRC_DIRS)
 	  cd ../colvars; \
 	  $(MAKE) -f Makefile.colvars; \
 	  cp *.a ../../src; \
+	  cd ../../src; \
 	  if test "$(CUDABUILD)" == "yes"; then \
 	    $(MODULE_LOAD_CUDA); \
-	    cd ../gpu; \
-	    echo CUDA_HOME = $${CUDAHOME} >> Makefile.linux; \
-	    echo CUDA_ARCH = -arch=sm_30 >> Makefile.linux; \
-	    echo gpu_SYSLIB = -lcudart_static >> Makefile.lammps.standard; \
-	    echo gpu_SYSPATH = -L$${CUDAHOME}/lib64 >> Makefile.lammps.standard; \
+            rm -rf lmp_mpi; \
+	    cd ../lib/gpu; \
+            patch Makefile.linux $(REDHAT.ROOT)/src/lammps/patch-files/Makefile.linux.gpu.patch; \
 	    $(MAKE) -f Makefile.linux; \
 	    cp *.a ../../src; \
 	    cd ../../src; \
 	    make yes-gpu; \
 	    cd ../lib/cuda; \
-	    echo CUDA_INSTALL_PATH = $${CUDAHOME} >> Makefile.common; \
+            patch Makefile.linux $(REDHAT.ROOT)/src/lammps/patch-files/Makefile.linux.cuda.patch; \
 	    $(MAKE); \
 	    cp *.a ../../src; \
+            cd ../../src; \
 	  fi; \
-	  cd ../../src; \
-	  $(MAKE) -j 16 ROOT=lmp mpi \
+	  $(MAKE) -j 16 ROOT=lmp mpi; \
+	  cp lmp_mpi $(ROOT)/$(PKGROOT)/bin/lammps;  \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
 	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
 	cp $(SOURCE_DIR)/src/lmp_mpi $(ROOT)/$(PKGROOT)/bin/lammps
-	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)/
+	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)
+	cp $(SOURCE_DIR)/src/lmp_mpi $(ROOT)/$(PKGROOT)/bin/lammps
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
 

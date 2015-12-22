@@ -1,4 +1,6 @@
-ifndef ROLLCOMPILER
+ifneq ("$(ROLLOPTS)", "$(subst gromacs_othercompiler=,,$(ROLLOPTS))")
+  override ROLLCOMPILER = $(subst gromacs_othercompiler=,,$(filter gromacs_othercompiler=%,$(ROLLOPTS)))
+else ifndef ROLLCOMPILER
   ROLLCOMPILER = gnu
 endif
 COMPILERNAME := $(firstword $(subst /, ,$(ROLLCOMPILER)))
@@ -11,8 +13,8 @@ endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 NAME           = sdsc-gromacs
-VERSION        = 5.0.4
-RELEASE        = 3
+VERSION        = 5.1
+RELEASE        = 0
 PKGROOT        = /opt/gromacs
 
 SRC_SUBDIR     = gromacs
