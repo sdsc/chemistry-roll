@@ -1,5 +1,5 @@
---- lammps-20Nov15/src/MAKE/Makefile.mpi	2015-07-14 13:10:46.000000000 -0700
-+++ patch-files/Makefile.mpi	2015-12-09 17:07:22.524519147 -0800
+--- lammps-7Dec15/src/MAKE/Makefile.mpi	2015-07-14 13:10:46.000000000 -0700
++++ patch-files/Makefile.mpi	2016-01-08 14:00:35.891341645 -0800
 @@ -7,13 +7,13 @@
  # specify flags and libraries needed for your compiler
  
@@ -13,16 +13,7 @@
 -LINKFLAGS =	-g -O
 -LIB = 
 +LINKFLAGS =	-O2
-+LIB = -lstdc++ -LMKLLIB -lmkl_gf_ilp64 -lmkl_gnu_thread -lmkl_core -lpthread -lgomp
++LIB = -lstdc++ -LMKLLIB -lmkl_FORTRANTYPE_ilp64 -lmkl_COMPILERTYPE_thread -lmkl_core -lpthread -lgomp GNULIBS
  SIZE =		size
  
  ARCHIVE =	ar
-@@ -50,7 +50,7 @@
- # PATH = path for FFT library
- # LIB = name of FFT library
- 
--FFT_INC =    	
-+FFT_INC =  -DFFT_MKL -IMKL_ROOT
- FFT_PATH = 
- FFT_LIB =	
- 

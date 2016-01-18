@@ -63,8 +63,16 @@ include $(SDSCDEVEL)/Pull.mk
 include $(SDSCDEVEL)/Rules.mk
 
 ROLLWARNINGS=
+FORTRANTYPE=gf
+COMPILERTYPE=gnu
+INTELLIBS=
+GNULIBS=-lgfortran
 ifeq ("$(COMPILERNAME)","intel")
+  GNULIBS=
   ROLLWARNINGS=-Wall -Wcheck -wd869,981,1572
+  FORTRANTYPE=intel
+  COMPILERTYPE=intel
+  INTELLIBS=-lifcore -lsvml -limf
 endif
 
 CUDABUILD = no
@@ -107,60 +115,51 @@ LICENSE: $(SRC_DIRS)
 	echo GPL > $@
 
 build: $(SRC_DIRS)
-	patch $(SOURCE_DIR)/src/MAKE/Makefile.mpi patch-files/Makefile.mpi.patch
-	if test "$(COMPILERNAME)" != "intel"; then \
-	  perl -pi -e "s! -restrict!!" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
-	fi
-	perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/src/MAKE/Makefile.mpi
-	#
-	if test "$(COMPILERNAME)" = "intel"; then \
-	  cp $(SOURCE_DIR)/lib/meam/Makefile.ifort $(SOURCE_DIR)/lib/meam/Makefile.meam; \
-	else \
-	  cp $(SOURCE_DIR)/lib/meam/Makefile.gfortran $(SOURCE_DIR)/lib/meam/Makefile.meam; \
-	fi
-	echo "F90 = mpif90" >> $(SOURCE_DIR)/lib/meam/Makefile.meam
-	echo "F90FLAGS = -O -fPIC $(AVX_FLAG)" >> $(SOURCE_DIR)/lib/meam/Makefile.meam
-	#
-	patch $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort patch-files/Makefile.lammps.meam.patch
-	if test "$(ROLLCOMPILER)" = "intel"; then \
-	  cp $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort $(SOURCE_DIR)/lib/meam/Makefile.lammps; \
-	else \
-	  cp $(SOURCE_DIR)/lib/meam/Makefile.lammps.gfortran $(SOURCE_DIR)/lib/meam/Makefile.lammps; \
-	fi
-	#
-	cp $(SOURCE_DIR)/lib/atc/Makefile.mpic++ $(SOURCE_DIR)/lib/atc/Makefile.atc 
-	#
-	cp $(SOURCE_DIR)/lib/awpmd/Makefile.mpicc $(SOURCE_DIR)/lib/awpmd/Makefile.awpmd
-	#
-	patch $(SOURCE_DIR)/lib/poems/Makefile.icc patch-files/Makefile.poems.patch
-	cp $(SOURCE_DIR)/lib/poems/Makefile.icc $(SOURCE_DIR)/lib/poems/Makefile.poems
-	perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/poems/Makefile.poems
-	perl -pi -e "s!ROLLWARNINGS!$(ROLLWARNINGS)!" $(SOURCE_DIR)/lib/poems/Makefile.poems
-	#
-	patch $(SOURCE_DIR)/lib/reax/Makefile.ifort patch-files/Makefile.lammps.reax.patch
-	cp $(SOURCE_DIR)/lib/reax/Makefile.ifort $(SOURCE_DIR)/lib/reax/Makefile.reax
-	perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/reax/Makefile.reax
-	perl -pi -e "s!ROLLCOMPILER!$(FC)!" $(SOURCE_DIR)/lib/reax/Makefile.reax
-	if test "$(COMPILERNAME)" != "intel"; then \
-	  perl -pi -e "s!ifort!gfortran!" $(SOURCE_DIR)/lib/reax/Makefile.reax; \
-	fi
-	#
-	patch $(SOURCE_DIR)/lib/reax/reax_defs.h patch-files/reax_defs.h.patch
-	#
-	patch $(SOURCE_DIR)/src/USER-REAXC/reaxc_defs.h patch-files/reaxc_defs.h.patch
-        #
-	patch $(SOURCE_DIR)/lib/awpmd/Makefile.lammps.installed patch-files/Makefile.lammps.awpmd.installed.patch
-	#
-	patch $(SOURCE_DIR)/lib/atc/Makefile.lammps.installed patch-files/Makefile.lammps.atc.installed.patch
-	#
-	patch -o $(SOURCE_DIR)/lib/colvars/Makefile.colvars $(SOURCE_DIR)/lib/colvars/Makefile.g++ patch-files/Makefile.colvars.patch
-	perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/colvars/Makefile.colvars
 	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
 	( \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \
+          module unload gnutools; \
 	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
 	  $(MODULE_LOAD_MPI); \
+# \
+          patch $(SOURCE_DIR)/src/MAKE/Makefile.mpi patch-files/Makefile.mpi.patch; \
+          perl -pi -e "s!FORTRANTYPE!$(FORTRANTYPE)!g" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
+	  perl -pi -e "s!COMPILERTYPE!$(COMPILERTYPE)!g" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
+	  perl -pi -e "s!GNULIBS!$(GNULIBS)!g" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
+          if test "$(COMPILERNAME)" != "intel"; then \
+             perl -pi -e "s! -restrict!!" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
+          fi; \
+          perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
+# meam \
+          patch -o $(SOURCE_DIR)/lib/meam/Makefile.meam $(SOURCE_DIR)/lib/meam/Makefile.ifort patch-files/Makefile.meam.patch; \
+          perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/meam/Makefile.meam; \
+          patch -o $(SOURCE_DIR)/lib/meam/Makefile.lammps $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort patch-files/Makefile.lammps.meam.patch; \
+          perl -pi -e "s!INTELLIBS!$(INTELLIBS)!" $(SOURCE_DIR)/lib/meam/Makefile.lammps; \
+# atc \
+          patch -o  $(SOURCE_DIR)/lib/atc/Makefile.atc $(SOURCE_DIR)/lib/atc/Makefile.mpic++ patch-files/Makefile.mpic++.patch; \
+          perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/atc/Makefile.atc; \
+          patch $(SOURCE_DIR)/lib/atc/Makefile.lammps.installed patch-files/Makefile.lammps.atc.installed.patch; \
+#awpmd \
+          patch -o  $(SOURCE_DIR)/lib/awpmd/Makefile.awpmd $(SOURCE_DIR)/lib/awpmd/Makefile.mpicc patch-files/Makefile.awpmd.patch; \
+          perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/awpmd/Makefile.awpmd; \
+          patch $(SOURCE_DIR)/lib/awpmd/Makefile.lammps.installed patch-files/Makefile.lammps.awpmd.installed.patch; \
+# poems \
+          patch -o $(SOURCE_DIR)/lib/poems/Makefile.poems $(SOURCE_DIR)/lib/poems/Makefile.icc patch-files/Makefile.poems.patch; \
+          perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/poems/Makefile.poems; \
+          perl -pi -e "s!ROLLWARNINGS!$(ROLLWARNINGS)!" $(SOURCE_DIR)/lib/poems/Makefile.poems; \
+# reax \
+          patch -o $(SOURCE_DIR)/lib/reax/Makefile.reax $(SOURCE_DIR)/lib/reax/Makefile.ifort patch-files/Makefile.reax.patch; \
+          perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/reax/Makefile.reax; \
+          perl -pi -e "s!ROLLCOMPILER!$(FC)!" $(SOURCE_DIR)/lib/reax/Makefile.reax; \
+          patch -o $(SOURCE_DIR)/lib/reax/Makefile.lammps $(SOURCE_DIR)/lib/reax/Makefile.lammps.ifort patch-files/Makefile.lammps.reax.patch; \
+          perl -pi -e "s!INTELLIBS!$(INTELLLIBS)!" $(SOURCE_DIR)/lib/reax/Makefile.lammps; \
+          patch $(SOURCE_DIR)/lib/reax/reax_defs.h patch-files/reax_defs.h.patch; \
+          patch $(SOURCE_DIR)/src/USER-REAXC/reaxc_defs.h patch-files/reaxc_defs.h.patch; \
+# colvars \
+          patch -o $(SOURCE_DIR)/lib/colvars/Makefile.colvars $(SOURCE_DIR)/lib/colvars/Makefile.g++ patch-files/Makefile.colvars.patch; \
+          perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/colvars/Makefile.colvars; \
+# \
 	  cd $(SOURCE_DIR)/src; \
 	  perl -pi -e "s!MKLLIB!$${MKLLIB}!" MAKE/Makefile.mpi; \
 	  perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" MAKE/Makefile.mpi; \
@@ -222,8 +221,11 @@ build: $(SRC_DIRS)
 	  cd ../../src; \
 	  if test "$(CUDABUILD)" == "yes"; then \
 	    $(MODULE_LOAD_CUDA); \
-            rm -rf lmp_mpi; \
-	    cd ../lib/gpu; \
+#           cd USER-CUDA; \
+#           ./Install.sh 1; \
+#           cd ..; \
+#           rm -rf lmp_mpi; \
+            cd ../lib/gpu; \
             patch Makefile.linux $(REDHAT.ROOT)/src/lammps/patch-files/Makefile.linux.gpu.patch; \
 	    $(MAKE) -f Makefile.linux; \
 	    cp *.a ../../src; \
@@ -234,6 +236,7 @@ build: $(SRC_DIRS)
 	    $(MAKE); \
 	    cp *.a ../../src; \
             cd ../../src; \
+            make yes-cuda; \
 	  fi; \
 	  $(MAKE) -j 16 ROOT=lmp mpi; \
 	  cp lmp_mpi $(ROOT)/$(PKGROOT)/bin/lammps;  \

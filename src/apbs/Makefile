@@ -70,22 +70,9 @@ else ifeq ("$(COMPILERNAME)","pgi")
   COMPILE_FLAGS = -fast
 endif
 
-AVX_FLAG=
-ifneq ("$(ROLLOPTS)", "$(subst avx2,,$(ROLLOPTS))")
-  ifeq ("$(COMPILERNAME)", "gnu")
-    AVX_FLAG = -mavx2
-  else ifeq ("$(COMPILERNAME)", "intel")
-    AVX_FLAG = -xcore-avx2
-  endif
-else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
-  ifeq ("$(COMPILERNAME)", "gnu")
-    AVX_FLAG = -mavx
-  else ifeq ("$(COMPILERNAME)", "intel")
-    AVX_FLAG = -xavx
-  endif
-endif
-
 $(NAME).spec: DESCRIPTION LICENSE
+
+ROLLPY=python
 
 DESCRIPTION:
 	$(MODULE_LOAD_CC); \
@@ -93,7 +80,8 @@ DESCRIPTION:
 	  $(DESCRIBE_PKG); \
 	  $(DESCRIBE_CC); \
 	  $(DESCRIBE_MKL); \
-	  $(DESCRIBE_MPI) \
+	  $(DESCRIBE_MPI); \
+          $(DESCRIBE_PYTHON) \
 	) > $@
 
 LICENSE: $(SRC_DIRS)
@@ -101,27 +89,35 @@ LICENSE: $(SRC_DIRS)
 	echo BSD and MIT > $@
 
 build: $(SRC_DIRS)
-	cp test.sh $(SOURCE_DIR)/examples/actin-dimer
+	patch $(SOURCE_DIR)/CMakeLists.txt patch-files/CMakeLists.txt.patch
 	( \
 	  $(MODULE_LOAD_CC); \
+          $(MODULE_LOAD_CMAKE); \
+          $(MODULE_LOAD_PYTHON); \
 	  $(MODULE_LOAD_MKL); \
+          export CC=mpicc; \
+          export CXX=mpicxx; \
+          export FC=mpif90; \
 	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
+          export LDFLAGS=-L$(PWD)/$(SOURCE_DIR)/build/fetk/lib; \
 	  $(MODULE_LOAD_MPI); \
-	  cd $(SOURCE_DIR); \
-	  export CFLAGS="$(COMPILE_FLAGS) $(AVX_FLAG)"; \
-	  export CXXFLAGS="$(COMPILE_FLAGS) $(AVX_FLAG)"; \
-	  export FFLAGS="$(COMPILE_FLAGS) $(AVX_FLAG)"; \
-	  export  CC=$(CC); \
-	  export  CXX=$(CXX); \
-	  if test -d "$${MPIHOME}/include/openmpi"; then \
-	    MPIFLAVOR=openmpi; \
-	  else \
-	    MPIFLAVOR=mpich2; \
-	  fi; \
-	  ./configure CC=mpicc F77=mpif77 \
-	              --prefix=$(PKGROOT) --with-$${MPIFLAVOR}=$${MPIHOME} \
-	              --with-blas="-L$${MKLLIB} -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm" --with-blas-name=mkl_core; \
-	  $(MAKE) \
+          cd $(MALOC_SOURCE_DIR); \
+          mkdir ../$(SOURCE_DIR)/externals/fetk/maloc; \
+          cp -r * ../$(SOURCE_DIR)/externals/fetk/maloc; \
+          cd ../$(PUNC_SOURCE_DIR); \
+          mkdir ../$(SOURCE_DIR)/externals/fetk/punc; \
+          cp -r * ../$(SOURCE_DIR)/externals/fetk/punc; \
+          cd ../$(GAMER_SOURCE_DIR); \
+          mkdir ../$(SOURCE_DIR)/externals/fetk/gamer; \
+          cp -r * ../$(SOURCE_DIR)/externals/fetk/gamer; \
+          cd ../$(MC_SOURCE_DIR); \
+          mkdir ../$(SOURCE_DIR)/externals/fetk/mc; \
+          cp -r * ../$(SOURCE_DIR)/externals/fetk/mc; \
+          cd ../$(SOURCE_DIR); \
+          mkdir build; \
+          cd build; \
+          cmake -DCMAKE_INSTALL_PREFIX=$(PKGROOT) -DENABLE_MPI=ON -DCMAKE_CXX_FLAGS="$(COMPILE_FLAGS)" -DCMAKE_CXX_COMPILER=mpicxx  -DBUILD_SHARED_LIBS=ON -DCHECK_EPSILON=ON -DENABLE_BEM=ON  -DENABLE=PEDANTIC -DENABLE_FETK=ON ENABLE_FAST=ON -DENABLE_INLINE=ON  -DENABLE_PYTHON=ON -DENABLE_OPENMP=ON -DBUILD_TOOLS=ON  -DBUILD_DOC=OFF .. ;  \
+           $(MAKE) \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
@@ -134,14 +130,20 @@ install::
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \
 	  $(MODULE_LOAD_MPI); \
-	  cd $(SOURCE_DIR); \
-	  $(MAKE) install \
+          export CC=mpicc; \
+          export CXX=mpicxx; \
+          export FC=mpif90; \
+          cd $(SOURCE_DIR)/build; \
+          $(MAKE) install \
 	)
 	$(INSTALL_LICENSE_FILES)
 	$(PKGROOT_BIND_UMOUNT)
 	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)
+	cp -r $(SOURCE_DIR)/build/fetk/lib/* $(ROOT)/$(PKGROOT)/lib
 	cp $(SOURCE_DIR)/tools/manip/psize.py $(ROOT)/$(PKGROOT)/examples/actin-dimer/
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SOURCE_DIR) ._apbs-* DESCRIPTION LICENSE
+	rm -rf $(SOURCE_DIR) $(MALOC_SOURCE_DIR) $(PUNC_SOURCE_DIR) $(GAMER_SOURCE_DIR) \
+                $(MC_SOURCE_DIR) pdb2pqr DESCRIPTION LICENSE
+

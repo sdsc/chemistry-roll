@@ -64,9 +64,12 @@ include $(SDSCDEVEL)/Pull.mk
 include $(SDSCDEVEL)/Rules.mk
 
 COMPILE_FLAGS = -O2
+COMPILERTYPE=gf
 ifeq ("$(COMPILERNAME)", "intel")
   COMPILE_FLAGS = -O2 -xHOST
+  COMPILERTYPE=intel
 else ifeq ("$(COMPILERNAME)", "pgi")
+  COMPILERTYPE=intel
   COMPILE_FLAGS = -fast
 endif
 
@@ -110,7 +113,7 @@ build: $(SRC_DIRS)
           make; \
           make install; \
           cd ../$(ATOMPAW_DIR); \
-          ./configure --prefix=$(CACHE_DIR)/atompaw --with-libxc-incs=-I$(CACHE_DIR)/libxc/include --with-libxc-libs="$(CACHE_DIR)/libxc/lib -lxc" --with-linalg-libs="-L$${MKLLIB} -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lpthread -lm"; \
+          ./configure --prefix=$(CACHE_DIR)/atompaw --with-libxc-incs=-I$(CACHE_DIR)/libxc/include --with-libxc-libs="$(CACHE_DIR)/libxc/lib -lxc" --with-linalg-libs="-L$${MKLLIB} -lmkl_$(COMPILERTYPE)_lp64 -lmkl_core -lmkl_sequential -lpthread -lm"; \
           make; \
           make install; \
           cd ../$(ETSF_IO_DIR); \
@@ -123,7 +126,7 @@ build: $(SRC_DIRS)
           make install; \
           export LD_LIBRARY_PATH=$(CACHE_DIR)/libxc/lib:$${LD_LIBRARY_PATH}; \
 	  cd ../$(SOURCE_DIR); \
-          ./configure --enable-mpi  --enable-mpi_io --with-mpi-prefix=$${MPIHOME} $(CUDAOPTS) --prefix=$(PKGROOT) --with-libxc-incs=-I$(CACHE_DIR)/libxc/include --with-libxc-libs="-L$(CACHE_DIR)/libxc/lib -lxc -lrt" --with-dft-flavor=atompaw+libxc+bigdft+wannier90 --with-atompaw-libs="-L$(CACHE_DIR)/atompaw/lib -latompaw" --with-atompaw-incs=-I$(CACHE_DIR)/atompaw/include --with-atompaw-bins=$(CACHE_DIR)/atompaw/bin --with-netcdf-incs=-I$${NETCDFHOME}/include --with-netcdf-libs="-L$${NETCDFHOME}/lib -lnetcdff -lnetcdf" --with-etsf-io-incs="-I$(CACHE_DIR)/etsf_io/include/intel -I$(CACHE_DIR)/etsf_io/include" --with-etsf-io-libs="-L$(CACHE_DIR)/etsf_io/lib -letsf_io_low_level -letsf_io -letsf_io_utils -letsf_io_low_level" --with-linalg-libs="-L$${MKLLIB} -lmkl_intel_lp64 -lmkl_core -lmkl_sequential" --with-fox-incs=-I$(CACHE_DIR)/FoX/finclude --with-fox-libs=" -L$(CACHE_DIR)/FoX/lib -lFoX_common -lFoX_dom -lFoX_fsys -lFoX_sax -lFoX_utils -lFoX_wcml -lFoX_wkml -lFoX_wxml -lFoX_fsys -lFoX_common" --enable-fallbacks --with-trio-flavor=netcdf+etsf_io+fox --enable-atompaw=yes --enable-bigdft=yes --enable-etsf-io=yes --enable-fox=yes --enable-libxc=yes --enable-linalg=yes --enable-netcdf=yes --enable-wannier90=yes; \
+          ./configure --enable-mpi  --enable-mpi_io --with-mpi-prefix=$${MPIHOME} $(CUDAOPTS) --prefix=$(PKGROOT) --with-libxc-incs=-I$(CACHE_DIR)/libxc/include --with-libxc-libs="-L$(CACHE_DIR)/libxc/lib -lxc -lrt" --with-dft-flavor=atompaw+libxc+bigdft+wannier90 --with-atompaw-libs="-L$(CACHE_DIR)/atompaw/lib -latompaw" --with-atompaw-incs=-I$(CACHE_DIR)/atompaw/include --with-atompaw-bins=$(CACHE_DIR)/atompaw/bin --with-netcdf-incs=-I$${NETCDFHOME}/include --with-netcdf-libs="-L$${NETCDFHOME}/lib -lnetcdff -lnetcdf" --with-etsf-io-incs="-I$(CACHE_DIR)/etsf_io/include/$(COMPILERNAME) -I$(CACHE_DIR)/etsf_io/include" --with-etsf-io-libs="-L$(CACHE_DIR)/etsf_io/lib -letsf_io_low_level -letsf_io -letsf_io_utils -letsf_io_low_level" --with-linalg-libs="-L$${MKLLIB} -lmkl_intel_lp64 -lmkl_core -lmkl_sequential" --with-fox-incs=-I$(CACHE_DIR)/FoX/finclude --with-fox-libs=" -L$(CACHE_DIR)/FoX/lib -lFoX_common -lFoX_dom -lFoX_fsys -lFoX_sax -lFoX_utils -lFoX_wcml -lFoX_wkml -lFoX_wxml -lFoX_fsys -lFoX_common" --enable-fallbacks --with-trio-flavor=netcdf+etsf_io+fox --enable-atompaw=yes --enable-bigdft=yes --enable-etsf-io=yes --enable-fox=yes --enable-libxc=yes --enable-linalg=yes --enable-netcdf=yes --enable-wannier90=yes; \
 	 $(MAKE) \
 	)
 	@echo "::: Package $(NAME) build complete :::"

@@ -1,0 +1,11 @@
+--- apbs-1.4.2/CMakeLists.txt	2016-01-14 17:46:20.000000000 -0800
++++ patch-files/CMakeLists.txt	2016-01-17 17:50:22.084517951 -0800
+@@ -231,7 +231,7 @@
+     get_filename_component(LIBGFORTRANPATH ${LIBGFORTRANPATH} PATH)
+     find_path(LIBGFORTRAN_PATH ${LIBGFORTRAN_NAME} PATH ${LIBGFORTRANPATH})
+     list(APPEND APBS_LIB_DIRS ${LIBRARY_OUTPUT_PATH} ${LIBGFORTRAN_PATH})
+-    list(APPEND APBS_LIBS "gfortran tabipb stdc++" )
++    list(APPEND APBS_LIBS "gfortran -ltabipb -lstdc++" )
+ endif() # ENABLE_BEM
+ 
+ ################################################################################

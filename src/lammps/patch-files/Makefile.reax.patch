@@ -1,0 +1,22 @@
+--- lammps-7Dec15/lib/reax/Makefile.ifort	2013-05-30 12:53:03.000000000 -0700
++++ patch-files/Makefile.ifort	2016-01-08 13:10:23.009925379 -0800
+@@ -12,7 +12,7 @@
+ 
+ # which file will be copied to Makefile.lammps
+ 
+-EXTRAMAKE = Makefile.lammps.ifort
++EXTRAMAKE = Makefile.lammps
+ 
+ # ------ FILES ------
+ 
+@@ -27,8 +27,8 @@
+ 
+ # ------ SETTINGS ------
+ 
+-F90 =           ifort
+-F90FLAGS =      -O -fPIC
++F90 =           mpif90
++F90FLAGS =      -O -fPIC ROLLAVX
+ ARCHIVE =	ar
+ ARCHFLAG =	-rc
+ USRLIB =
