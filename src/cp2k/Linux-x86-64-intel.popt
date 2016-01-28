@@ -18,6 +18,7 @@ LIBXC_INC  = LIBXCPATH/include
 LIBXC_LIB  = LIBXCPATH/lib
 DFLAGS = -D__INTEL -D__FFTSG -D__parallel -D__BLACS -D__SCALAPACK -D__FFTW3 -D__LIBINT -D__LIBXC2 CUDADEFS
 CPPFLAGS = -C $(DFLAGS) -P -traditional
+FFTW_INC = ROLLFFTW/include
 FCFLAGS  = $(DFLAGS) -I$(FFTW_INC) -I$(LIBXC_INC) -O2 -xW -heap-arrays -funroll-loops -fpp -free -mkl=sequential
 #verify if the path to the mkl libraries is already defined and/or differs from this
 LDFLAGS  = $(FCFLAGS) -LMKLROOT/lib/intel64
