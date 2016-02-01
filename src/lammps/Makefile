@@ -247,6 +247,11 @@ install::
 	cp $(SOURCE_DIR)/src/lmp_mpi $(ROOT)/$(PKGROOT)/bin/lammps
 	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)
 	cp $(SOURCE_DIR)/src/lmp_mpi $(ROOT)/$(PKGROOT)/bin/lammps
+	if test "$(CUDABUILD)" = "yes"; then \
+            $(MODULE_LOAD_CUDA); \
+            mkdir $(ROOT)/$(PKGROOT)/lib; \
+            cp $${CUDAHOME}/lib64/libcudart.so.7.0 $(ROOT)/$(PKGROOT)/lib; \
+        fi
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
 
