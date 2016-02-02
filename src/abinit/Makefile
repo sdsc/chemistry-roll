@@ -75,9 +75,11 @@ else ifeq ("$(COMPILERNAME)", "pgi")
   COMPILE_FLAGS = -fast
 endif
 
-CUDAOPTS = 
+CUDABUILD = no
+CUDAOPTS=
 ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
   CUDAOPTS = --enable-gpu --with-gpu-flavor=cuda-double --with-gpu-prefix=$${CUDAHOME}
+  CUDABUILD = yes
 endif
 
 $(NAME).spec: DESCRIPTION LICENSE
@@ -90,7 +92,9 @@ DESCRIPTION:
 	  $(DESCRIBE_MPI); \
           $(DESCRIBE_NETCDF); \
           $(DESCRIBE_MKL); \
-	  $(DESCRIBE_CUDA) \
+	  if test "$(CUDABUILD)" = "yes"; then \
+	    $(DESCRIBE_CUDA); \
+	  fi \
 	) > $@
 
 LICENSE: $(SRC_DIRS)
@@ -105,7 +109,9 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_MPI); \
           $(MODULE_LOAD_NETCDF); \
           $(MODULE_LOAD_MKL); \
+	  if test "$(CUDABUILD)" == "yes"; then \
 	  $(MODULE_LOAD_CUDA); \
+          fi; \
           export CC=$(CC); \
           export CXX=$(CXX); \
           export FC=$(FC); \
@@ -140,14 +146,19 @@ install::
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MPI); \
           $(MODULE_LOAD_NETCDF); \
-	  $(MODULE_LOAD_CUDA); \
 	  cd $(SOURCE_DIR); \
           make install; \
           cd $(CACHE_DIR)/atompaw; \
           cp -r * $(PKGROOT) \
           cd $(CACHE_DIR)/libxc/lib; \
           cp t01.files $(PKGROOT)/share/abinit-test/paral/Input; \
-          cp -r * $(PKGROOT)/lib \
+          cp -r * $(PKGROOT)/lib; \
+	  if test "$(CUDABUILD)" == "yes"; then \
+            $(MODULE_LOAD_CUDA); \
+            cp $${CUDAHOME}/lib64/libcudart.so.7.0 $(PKGROOT)/lib; \
+            cp $${CUDAHOME}/lib64/libcublas.so.7.0 $(PKGROOT)/lib; \
+            cp $${CUDAHOME}/lib64/libcufft.so.7.0  $(PKGROOT)/lib; \
+          fi \
         ) 
 	$(PKGROOT_BIND_UMOUNT)
 	$(INSTALL_LICENSE_FILES)
