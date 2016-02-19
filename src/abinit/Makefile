@@ -64,15 +64,22 @@ include $(SDSCDEVEL)/Pull.mk
 include $(SDSCDEVEL)/Rules.mk
 
 COMPILE_FLAGS = -O2
+COMPILERTYPE=gf
+COMPILERTYPE2=gcc
 ifeq ("$(COMPILERNAME)", "intel")
   COMPILE_FLAGS = -O2 -xHOST
+  COMPILERTYPE=intel
+  COMPILERTYPE2=intel
 else ifeq ("$(COMPILERNAME)", "pgi")
+  COMPILERTYPE=intel
   COMPILE_FLAGS = -fast
 endif
 
-CUDAOPTS = 
+CUDABUILD = no
+CUDAOPTS=
 ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
   CUDAOPTS = --enable-gpu --with-gpu-flavor=cuda-double --with-gpu-prefix=$${CUDAHOME}
+  CUDABUILD = yes
 endif
 
 $(NAME).spec: DESCRIPTION LICENSE
@@ -85,7 +92,9 @@ DESCRIPTION:
 	  $(DESCRIBE_MPI); \
           $(DESCRIBE_NETCDF); \
           $(DESCRIBE_MKL); \
-	  $(DESCRIBE_CUDA) \
+	  if test "$(CUDABUILD)" = "yes"; then \
+	    $(DESCRIBE_CUDA); \
+	  fi \
 	) > $@
 
 LICENSE: $(SRC_DIRS)
@@ -100,7 +109,9 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_MPI); \
           $(MODULE_LOAD_NETCDF); \
           $(MODULE_LOAD_MKL); \
+	  if test "$(CUDABUILD)" == "yes"; then \
 	  $(MODULE_LOAD_CUDA); \
+          fi; \
           export CC=$(CC); \
           export CXX=$(CXX); \
           export FC=$(FC); \
@@ -110,7 +121,7 @@ build: $(SRC_DIRS)
           make; \
           make install; \
           cd ../$(ATOMPAW_DIR); \
-          ./configure --prefix=$(CACHE_DIR)/atompaw --with-libxc-incs=-I$(CACHE_DIR)/libxc/include --with-libxc-libs="$(CACHE_DIR)/libxc/lib -lxc" --with-linalg-libs="-L$${MKLLIB} -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lpthread -lm"; \
+          ./configure --prefix=$(CACHE_DIR)/atompaw --with-libxc-incs=-I$(CACHE_DIR)/libxc/include --with-libxc-libs="$(CACHE_DIR)/libxc/lib -lxc" --with-linalg-libs="-L$${MKLLIB} -lmkl_$(COMPILERTYPE)_lp64 -lmkl_core -lmkl_sequential -lpthread -lm"; \
           make; \
           make install; \
           cd ../$(ETSF_IO_DIR); \
@@ -123,7 +134,7 @@ build: $(SRC_DIRS)
           make install; \
           export LD_LIBRARY_PATH=$(CACHE_DIR)/libxc/lib:$${LD_LIBRARY_PATH}; \
 	  cd ../$(SOURCE_DIR); \
-          ./configure --enable-mpi  --enable-mpi_io --with-mpi-prefix=$${MPIHOME} $(CUDAOPTS) --prefix=$(PKGROOT) --with-libxc-incs=-I$(CACHE_DIR)/libxc/include --with-libxc-libs="-L$(CACHE_DIR)/libxc/lib -lxc -lrt" --with-dft-flavor=atompaw+libxc+bigdft+wannier90 --with-atompaw-libs="-L$(CACHE_DIR)/atompaw/lib -latompaw" --with-atompaw-incs=-I$(CACHE_DIR)/atompaw/include --with-atompaw-bins=$(CACHE_DIR)/atompaw/bin --with-netcdf-incs=-I$${NETCDFHOME}/include --with-netcdf-libs="-L$${NETCDFHOME}/lib -lnetcdff -lnetcdf" --with-etsf-io-incs="-I$(CACHE_DIR)/etsf_io/include/intel -I$(CACHE_DIR)/etsf_io/include" --with-etsf-io-libs="-L$(CACHE_DIR)/etsf_io/lib -letsf_io_low_level -letsf_io -letsf_io_utils -letsf_io_low_level" --with-linalg-libs="-L$${MKLLIB} -lmkl_intel_lp64 -lmkl_core -lmkl_sequential" --with-fox-incs=-I$(CACHE_DIR)/FoX/finclude --with-fox-libs=" -L$(CACHE_DIR)/FoX/lib -lFoX_common -lFoX_dom -lFoX_fsys -lFoX_sax -lFoX_utils -lFoX_wcml -lFoX_wkml -lFoX_wxml -lFoX_fsys -lFoX_common" --enable-fallbacks --with-trio-flavor=netcdf+etsf_io+fox --enable-atompaw=yes --enable-bigdft=yes --enable-etsf-io=yes --enable-fox=yes --enable-libxc=yes --enable-linalg=yes --enable-netcdf=yes --enable-wannier90=yes; \
+          ./configure --enable-mpi  --enable-mpi_io --with-mpi-prefix=$${MPIHOME} $(CUDAOPTS) --prefix=$(PKGROOT) --with-libxc-incs=-I$(CACHE_DIR)/libxc/include --with-libxc-libs="-L$(CACHE_DIR)/libxc/lib -lxc -lrt" --with-dft-flavor=atompaw+libxc+bigdft+wannier90 --with-atompaw-libs="-L$(CACHE_DIR)/atompaw/lib -latompaw" --with-atompaw-incs=-I$(CACHE_DIR)/atompaw/include --with-atompaw-bins=$(CACHE_DIR)/atompaw/bin --with-netcdf-incs=-I$${NETCDFHOME}/include --with-netcdf-libs="-L$${NETCDFHOME}/lib -lnetcdff -lnetcdf" --with-etsf-io-incs="-I$(CACHE_DIR)/etsf_io/include/$(COMPILERTYPE2) -I$(CACHE_DIR)/etsf_io/include" --with-etsf-io-libs="-L$(CACHE_DIR)/etsf_io/lib -letsf_io_low_level -letsf_io -letsf_io_utils -letsf_io_low_level" --with-linalg-libs="-L$${MKLLIB} -lmkl_intel_lp64 -lmkl_core -lmkl_sequential" --with-fox-incs=-I$(CACHE_DIR)/FoX/finclude --with-fox-libs=" -L$(CACHE_DIR)/FoX/lib -lFoX_common -lFoX_dom -lFoX_fsys -lFoX_sax -lFoX_utils -lFoX_wcml -lFoX_wkml -lFoX_wxml -lFoX_fsys -lFoX_common" --enable-fallbacks --with-trio-flavor=netcdf+etsf_io+fox --enable-atompaw=yes --enable-bigdft=yes --enable-etsf-io=yes --enable-fox=yes --enable-libxc=yes --enable-linalg=yes --enable-netcdf=yes --enable-wannier90=yes; \
 	 $(MAKE) \
 	)
 	@echo "::: Package $(NAME) build complete :::"
@@ -135,14 +146,19 @@ install::
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MPI); \
           $(MODULE_LOAD_NETCDF); \
-	  $(MODULE_LOAD_CUDA); \
 	  cd $(SOURCE_DIR); \
           make install; \
           cd $(CACHE_DIR)/atompaw; \
           cp -r * $(PKGROOT) \
           cd $(CACHE_DIR)/libxc/lib; \
           cp t01.files $(PKGROOT)/share/abinit-test/paral/Input; \
-          cp -r * $(PKGROOT)/lib \
+          cp -r * $(PKGROOT)/lib; \
+	  if test "$(CUDABUILD)" == "yes"; then \
+            $(MODULE_LOAD_CUDA); \
+            cp $${CUDAHOME}/lib64/libcudart.so.7.0 $(PKGROOT)/lib; \
+            cp $${CUDAHOME}/lib64/libcublas.so.7.0 $(PKGROOT)/lib; \
+            cp $${CUDAHOME}/lib64/libcufft.so.7.0  $(PKGROOT)/lib; \
+          fi \
         ) 
 	$(PKGROOT_BIND_UMOUNT)
 	$(INSTALL_LICENSE_FILES)

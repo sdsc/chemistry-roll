@@ -1,13 +1,10 @@
---- lammps-20Nov15/lib/reax/Makefile.ifort	2013-05-30 12:53:03.000000000 -0700
-+++ patch-files/Makefile.ifort	2015-12-09 17:57:23.508821292 -0800
-@@ -27,8 +27,8 @@
+--- lammps-7Dec15/lib/reax/Makefile.lammps.ifort	2014-06-20 09:46:39.000000000 -0700
++++ patch-files/Makefile.lammps.ifort	2016-01-08 11:29:33.096209464 -0800
+@@ -1,6 +1,6 @@
+ # Settings that the LAMMPS build will import when this package library is used
  
- # ------ SETTINGS ------
+ reax_SYSINC =
+-reax_SYSLIB = -lifcore 
++reax_SYSLIB = INTELLIBS
+ reax_SYSPATH = 
  
--F90 =           ifort
--F90FLAGS =      -O -fPIC
-+F90 =           mpif90
-+F90FLAGS =      -O -fPIC ROLLAVX
- ARCHIVE =	ar
- ARCHFLAG =	-rc
- USRLIB =

@@ -10,7 +10,7 @@ MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 NAME           = sdsc-cp2k
 VERSION        = 2.6.2
-RELEASE        = 0
+RELEASE        = 1
 PKGROOT        = /opt/cp2k
 
 SRC_SUBDIR     = cp2k

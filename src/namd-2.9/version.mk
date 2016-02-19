@@ -36,7 +36,7 @@ FFTW_NAME      = fftw-linux
 FFTW_SUFFIX    = tar.gz
 FFTW_VERSION   = $(ARCH)
 FFTW_PKG       = $(FFTW_NAME)-$(ARCH).$(FFTW_SUFFIX)
-FFTW_DIR       = $(FFTW_PKG:%.$(FFTW_SUFFIX)=%)
+FFTW_DIR       = linux-$(ARCH)
 
 TGZ_PKGS       = $(SOURCE_PKG)
 TAR_GZ_PKGS    = $(TINY_PKG) $(TCL_PKG) $(FFTW_PKG)

@@ -163,5 +163,5 @@ install::
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SRC_DIRS) _arch DESCRIPTION LICENSE
+	rm -rf $(FFTW_DIR) $(SRC_DIRS) _arch DESCRIPTION LICENSE
 

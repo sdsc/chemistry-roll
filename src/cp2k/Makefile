@@ -78,16 +78,7 @@ else
 endif
 
 ROLLMAKEFILE = Linux-x86-64-$(COMPILERNAME)
-OMPI_CFLAGS=
-OMPI_CXXFLAGS=
-OMPI_FFLAGS=
-OMPI_FCFLAGS=
-ifeq ("$(COMPILERNAME)", "intel")
-  OMPI_CFLAGS=-pthread
-  OMPI_CXXFLAGS=-pthread
-  OMPI_FFLAGS=-pthread
-  OMPI_FCFLAGS=-pthread
-endif
+
 
 COMPILE_FLAGS += -I$(REDHAT.ROOT)/src/cp2k/$(SOURCE_DIR)/obj/$(ROLLMAKEFILE)/popt
 
@@ -109,8 +100,8 @@ CACHE_DIR=$(REDHAT.ROOT)/cache
 
 CUDAVARS =  \
         CUDADEFS=; \
-        CUDALIBS=; \
-        CUDABIN=
+        CUDALIBS=
+
 #ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
 #     CUDAVARS =  \
 #       CUDADEFS="-D__ACC -D__DBCSR_ACC -D__PW_CUDA"; \
@@ -163,10 +154,6 @@ build: $(SRC_DIRS)
 	  export CXX=$(CXX); \
 	  export CXXFLAGS="$(COMPILE_FLAGS)"; \
 	  export FFLAGS="$(COMPILE_FLAGS)"; \
-	  export OMPI_CFLAGS="$(OMPI_CFLAGS)"; \
-	  export OMPI_CXXFLAGS="$(OMPI_CXXFLAGS)"; \
-	  export OMPI_FFLAGS="$(OMPI_FFLAGS)"; \
-	  export OMPI_FCFLAGS="$(OMPI_FCFLAGS)"; \
 	  cd $(SOURCE_DIR); \
           mv ../$(LIBINT_DIR) .; \
 	  cd $(LIBINT_DIR); \
@@ -179,9 +166,7 @@ build: $(SRC_DIRS)
 	    --with-libderiv-max-am1=4 --prefix=`pwd`/../libint; \
 	  $(MAKE) -j 16; \
 	  $(MAKE) install; \
-	  cd ../tools/hfx_tools/libint_tools; \
-	  $(CXX) $(COMPILE_FLAGS) -c libint_cpp_wrapper.cpp -I../../../libint/include; \
-	  cd ../../../makefiles; \
+          cd ../makefiles; \
 	  $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt \
 	)
 	@echo "::: Package $(NAME) build complete :::"

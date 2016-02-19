@@ -1,5 +1,5 @@
---- lammps-20Nov15/lib/colvars/Makefile.g++	2015-04-30 07:09:42.000000000 -0700
-+++ patch-files/Makefile.g++	2015-12-09 18:26:03.573268976 -0800
+--- lammps-7Dec15/lib/colvars/Makefile.g++	2015-04-30 07:09:42.000000000 -0700
++++ patch-files/Makefile.g++	2016-01-07 17:03:38.896437518 -0800
 @@ -6,8 +6,8 @@
  
  # ------ SETTINGS ------

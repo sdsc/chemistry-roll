@@ -148,7 +148,7 @@ cp $packageHome/examples/colloid/* .
 output=`mpirun -np 1 $packageHome/bin/lammps < in.colloid 2>&1`
 if [[ "\$output" =~ "run-as-root" ]]; then
   # Recent openmpi requires special option for root user
-  output=`mpirun -np 1 --allow-run-as-root $packageHome/bin/lammps -sf omp < in.colloid 2>&1`
+  output=`mpirun -np 1 --allow-run-as-root $packageHome/bin/lammps < in.colloid 2>&1`
 fi
 echo \$output
 END

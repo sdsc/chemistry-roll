@@ -2,4 +2,4 @@
 setenv CP2KHOME /opt/cp2k
 prepend-path PATH /opt/cp2k/bin
 prepend-path LD_LIBRARY_PATH /opt/cp2k/lib
-module load ROLLCOMPILER ROLLMPI fftw cuda
+module load ROLLCOMPILER ROLLMPI fftw

@@ -1,0 +1,13 @@
+--- lammps-7Dec15/lib/awpmd/Makefile.mpicc	2014-09-23 08:55:27.000000000 -0700
++++ patch-files/Makefile.mpicc	2016-01-07 16:53:36.991208886 -0800
+@@ -36,8 +36,8 @@
+ # include any MPI settings needed for the ATC library to build with
+ # the same MPI library that LAMMPS is built with
+ 
+-CC =	    mpic++ 
+-CCFLAGS = -O -fPIC -Isystems/interact/TCP/ -Isystems/interact -Iivutils/include
++CC =	    mpicxx
++CCFLAGS = -O -fPIC -Isystems/interact/TCP/ -Isystems/interact -Iivutils/include ROLLAVX
+ ARCHIVE =	ar
+ ARCHFLAG =	-rc
+ DEPFLAGS =  -M
