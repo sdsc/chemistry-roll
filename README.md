@@ -72,6 +72,12 @@ the `ROLLMPI` variable.  The default values are "gnu" and "rocks-openmpi".
 For gnu compilers, the roll also supports a `ROLLOPTS` make variable value of
 'avx', indicating that the target architecture supports AVX instructions.
 
+NOTE: Because of limitations of the system gfortran, the cp2k package in the
+chemistry-roll cannot be built successfully with ROLLMPI=rocks-openmpi under
+a Rocksv6 install.  For "vanilla" chemistry-roll builds, it is recommended
+to build and install the SDSC mpi-roll first, then build the chemistry-roll
+with ROLLMPI=openmpi_eth.
+
 
 ## Installation
 
