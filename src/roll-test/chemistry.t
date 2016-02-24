@@ -3,8 +3,6 @@
 # chemistry.t [nodetype]
 #   where nodetype is one of "Compute", "Dbnode", "Frontend" or "Login"
 #   if not specified, the test assumes either Compute or Frontend
-my $compiler="ROLLCOMPILER";
-my $mpi="ROLLMPI";
 
 use Test::More qw(no_plan);
 
@@ -48,12 +46,13 @@ $packageHome/share/abinit-test/Psps_for_tests/14si.psp
 ENDIT
 output=`mpirun -np 4 $packageHome/bin/abinit <t01.files 2>&1`
 if [[ "\$output" =~ "run-as-root" ]]; then
-mpirun --allow-run-as-root -np 4 $packageHome/bin/abinit <t01.files >& /dev/null
+  output=`mpirun --allow-run-as-root -np 4 $packageHome/bin/abinit <t01.files 2>&1`
 fi
+echo \$output
 END
 close(OUT);
- `bash $TESTFILE.sh`;
-  $output=`cat $TESTFILE.dir/t01.out`;
+  $output = `bash $TESTFILE.sh 2>&1`;
+  $output=`cat $TESTFILE.dir/t01.out 2>&1`;
   ok($output =~ /etotal     -8.593873/, 'abinit sample run');
   `rm -rf $TESTFILE*`;
 }
@@ -75,7 +74,7 @@ cp -r $packageHome/examples/actin-dimer/* .
 $packageHome/bin/apbs apbs-smol-auto.in
 END
   close(OUT);
-  $output = `/bin/bash $TESTFILE.sh`;
+  $output = `/bin/bash $TESTFILE.sh 2>&1`;
   ok($output =~ /Global.*energy.*\d+\.\d+.*kJ\/mol/, 'apbs sample run');
   `rm -rf $TESTFILE*`;
 }
