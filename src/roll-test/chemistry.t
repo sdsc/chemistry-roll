@@ -51,7 +51,7 @@ fi
 echo \$output
 END
 close(OUT);
- `bash $TESTFILE.sh`;
+  $output = `bash $TESTFILE.sh 2>&1`;
   $output=`cat $TESTFILE.dir/t01.out 2>&1`;
   ok($output =~ /etotal     -8.593873/, 'abinit sample run');
   `rm -rf $TESTFILE*`;
