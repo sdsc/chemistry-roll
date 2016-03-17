@@ -1,0 +1,2 @@
+#%Module1.0
+prepend-path LD_LIBRARY_PATH /opt/gnu/gcc/lib64:/usr/lib64

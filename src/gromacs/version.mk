@@ -10,10 +10,11 @@ ifneq ("$(ROLLOPTS)", "$(subst gromacs_othermpi=,,$(ROLLOPTS))")
 else ifndef ROLLMPI
   ROLLMPI = rocks-openmpi
 endif
+
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 NAME           = sdsc-gromacs
-VERSION        = 5.1
+VERSION        = 5.1.2
 RELEASE        = 0
 PKGROOT        = /opt/gromacs
 

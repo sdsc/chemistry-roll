@@ -9,7 +9,10 @@ $(VERSION_INC): $(VERSION_SRC)
  
 build:
 
-install:: typical-modulefile-install
+install:: typical-modulefile-install extra-modulefile-install
+
+extra-modulefile-install:
+	cp gromacsextra $(ROOT)/$(PKGROOT)/$(VERSION).extra
 
 clean::
 	rm -f $(VERSION_INC)
