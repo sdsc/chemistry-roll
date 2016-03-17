@@ -73,7 +73,7 @@ endif
 
 CUDA=-DGMX_GPU=OFF
 CUDABUILD=NO
-ifneq ("$(ROLLOPTS)", "$(subst gromacs_cuda,,$(ROLLOPTS))")
+ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
   CUDABUILD=YES
   CUDA = -DGMX_GPU=ON -DCUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME} -DCUDA_HOST_COMPILER=$${MPIHOME}/bin/mpicc
 endif
