@@ -129,8 +129,11 @@ install::
 	  $(MODULE_LOAD_MPI); \
           $(MODULE_LOAD_CUDA); \
 	  cd $(SOURCE_DIR)/build; \
-	  $(MAKE) prefix=$(PKGROOT) install \
+	  $(MAKE) prefix=$(PKGROOT) install; \
+          cd $(PKGROOT)/bin; \
+          mv gmx_mpi gmx_mpi.real \
 	)
+	cp gmx_mpi $(PKGROOT)/bin
 	$(PKGROOT_BIND_UMOUNT)
 	$(INSTALL_LICENSE_FILES)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)
