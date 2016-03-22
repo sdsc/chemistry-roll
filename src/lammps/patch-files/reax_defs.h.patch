@@ -1,5 +1,5 @@
---- lammps-20Nov15/lib/reax/reax_defs.h	2009-02-06 08:39:43.000000000 -0800
-+++ patch-files/reax_defs.h	2015-12-09 17:58:55.717968908 -0800
+--- lammps-7Dec15/lib/reax/reax_defs.h	2009-02-06 08:39:43.000000000 -0800
++++ patch-files/reax_defs.h	2016-03-18 22:34:59.366544229 -0700
 @@ -40,7 +40,7 @@
   /*     MEZONEDEF =      Max number of electric field zones                  */
  #endif
