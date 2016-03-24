@@ -72,7 +72,9 @@ else ifeq ("$(COMPILERNAME)", "pgi")
 endif
 
 CUDA=-DGMX_GPU=OFF
+CUDABUILD=NO
 ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
+  CUDABUILD=YES
   CUDA = -DGMX_GPU=ON -DCUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME} -DCUDA_HOST_COMPILER=$${MPIHOME}/bin/mpicc
 endif
 
@@ -96,12 +98,18 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MPI); \
-	  $(MODULE_LOAD_CUDA); \
+          $(MODULE_LOAD_CUDA); \
 	  cd $(SOURCE_DIR); \
 	  mkdir build; \
 	  cd build; \
 	  export CC=mpicc; \
 	  export CXX=mpicxx; \
+          if test "CUDABUILD" = "YES"; then \
+               export CUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME}; \
+               export CUDA_NVCC_EXECUTABLE=$${CUDAHOME}/bin/nvcc; \
+               export CUDA_INCLUDE_DIRS=$${CUDAHOME}/include; \
+               export CUDA_CUDART_LIBRARY=$${CUDAHOME}/lib64/libcudart.so; \
+          fi; \
 	  cmake .. -DGMX_BUILD_OWN_FFTW=ON \
 	           -DGMX_BUILD_OWN_FFTW_URL="../../$(FFTW_PKG)" \
 	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
@@ -119,10 +127,13 @@ install::
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MPI); \
-	  $(MODULE_LOAD_CUDA); \
+          $(MODULE_LOAD_CUDA); \
 	  cd $(SOURCE_DIR)/build; \
-	  $(MAKE) prefix=$(PKGROOT) install \
+	  $(MAKE) prefix=$(PKGROOT) install; \
+          cd $(PKGROOT)/bin; \
+          mv gmx_mpi gmx_mpi.real \
 	)
+	cp gmx_mpi $(PKGROOT)/bin
 	$(PKGROOT_BIND_UMOUNT)
 	$(INSTALL_LICENSE_FILES)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)

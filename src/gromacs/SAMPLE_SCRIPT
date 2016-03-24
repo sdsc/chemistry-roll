@@ -12,7 +12,7 @@ For SLURM:
 
 module unload mvapich2_ib
 module load gromacs
-ibrun /opt/gromacs/bin/mdrun_mpi -v -s test.tpr -deffnm test.out
+ibrun /opt/gromacs/bin/gmx_mpi mdrun  -v -s test.tpr -deffnm test.out
 
 For PBS:
 
@@ -28,4 +28,4 @@ For PBS:
 module unload mvapich2_ib
 module load gromacs
 cd $PBS_O_WORKDIR
-ibrun /opt/gromacs/bin/mdrun_mpi -v -s test.tpr -deffnm test.out
+ibrun /opt/gromacs/bin/gmx_mpi mdrun  -v -s test.tpr -deffnm test.out

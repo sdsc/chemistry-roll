@@ -7,3 +7,4 @@ setenv GMXMAN /opt/gromacs/share/man
 prepend-path PATH /opt/gromacs/bin
 prepend-path LD_LIBRARY_PATH /opt/gromacs/lib
 module load ROLLCOMPILER ROLLMPI
+

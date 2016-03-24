@@ -1,5 +1,5 @@
---- lammps-20Nov15/lib/atc/Makefile.lammps.installed	2013-05-30 10:26:11.000000000 -0700
-+++ patch-files/Makefile.lammps.installed	2015-12-09 18:22:48.752854414 -0800
+--- lammps-7Dec15/lib/atc/Makefile.lammps.installed	2013-05-30 10:26:11.000000000 -0700
++++ patch-files/Makefile.lammps.installed	2016-03-18 16:58:57.959538985 -0700
 @@ -1,5 +1,5 @@
  # Settings that the LAMMPS build will import when this package library is used
  

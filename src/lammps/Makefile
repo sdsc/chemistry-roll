@@ -198,7 +198,6 @@ build: $(SRC_DIRS)
 	  $(MAKE) yes-user-reaxc; \
 	  $(MAKE) yes-user-cg-cmm; \
 	  $(MAKE) yes-asphere; \
-	  $(MAKE) yes-kspace; \
           cd ../lib/atc; \
 	  $(MAKE) -f Makefile.atc; \
 	  cp *.a ../../src; \
@@ -218,7 +217,7 @@ build: $(SRC_DIRS)
 	  $(MAKE) -f Makefile.colvars; \
 	  cp *.a ../../src; \
 	  cd ../../src; \
-	  if test "$(CUDABUILD)" == "yes"; then \
+	  if test "$(CUDABUILD)" = "yes"; then \
 	    $(MODULE_LOAD_CUDA); \
 #           cd USER-CUDA; \
 #           ./Install.sh 1; \
@@ -231,7 +230,8 @@ build: $(SRC_DIRS)
 	    cd ../../src; \
 	    make yes-gpu; \
 	    cd ../lib/cuda; \
-            patch Makefile.linux $(REDHAT.ROOT)/src/lammps/patch-files/Makefile.linux.cuda.patch; \
+            patch Makefile.common $(REDHAT.ROOT)/src/lammps/patch-files/Makefile.common.cuda.patch; \
+            patch Makefile.lammps $(REDHAT.ROOT)/src/lammps/patch-files/Makefile.lammps.cuda.patch; \
 	    $(MAKE); \
 	    cp *.a ../../src; \
             cd ../../src; \
