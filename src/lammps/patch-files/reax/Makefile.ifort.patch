@@ -1,6 +1,6 @@
---- lammps-7Dec15/lib/meam/Makefile.ifort	2013-05-30 12:43:25.000000000 -0700
-+++ patch-files/Makefile.ifort	2016-01-08 13:12:46.704411857 -0800
-@@ -11,7 +11,7 @@
+--- lammps-16Feb16/lib/reax/Makefile.ifort	2013-05-30 12:53:03.000000000 -0700
++++ patch-files/reax/Makefile.ifort	2016-04-10 15:37:23.907729358 -0700
+@@ -12,7 +12,7 @@
  
  # which file will be copied to Makefile.lammps
  
@@ -9,7 +9,7 @@
  
  # ------ FILES ------
  
-@@ -26,8 +26,8 @@
+@@ -27,8 +27,8 @@
  
  # ------ SETTINGS ------
  

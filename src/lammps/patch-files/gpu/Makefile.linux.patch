@@ -1,6 +1,6 @@
---- lammps-7Dec15/lib/gpu/Makefile.linux	2014-01-28 16:07:38.000000000 -0800
-+++ patch-files/Makefile.linux	2016-01-07 17:06:37.053277284 -0800
-@@ -7,7 +7,7 @@
+--- lammps-16Feb16/lib/gpu/Makefile.linux	2014-01-28 16:07:38.000000000 -0800
++++ patch-files/gpu/Makefile.linux	2016-04-12 13:42:34.874073855 -0700
+@@ -7,11 +7,12 @@
  
  EXTRAMAKE = Makefile.lammps.standard
  
@@ -8,8 +8,14 @@
 +CUDA_HOME = ${CUDAHOME}
  NVCC = nvcc
  
++CUDA_ARCH = -gencode arch=compute_35,code=sm_35
  # Tesla CUDA
-@@ -33,7 +33,7 @@
+-CUDA_ARCH = -arch=sm_21
++#CUDA_ARCH = -arch=sm_21
+ # newer CUDA
+ #CUDA_ARCH = -arch=sm_13
+ # older CUDA
+@@ -33,7 +34,7 @@
  CUDA_LIB = -L$(CUDA_HOME)/lib64
  CUDA_OPTS = -DUNIX -O3 -Xptxas -v --use_fast_math $(LMP_INC)
  
