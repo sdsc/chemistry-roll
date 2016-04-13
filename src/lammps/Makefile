@@ -250,6 +250,7 @@ install::
             mkdir $(ROOT)/$(PKGROOT)/lib; \
             cp $${CUDAHOME}/lib64/libcudart.so.* $(ROOT)/$(PKGROOT)/lib; \
             cp $${CUDAHOME}/lib64/libcufft.so.*  $(ROOT)/$(PKGROOT)/lib; \
+            cp /usr/lib64/libcuda.so.*  $(ROOT)/$(PKGROOT)/lib; \
         fi
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
