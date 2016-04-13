@@ -248,7 +248,8 @@ install::
 	if test "$(CUDABUILD)" = "yes"; then \
             $(MODULE_LOAD_CUDA); \
             mkdir $(ROOT)/$(PKGROOT)/lib; \
-            cp $${CUDAHOME}/lib64/libcudart.so.7.0 $(ROOT)/$(PKGROOT)/lib; \
+            cp $${CUDAHOME}/lib64/libcudart.so.* $(ROOT)/$(PKGROOT)/lib; \
+            cp $${CUDAHOME}/lib64/libcufft.so.*  $(ROOT)/$(PKGROOT)/lib; \
         fi
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
