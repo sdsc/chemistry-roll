@@ -1,5 +1,5 @@
 --- lammps-16Feb16/src/MAKE/Makefile.mpi	2015-07-14 13:10:46.000000000 -0700
-+++ patch-files/Makefile.mpi	2016-04-11 10:44:20.716232205 -0700
++++ patch-files/Makefile.mpi	2016-04-14 12:37:28.620555578 -0700
 @@ -7,13 +7,13 @@
  # specify flags and libraries needed for your compiler
  
@@ -13,7 +13,7 @@
 -LINKFLAGS =	-g -O
 -LIB = 
 +LINKFLAGS =	-O2
-+LIB = -lstdc++ -LMKLLIB -lmkl_FORTRANTYPE_ilp64 -lmkl_COMPILERTYPE_thread -lmkl_core -lpthread -lgomp GNULIBS -lrt -liomp5
++LIB = -lstdc++ -LMKLLIB -lmkl_FORTRANTYPE_ilp64 -lmkl_COMPILERTYPE_thread -lmkl_core -lpthread -lgomp GNULIBS -lrt INTELLIB
  SIZE =		size
  
  ARCHIVE =	ar

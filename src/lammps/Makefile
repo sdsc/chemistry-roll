@@ -66,6 +66,7 @@ ROLLWARNINGS=
 FORTRANTYPE=gf
 COMPILERTYPE=gnu
 INTELLIBS=
+INTELLIBS2=
 GNULIBS=-lgfortran
 ifeq ("$(COMPILERNAME)","intel")
   GNULIBS=
@@ -73,6 +74,7 @@ ifeq ("$(COMPILERNAME)","intel")
   FORTRANTYPE=intel
   COMPILERTYPE=intel
   INTELLIBS=-lifcore -lsvml -limf
+  INTELLIBS2=-liomp5
 endif
 
 CUDABUILD = no
@@ -117,6 +119,7 @@ LICENSE: $(SRC_DIRS)
 build: $(SRC_DIRS)
 	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
 	( \
+          module unload gnutools; \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \
 	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
@@ -131,6 +134,7 @@ build: $(SRC_DIRS)
              perl -pi -e "s! -restrict!!" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
           fi; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
+          perl -pi -e "s!INTELLIB!$(INTELLIBS2)!" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
 # meam \
           patch -o $(SOURCE_DIR)/lib/meam/Makefile.meam $(SOURCE_DIR)/lib/meam/Makefile.ifort patch-files/meam/Makefile.ifort.patch; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/meam/Makefile.meam; \
