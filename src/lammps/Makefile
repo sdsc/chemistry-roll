@@ -119,7 +119,6 @@ LICENSE: $(SRC_DIRS)
 build: $(SRC_DIRS)
 	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
 	( \
-          module unload gnutools; \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \
 	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
