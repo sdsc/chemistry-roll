@@ -66,6 +66,7 @@ ROLLWARNINGS=
 FORTRANTYPE=gf
 COMPILERTYPE=gnu
 INTELLIBS=
+INTELLIBS2=
 GNULIBS=-lgfortran
 ifeq ("$(COMPILERNAME)","intel")
   GNULIBS=
@@ -73,6 +74,7 @@ ifeq ("$(COMPILERNAME)","intel")
   FORTRANTYPE=intel
   COMPILERTYPE=intel
   INTELLIBS=-lifcore -lsvml -limf
+  INTELLIBS2=-liomp5
 endif
 
 CUDABUILD = no
@@ -123,6 +125,7 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_MPI); \
 # \
           patch $(SOURCE_DIR)/src/MAKE/Makefile.mpi patch-files/Makefile.mpi.patch; \
+          patch $(SOURCE_DIR)/src/USER-CUDA/verlet_cuda.cpp patch-files/verlet_cuda.cpp.patch; \
           perl -pi -e "s!FORTRANTYPE!$(FORTRANTYPE)!g" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
 	  perl -pi -e "s!COMPILERTYPE!$(COMPILERTYPE)!g" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
 	  perl -pi -e "s!GNULIBS!$(GNULIBS)!g" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
@@ -130,33 +133,34 @@ build: $(SRC_DIRS)
              perl -pi -e "s! -restrict!!" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
           fi; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
+          perl -pi -e "s!INTELLIB!$(INTELLIBS2)!" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
 # meam \
-          patch -o $(SOURCE_DIR)/lib/meam/Makefile.meam $(SOURCE_DIR)/lib/meam/Makefile.ifort patch-files/Makefile.meam.patch; \
+          patch -o $(SOURCE_DIR)/lib/meam/Makefile.meam $(SOURCE_DIR)/lib/meam/Makefile.ifort patch-files/meam/Makefile.ifort.patch; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/meam/Makefile.meam; \
-          patch -o $(SOURCE_DIR)/lib/meam/Makefile.lammps $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort patch-files/Makefile.lammps.meam.patch; \
+          patch -o $(SOURCE_DIR)/lib/meam/Makefile.lammps $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort patch-files/meam/Makefile.lammps.ifort.patch; \
           perl -pi -e "s!INTELLIBS!$(INTELLIBS)!" $(SOURCE_DIR)/lib/meam/Makefile.lammps; \
 # atc \
-          patch -o  $(SOURCE_DIR)/lib/atc/Makefile.atc $(SOURCE_DIR)/lib/atc/Makefile.mpic++ patch-files/Makefile.mpic++.patch; \
+          patch -o  $(SOURCE_DIR)/lib/atc/Makefile.atc $(SOURCE_DIR)/lib/atc/Makefile.mpic++ patch-files/atc/Makefile.mpic++.patch; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/atc/Makefile.atc; \
-          patch $(SOURCE_DIR)/lib/atc/Makefile.lammps.installed patch-files/Makefile.lammps.atc.installed.patch; \
+          patch $(SOURCE_DIR)/lib/atc/Makefile.lammps.installed patch-files/atc/Makefile.lammps.installed.patch; \
 #awpmd \
-          patch -o  $(SOURCE_DIR)/lib/awpmd/Makefile.awpmd $(SOURCE_DIR)/lib/awpmd/Makefile.mpicc patch-files/Makefile.awpmd.patch; \
+          patch -o  $(SOURCE_DIR)/lib/awpmd/Makefile.awpmd $(SOURCE_DIR)/lib/awpmd/Makefile.mpicc patch-files/awpmd/Makefile.mpicc.patch; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/awpmd/Makefile.awpmd; \
-          patch $(SOURCE_DIR)/lib/awpmd/Makefile.lammps.installed patch-files/Makefile.lammps.awpmd.installed.patch; \
+          patch $(SOURCE_DIR)/lib/awpmd/Makefile.lammps.installed patch-files/awpmd/Makefile.lammps.installed.patch; \
 # poems \
-          patch -o $(SOURCE_DIR)/lib/poems/Makefile.poems $(SOURCE_DIR)/lib/poems/Makefile.icc patch-files/Makefile.poems.patch; \
+          patch -o $(SOURCE_DIR)/lib/poems/Makefile.poems $(SOURCE_DIR)/lib/poems/Makefile.icc patch-files/poems/Makefile.icc.patch; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/poems/Makefile.poems; \
           perl -pi -e "s!ROLLWARNINGS!$(ROLLWARNINGS)!" $(SOURCE_DIR)/lib/poems/Makefile.poems; \
 # reax \
-          patch -o $(SOURCE_DIR)/lib/reax/Makefile.reax $(SOURCE_DIR)/lib/reax/Makefile.ifort patch-files/Makefile.reax.patch; \
+          patch -o $(SOURCE_DIR)/lib/reax/Makefile.reax $(SOURCE_DIR)/lib/reax/Makefile.ifort patch-files/reax/Makefile.ifort.patch; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/reax/Makefile.reax; \
           perl -pi -e "s!ROLLCOMPILER!$(FC)!" $(SOURCE_DIR)/lib/reax/Makefile.reax; \
-          patch -o $(SOURCE_DIR)/lib/reax/Makefile.lammps $(SOURCE_DIR)/lib/reax/Makefile.lammps.ifort patch-files/Makefile.lammps.reax.patch; \
+          patch -o $(SOURCE_DIR)/lib/reax/Makefile.lammps $(SOURCE_DIR)/lib/reax/Makefile.lammps.ifort patch-files/reax/Makefile.lammps.ifort.patch; \
           perl -pi -e "s!INTELLIBS!$(INTELLLIBS)!" $(SOURCE_DIR)/lib/reax/Makefile.lammps; \
-          patch $(SOURCE_DIR)/lib/reax/reax_defs.h patch-files/reax_defs.h.patch; \
-          patch $(SOURCE_DIR)/src/USER-REAXC/reaxc_defs.h patch-files/reaxc_defs.h.patch; \
+          patch $(SOURCE_DIR)/lib/reax/reax_defs.h patch-files/reax/reax_defs.h.patch; \
+          patch $(SOURCE_DIR)/src/USER-REAXC/reaxc_defs.h patch-files/reax/reaxc_defs.h.patch; \
 # colvars \
-          patch -o $(SOURCE_DIR)/lib/colvars/Makefile.colvars $(SOURCE_DIR)/lib/colvars/Makefile.g++ patch-files/Makefile.colvars.patch; \
+          patch -o $(SOURCE_DIR)/lib/colvars/Makefile.colvars $(SOURCE_DIR)/lib/colvars/Makefile.g++ patch-files/colvars/Makefile.g++.patch; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/colvars/Makefile.colvars; \
 # \
 	  cd $(SOURCE_DIR)/src; \
@@ -219,23 +223,19 @@ build: $(SRC_DIRS)
 	  cd ../../src; \
 	  if test "$(CUDABUILD)" = "yes"; then \
 	    $(MODULE_LOAD_CUDA); \
-#           cd USER-CUDA; \
-#           ./Install.sh 1; \
-#           cd ..; \
-#           rm -rf lmp_mpi; \
+            make yes-USER-CUDA; \
             cd ../lib/gpu; \
-            patch Makefile.linux $(REDHAT.ROOT)/src/lammps/patch-files/Makefile.linux.gpu.patch; \
+            patch Makefile.linux $(REDHAT.ROOT)/src/lammps/patch-files/gpu/Makefile.linux.patch; \
 	    $(MAKE) -f Makefile.linux; \
 	    cp *.a ../../src; \
 	    cd ../../src; \
 	    make yes-gpu; \
 	    cd ../lib/cuda; \
-            patch Makefile.common $(REDHAT.ROOT)/src/lammps/patch-files/Makefile.common.cuda.patch; \
-            patch Makefile.lammps $(REDHAT.ROOT)/src/lammps/patch-files/Makefile.lammps.cuda.patch; \
+            patch Makefile.common $(REDHAT.ROOT)/src/lammps/patch-files/cuda/Makefile.common.patch; \
+            patch Makefile.lammps $(REDHAT.ROOT)/src/lammps/patch-files/cuda/Makefile.lammps.patch; \
 	    $(MAKE); \
 	    cp *.a ../../src; \
             cd ../../src; \
-            make yes-cuda; \
 	  fi; \
 	  $(MAKE) -j 16 ROOT=lmp mpi; \
 	  cp lmp_mpi $(ROOT)/$(PKGROOT)/bin/lammps;  \
@@ -250,7 +250,9 @@ install::
 	if test "$(CUDABUILD)" = "yes"; then \
             $(MODULE_LOAD_CUDA); \
             mkdir $(ROOT)/$(PKGROOT)/lib; \
-            cp $${CUDAHOME}/lib64/libcudart.so.7.0 $(ROOT)/$(PKGROOT)/lib; \
+            cp $${CUDAHOME}/lib64/libcudart.so.* $(ROOT)/$(PKGROOT)/lib; \
+            cp $${CUDAHOME}/lib64/libcufft.so.*  $(ROOT)/$(PKGROOT)/lib; \
+            cp /usr/lib64/libcuda.so.*  $(ROOT)/$(PKGROOT)/lib; \
         fi
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"

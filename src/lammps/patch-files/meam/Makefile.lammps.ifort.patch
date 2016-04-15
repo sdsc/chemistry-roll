@@ -1,0 +1,9 @@
+--- lammps-16Feb16/lib/meam/Makefile.lammps.ifort	2011-08-18 10:32:34.000000000 -0700
++++ patch-files/meam/Makefile.lammps.ifort	2016-04-13 21:09:39.401662668 -0700
+@@ -1,5 +1,4 @@
+ # Settings that the LAMMPS build will import when this package library is used
+ 
+ meam_SYSINC =
+-meam_SYSLIB = -lifcore -lsvml -lompstub -limf
+-meam_SYSPATH = -L/opt/intel/fce/10.0.023/lib
++meam_SYSLIB = INTELLIBS
