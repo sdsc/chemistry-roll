@@ -62,7 +62,6 @@ REDHAT.ROOT = $(CURDIR)/../../
 include Rules.mk
 include $(SDSCDEVEL)/Pull.mk
 include $(SDSCDEVEL)/Rules.mk
-include modules.mk
 
 COMPILE_FLAGS = -fPIC -O2
 ifeq ("$(COMPILERNAME)", "intel")
