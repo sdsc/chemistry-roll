@@ -76,12 +76,13 @@ ROLLPY=python
 
 DESCRIPTION:
 	$(MODULE_LOAD_CC); \
+	$(MODULE_LOAD_PYTHON); \
 	( \
 	  $(DESCRIBE_PKG); \
 	  $(DESCRIBE_CC); \
 	  $(DESCRIBE_MKL); \
 	  $(DESCRIBE_MPI); \
-          $(DESCRIBE_PYTHON) \
+	  $(DESCRIBE_PYTHON) \
 	) > $@
 
 LICENSE: $(SRC_DIRS)
