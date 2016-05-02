@@ -114,14 +114,13 @@ $(NAME).spec: DESCRIPTION LICENSE
 
 DESCRIPTION:
 	$(MODULE_LOAD_CC); \
-	$(MODULE_LOAD_MPI); \
 	( \
 	  $(DESCRIBE_PKG); \
 	  $(DESCRIBE_CC); \
 	  $(DESCRIBE_MKL); \
 	  $(DESCRIBE_MPI); \
 	  $(DESCRIBE_FFTW); \
-          $(DESCRIBE_CUDA) \
+	  $(DESCRIBE_CUDA) \
 	) > $@
 
 LICENSE: $(SRC_DIRS)
