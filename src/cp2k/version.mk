@@ -9,8 +9,8 @@ endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 NAME           = sdsc-cp2k
-VERSION        = 2.6.2
-RELEASE        = 2
+VERSION        = 3.0
+RELEASE        = 0
 PKGROOT        = /opt/cp2k
 
 SRC_SUBDIR     = cp2k
@@ -27,7 +27,13 @@ LIBINT_VERSION = 1-1-6
 LIBINT_PKG     = $(LIBINT_NAME)-release-$(LIBINT_VERSION).$(LIBINT_SUFFIX)
 LIBINT_DIR     = $(LIBINT_PKG:%.$(LIBINT_SUFFIX)=%)
 
+LIBXC_NAME    = libxc
+LIBXC_SUFFIX  = tar.gz
+LIBXC_VERSION = 2.2.2
+LIBXC_PKG     = $(LIBXC_NAME)-$(LIBXC_VERSION).$(LIBXC_SUFFIX)
+LIBXC_DIR     = $(LIBXC_PKG:%.$(LIBXC_SUFFIX)=%)
+
 TAR_BZ2_PKGS   = $(SOURCE_PKG)
-TAR_GZ_PKGS    = $(LIBINT_PKG)
+TAR_GZ_PKGS    = $(LIBINT_PKG) $(LIBXC_PKG)
 
 RPM.EXTRAS     = AutoReq:No
