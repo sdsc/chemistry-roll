@@ -71,7 +71,7 @@ else ifeq ("$(COMPILERNAME)", "pgi")
 endif
 
 MODULE_LOAD_CUDA_6.5 = $(call MODULE_LOAD_PACKAGE, cuda/6.5, CUDAHOME)
-DESCRIBE_CUDA_6.5 = echo built with cuda $(call GET_MODULE_VERSION, cuda/6.4)
+DESCRIBE_CUDA_6.5 = echo built with cuda $(call GET_MODULE_VERSION, cuda/6.5)
 
 ifneq (,$(findstring mvapich,$(MPINAME)))
   INTELMPITYPE=intelmpi
