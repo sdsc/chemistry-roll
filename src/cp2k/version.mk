@@ -1,3 +1,9 @@
+CUDAVERSION=cuda
+ifneq ("$(ROLLOPTS)", "$(subst cp2k_othercuda=,,$(ROLLOPTS))")
+  CUDAVERSION = $(subst cp2k_othercuda=,,$(filter cp2k_othercuda=%,$(ROLLOPTS)))
+endif
+
+
 ifndef ROLLCOMPILER
   ROLLCOMPILER = gnu
 endif

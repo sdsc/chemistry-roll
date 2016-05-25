@@ -70,8 +70,8 @@ else ifeq ("$(COMPILERNAME)", "pgi")
   COMPILE_FLAGS = -fast
 endif
 
-MODULE_LOAD_CUDA_6.5 = $(call MODULE_LOAD_PACKAGE, cuda/6.5, CUDAHOME)
-DESCRIBE_CUDA_6.5 = echo built with cuda $(call GET_MODULE_VERSION, cuda/6.5)
+MODULE_LOAD_CP2K_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
+DESCRIBE_CP2K_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSION))
 
 ifneq (,$(findstring mvapich,$(MPINAME)))
   INTELMPITYPE=intelmpi
@@ -113,6 +113,7 @@ endif
 $(NAME).spec: DESCRIPTION LICENSE
 
 DESCRIPTION:
+	echo "CUDAVERSION $(CUDAVERSION)"
 	$(MODULE_LOAD_CC); \
 	( \
 	  $(DESCRIBE_PKG); \
@@ -121,7 +122,7 @@ DESCRIPTION:
 	  $(DESCRIBE_MPI); \
 	  $(DESCRIBE_FFTW); \
           if test "$(CUDABUILD)" = "yes"; then \
-            $(DESCRIBE_CUDA_6.5); \
+            $(DESCRIBE_CP2K_CUDA); \
           fi \
 	) > $@
 
@@ -136,6 +137,7 @@ build: $(SRC_DIRS)
           if test "$(COMPILERNAME)" = "intel"; then \
 	     patch $(SOURCE_DIR)/makefiles/Makefile patch-files/Makefile.patch; \
           fi; \
+          module unload gnutools; \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \
 	  $(MODULE_LOAD_MPI); \
@@ -178,7 +180,7 @@ build: $(SRC_DIRS)
           $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt; \
           mv ../exe/Linux-x86-64-$(COMPILERNAME)/*.popt ..; \
           if test "$(CUDABUILD)" = "yes"; then \
-              $(MODULE_LOAD_CUDA_6.5); \
+              $(MODULE_LOAD_CP2K_CUDA); \
               $(CUDAVARS); \
               cp ../../Linux-x86-64-gnu.popt ../arch; \
               cp ../../Linux-x86-64-intel.popt ../arch; \
