@@ -137,7 +137,6 @@ build: $(SRC_DIRS)
           if test "$(COMPILERNAME)" = "intel"; then \
 	     patch $(SOURCE_DIR)/makefiles/Makefile patch-files/Makefile.patch; \
           fi; \
-          module unload gnutools; \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \
 	  $(MODULE_LOAD_MPI); \
