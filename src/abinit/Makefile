@@ -148,16 +148,16 @@ install::
           $(MODULE_LOAD_NETCDF); \
 	  cd $(SOURCE_DIR); \
           make install; \
+          cp ../t01.files $(PKGROOT)/share/abinit-test/paral/Input; \
           cd $(CACHE_DIR)/atompaw; \
-          cp -r * $(PKGROOT) \
+          cp -r * $(PKGROOT); \
           cd $(CACHE_DIR)/libxc/lib; \
-          cp t01.files $(PKGROOT)/share/abinit-test/paral/Input; \
           cp -r * $(PKGROOT)/lib; \
 	  if test "$(CUDABUILD)" == "yes"; then \
             $(MODULE_LOAD_CUDA); \
-            cp $${CUDAHOME}/lib64/libcudart.so.7.0 $(PKGROOT)/lib; \
-            cp $${CUDAHOME}/lib64/libcublas.so.7.0 $(PKGROOT)/lib; \
-            cp $${CUDAHOME}/lib64/libcufft.so.7.0  $(PKGROOT)/lib; \
+            cp $${CUDAHOME}/lib64/libcudart* $(PKGROOT)/lib; \
+            cp $${CUDAHOME}/lib64/libcublas* $(PKGROOT)/lib; \
+            cp $${CUDAHOME}/lib64/libcufft*  $(PKGROOT)/lib; \
           fi \
         ) 
 	$(PKGROOT_BIND_UMOUNT)

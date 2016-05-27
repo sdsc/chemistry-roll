@@ -70,6 +70,8 @@ else ifeq ("$(COMPILERNAME)", "pgi")
   COMPILE_FLAGS = -fast
 endif
 
+MODULE_LOAD_CP2K_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
+DESCRIBE_CP2K_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSION))
 
 ifneq (,$(findstring mvapich,$(MPINAME)))
   INTELMPITYPE=intelmpi
@@ -96,23 +98,22 @@ else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
   endif
 endif
 
-CACHE_DIR=$(REDHAT.ROOT)/cache
 
-CUDAVARS =  \
-        CUDADEFS=; \
-        CUDALIBS=
+CUDABUILD=no
 
-#ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
-#     CUDAVARS =  \
-#       CUDADEFS="-D__ACC -D__DBCSR_ACC -D__PW_CUDA"; \
-#       CUDALIBS="-L$${CUDAHOME}/lib64 -lcudart -lcublas -lcufft -lrt"; \
-#       NVCCPATH=$${CUDAHOME}/bin/nvcc
-#endif
+ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
+     CUDAVARS =  \
+       CUDADEFS="-D__ACC -D__DBCSR_ACC -D__PW_CUDA"; \
+       CUDALIBS="-L$${CUDAHOME}/lib64 -lcudart -lcublas -lcufft -lrt"; \
+       NVCCPATH=$${CUDAHOME}/bin/nvcc
+     CUDABUILD=yes
+endif
 
 
 $(NAME).spec: DESCRIPTION LICENSE
 
 DESCRIPTION:
+	echo "CUDAVERSION $(CUDAVERSION)"
 	$(MODULE_LOAD_CC); \
 	( \
 	  $(DESCRIBE_PKG); \
@@ -120,7 +121,9 @@ DESCRIPTION:
 	  $(DESCRIBE_MKL); \
 	  $(DESCRIBE_MPI); \
 	  $(DESCRIBE_FFTW); \
-	  $(DESCRIBE_CUDA) \
+          if test "$(CUDABUILD)" = "yes"; then \
+            $(DESCRIBE_CP2K_CUDA); \
+          fi \
 	) > $@
 
 LICENSE: $(SRC_DIRS)
@@ -131,21 +134,22 @@ build: $(SRC_DIRS)
 	cp Linux-x86-64-gnu.popt $(SOURCE_DIR)/arch
 	cp Linux-x86-64-intel.popt $(SOURCE_DIR)/arch
 	( \
+          if test "$(COMPILERNAME)" = "intel"; then \
+	     patch $(SOURCE_DIR)/makefiles/Makefile patch-files/Makefile.patch; \
+          fi; \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \
 	  $(MODULE_LOAD_MPI); \
 	  $(MODULE_LOAD_FFTW); \
-	  $(MODULE_LOAD_CUDA); \
 	  perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!INTELMPITYPE!$(INTELMPITYPE)!g" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLFFTW!$${FFTWHOME}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLLIBINT!$(PWD)/$(SOURCE_DIR)/libint/lib!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!LIBINTPATH!$(PWD)/$(SOURCE_DIR)/libint/lib!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
-          $(CUDAVARS); \
-	  perl -pi -e "s!CUDADEFS!$${CUDADEFS}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
-	  perl -pi -e "s!CUDALIBS!$${CUDALIBS}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
-	  perl -pi -e "s!NVCCPATH!$${NVCCPATH}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
-	  perl -pi -e "s!LIBXCPATH!$(CACHE_DIR)/libxc!g" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!CUDADEFS!!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!CUDALIBS!!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!NVCCPATH!!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!LIBXCPATH!$(PWD)/$(SOURCE_DIR)/libxc!g" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  export CC=$(CC); \
 	  export CFLAGS="$(COMPILE_FLAGS)"; \
 	  export FC=$(FC); \
@@ -155,18 +159,48 @@ build: $(SRC_DIRS)
 	  export FFLAGS="$(COMPILE_FLAGS)"; \
 	  cd $(SOURCE_DIR); \
           mv ../$(LIBINT_DIR) .; \
-	  cd $(LIBINT_DIR); \
-	  if test ! -f configure; then \
-	    aclocal -I lib/autoconf; \
-	    autoconf; \
-	  fi; \
-	  ./configure --with-cc-optflags="$(COMPILE_FLAGS)" \
-	    --with-cxx-optflags="$(COMPILE_FLAGS)" --with-libint-max-am=5 \
-	    --with-libderiv-max-am1=4 --prefix=`pwd`/../libint; \
-	  $(MAKE) -j 16; \
-	  $(MAKE) install; \
+          cd $(LIBINT_DIR); \
+          if test ! -f configure; then \
+            aclocal -I lib/autoconf; \
+            autoconf; \
+          fi; \
+          ./configure --with-cc-optflags="$(COMPILE_FLAGS)" \
+            --with-cxx-optflags="$(COMPILE_FLAGS)" --with-libint-max-am=5 \
+            --with-libderiv-max-am1=4 --prefix=`pwd`/../libint; \
+          $(MAKE) -j 16; \
+          $(MAKE) install; \
+          cd ..; \
+          mv ../$(LIBXC_DIR) .; \
+          cd $(LIBXC_DIR); \
+          ./configure --prefix=`pwd`/../libxc --enable-fortran --enable-shared; \
+          make; \
+          make install; \
           cd ../makefiles; \
-	  $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt \
+          $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt; \
+          mv ../exe/Linux-x86-64-$(COMPILERNAME)/*.popt ..; \
+          if test "$(CUDABUILD)" = "yes"; then \
+              $(MODULE_LOAD_CP2K_CUDA); \
+              $(CUDAVARS); \
+              cp ../../Linux-x86-64-gnu.popt ../arch; \
+              cp ../../Linux-x86-64-intel.popt ../arch; \
+              perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" ../arch/$(ROLLMAKEFILE).popt; \
+              perl -pi -e "s!INTELMPITYPE!$(INTELMPITYPE)!g" ../arch/$(ROLLMAKEFILE).popt; \
+              perl -pi -e "s!ROLLFFTW!$${FFTWHOME}!" ../arch/$(ROLLMAKEFILE).popt; \
+              perl -pi -e "s!ROLLLIBINT!$(PWD)/$(SOURCE_DIR)/libint/lib!" ../arch/$(ROLLMAKEFILE).popt; \
+              perl -pi -e "s!LIBINTPATH!$(PWD)/$(SOURCE_DIR)/libint/lib!" ../arch/$(ROLLMAKEFILE).popt; \
+              perl -pi -e "s!NVCCPATH!$${NVCCPATH}!" ../arch/$(ROLLMAKEFILE).popt; \
+	      perl -pi -e "s!LIBXCPATH!$(PWD)/$(SOURCE_DIR)/libxc!g" ../arch/$(ROLLMAKEFILE).popt; \
+  	      perl -pi -e "s!CUDADEFS!$${CUDADEFS}!" ../arch/$(ROLLMAKEFILE).popt; \
+ 	      perl -pi -e "s!CUDALIBS!$${CUDALIBS}!" ../arch/$(ROLLMAKEFILE).popt; \
+              make realclean ARCH=$(ROLLMAKEFILE) VERSION=popt; \
+              $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt ; \
+              exes=`find ../exe/Linux-x86-64-$(COMPILERNAME) -name \*.popt -print`; \
+              for exe in $${exes}; do \
+                   name=`basename $${exe}`; \
+                   name=`echo $${name} |sed 's/\.popt/.cuda.popt/'`; \
+                   mv $${exe} ../$${name}; \
+               done; \
+           fi \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
@@ -175,10 +209,10 @@ install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/lib
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/test
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/data
-	cp $(SOURCE_DIR)/exe/$(ROLLMAKEFILE)/cp2k.popt $(ROOT)/$(PKGROOT)/bin
-	cp -r $(SOURCE_DIR)/tests/EP/* $(ROOT)/$(PKGROOT)/test/
+	cp $(SOURCE_DIR)/*.popt $(ROOT)/$(PKGROOT)/bin
+	cp -r $(SOURCE_DIR)/tests/MC/*/* $(ROOT)/$(PKGROOT)/test/
 	cp -r $(SOURCE_DIR)/data/* $(ROOT)/$(PKGROOT)/data
-	cp -r $(CACHE_DIR)/libxc/lib/* $(ROOT)/$(PKGROOT)/lib/
+	cp -r $(SOURCE_DIR)/libxc/lib/* $(ROOT)/$(PKGROOT)/lib/
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
 

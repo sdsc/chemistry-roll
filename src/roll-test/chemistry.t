@@ -92,12 +92,12 @@ SKIP: {
 module load cp2k
 cd $TESTFILE.dir
 cp $testDir/* .
-cp2k.popt 3H2O-ep.inp
+mpirun -np 8 cp2k.popt MC_QS.inp
 END
 close(OUT);
 
   $output = `/bin/bash $TESTFILE.sh 2>&1`;
-  ok($output =~ /TEMPERATURE.*303.1/, 'cp2k test run');
+  ok($output =~ /ENERGY.*-51.3432165/, 'cp2k test run');
   `rm -rf $TESTFILE*`;
 }
 

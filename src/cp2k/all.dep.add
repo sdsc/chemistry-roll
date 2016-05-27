@@ -1,0 +1,2 @@
+$(EXEDIR)/libcusmm_unittest.$(ONEVERSION) : libcusmm_unittest.o $(LIBDIR)/libcusmm.a
+	$(LD) $(LDFLAGS) -nofor-main -L$(LIBDIR) -o $@ libcusmm_unittest.o $(EXTERNAL_OBJECTS) -lcusmm $(LIBS)
