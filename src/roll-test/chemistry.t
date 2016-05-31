@@ -92,7 +92,11 @@ SKIP: {
 module load cp2k
 cd $TESTFILE.dir
 cp $testDir/* .
-mpirun -np 8 cp2k.popt MC_QS.inp
+output=`mpirun -np 8 cp2k.popt MC_QS.inp 2>&1`
+if [[ "\$output" =~ "run-as-root" ]]; then
+  output=`mpirun --allow-run-as-root -np 8 cp2k.popt MC_QS.inp 2>&1`
+fi
+echo \$output
 END
 close(OUT);
 
