@@ -162,49 +162,33 @@ END
 }
 
 # namd
-$packageHome = '/opt/namd/2.10';
-$testDir = '/opt/namd/2.10/tiny';
+$packageHome = '/opt/namd';
 SKIP: {
 
   skip 'namd not installed', 1 if ! -d $packageHome;
-  skip 'namd test not installed', 1 if ! -d $testDir;
-  `mkdir $TESTFILE.dir`;
-  open(OUT, ">$TESTFILE.sh");
-  print OUT <<END;
-module load namd
-cd $TESTFILE.dir
-cp $testDir/* .
-$packageHome/bin/namd2 tiny.namd
-END
-  close(OUT);
-  $output = `/bin/bash $TESTFILE.sh`;
-  ok($output =~ /WRITING VELOCITIES/, 'namd 2.10 sample run');
-  `rm -rf  $TESTFILE*`;
+
+  $output = `ls $packageHome`;
+  chomp($output);
+
+  foreach my $version(split(/\s+/, $output)) {
+    skip "namd $version test not installed", 2
+      if ! -d "$packageHome/$version/tiny";
+    `mkdir $TESTFILE.dir`;
+    `cp $packageHome/$version/tiny/* $TESTFILE.dir/`;
+    $output = `module load namd/$version;cd $TESTFILE.dir;namd2 tiny.namd 2>&1`;
+    like($output, qr#WRITING VELOCITIES#, "namd $version sample run");
+    SKIP: {
+      skip 'namd $version cuda version not installed', 1 if ! -f "$packageHome/$version/bin/namd2.cuda";
+      skip 'CUDA_VISIBLE_DEVICES not set', 1 if !$ENV{'CUDA_VISIBLE_DEVICES'};
+      $output = `module load namd/$version;cd $TESTFILE.dir;namd2.cuda +devices $ENV{'CUDA_VISIBLE_DEVICES'} tiny.namd 2>&1`;
+      like($output, qr#WRITING VELOCITIES#, "namd.cuda $version sample run");
+    }
+    `rm -rf $TESTFILE*`;
+  }
+
 }
 
-
-# namd
-$packageHome = '/opt/namd/2.9';
-$testDir = '/opt/namd/2.9/tiny';
 SKIP: {
-
-  skip 'namd not installed', 1 if ! -d $packageHome;
-  skip 'namd test not installed', 1 if ! -d $testDir;
-  `mkdir $TESTFILE.dir`;
-  open(OUT, ">$TESTFILE.sh");
-  print OUT <<END;
-module load namd/2.9
-cd $TESTFILE.dir
-cp $testDir/* .
-$packageHome/bin/namd2 tiny.namd
-END
-  close(OUT);
-  $output = `/bin/bash $TESTFILE.sh`;
-  ok($output =~ /WRITING VELOCITIES/, 'namd 2.9 sample run');
-  `rm -rf  $TESTFILE*`;
-}
-SKIP: {
-
   foreach my $package(@packages) {
     skip "$package not installed", 3 if ! -d "/opt/$package";
     my ($noVersion) = $package =~ m#([^/]+)#;
@@ -215,5 +199,4 @@ SKIP: {
     ok(-l "/opt/modulefiles/applications/$noVersion/.version",
        "$package version module link created");
   }
-
 }
