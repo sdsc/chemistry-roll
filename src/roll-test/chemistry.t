@@ -110,28 +110,37 @@ $packageHome = '/opt/gromacs';
 $testDir = "$packageHome/gmxtest/complex/acetonitrilRF";
 SKIP: {
 
-  skip 'gromacs not installed', 1 if ! -d $packageHome;
-  skip 'gromacs test not installed', 1 if ! -d $testDir;
+  skip 'gromacs not installed', 2 if ! -d $packageHome;
+  skip 'gromacs test not installed', 2 if ! -d $testDir;
   `mkdir $TESTFILE.dir`;
+  `cp -r $testDir/* $TESTFILE.dir`;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
 module load gromacs
 export OMP_NUM_THREADS=1
-cp -r $testDir/* $TESTFILE.dir
 cd $TESTFILE.dir
 rm -f md.log
 $packageHome/bin/gmx_mpi grompp
-output=`mpirun -np 1 $packageHome/bin/gmx_mpi mdrun 2>&1`
+output=`mpirun -np 1 $packageHome/bin/gmx_mpi mdrun \$1 2>&1`
 if [[ "\$output" =~ "run-as-root" ]]; then
   # Recent openmpi requires special option for root user
-  output=`mpirun -np 1 --allow-run-as-root $packageHome/bin/gmx_mpi mdrun 2>&1`
+  output=`mpirun -np 1 --allow-run-as-root $packageHome/bin/gmx_mpi mdrun \$1 2>&1`
 fi
 echo \$output
 cat md.log
 END
   close(OUT);
   $output = `/bin/bash $TESTFILE.sh 2>&1`;
-  ok($output =~ /Performance:\s+\d+(\.\d+)?/, 'gromacs sample run');
+  like($output, qr#Performance:\s+\d+(\.\d+)?#, 'gromacs sample run');
+  SKIP: {
+    skip 'CUDA_VISIBLE_DEVICES undef', 1
+      if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
+    my $gpus = $ENV{'CUDA_VISIBLE_DEVICES'};
+    $gpus =~ s/,//g;
+    $output = `/bin/bash $TESTFILE.sh "--gpu_id $gpus" 2>&1`;
+    print $output;
+    like($output, qr#Performance:\s+\d+(\.\d+)?#, 'gromacs cuda sample run');
+  }
   `rm -rf  $TESTFILE*`;
 }
 
@@ -179,7 +188,8 @@ SKIP: {
     like($output, qr#WRITING VELOCITIES#, "namd $version sample run");
     SKIP: {
       skip 'namd $version cuda version not installed', 1 if ! -f "$packageHome/$version/bin/namd2.cuda";
-      skip 'CUDA_VISIBLE_DEVICES not set', 1 if !$ENV{'CUDA_VISIBLE_DEVICES'};
+      skip 'CUDA_VISIBLE_DEVICES undef', 1
+        if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
       $output = `module load namd/$version;cd $TESTFILE.dir;namd2.cuda +devices $ENV{'CUDA_VISIBLE_DEVICES'} tiny.namd 2>&1`;
       like($output, qr#WRITING VELOCITIES#, "namd.cuda $version sample run");
     }
