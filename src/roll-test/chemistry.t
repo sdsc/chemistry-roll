@@ -152,21 +152,27 @@ SKIP: {
   skip 'lammps not installed', 1 if ! -d $packageHome;
   skip 'lammps test not installed', 1 if ! -d $testDir;
   `mkdir $TESTFILE.dir`;
+  `cp $testDir/* $TESTFILE.dir/`;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
 module load lammps
 cd $TESTFILE.dir
-cp $packageHome/examples/colloid/* .
-output=`mpirun -np 1 $packageHome/bin/lammps < in.colloid 2>&1`
+output=`mpirun -np 1 $packageHome/bin/lammps \$1 < in.colloid 2>&1`
 if [[ "\$output" =~ "run-as-root" ]]; then
   # Recent openmpi requires special option for root user
-  output=`mpirun -np 1 --allow-run-as-root $packageHome/bin/lammps < in.colloid 2>&1`
+  output=`mpirun -np 1 --allow-run-as-root $packageHome/bin/lammps \$1 < in.colloid 2>&1`
 fi
 echo \$output
 END
   close(OUT);
   $output = `/bin/bash $TESTFILE.sh`;
-  ok($output =~ /900 atoms/, 'lammps sample run');
+  like($output, qr#900 atoms#, 'lammps sample run');
+  SKIP: {
+    skip 'CUDA_VISIBLE_DEVICES undef', 1
+      if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
+    $output = `/bin/bash $TESTFILE.sh "-pk gpu $ENV{'CUDA_VISIBLE_DEVICES'}"`;
+    like($output, qr#900 atoms#, 'lammps sample run');
+  }
   `rm -rf $TESTFILE*`;
 }
 
