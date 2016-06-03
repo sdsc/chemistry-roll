@@ -13,7 +13,7 @@ MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 PKGROOT        = /opt/abinit
 NAME           = sdsc-abinit
 VERSION        = 7.10.5
-RELEASE        = 1
+RELEASE        = 2
 
 SRC_SUBDIR     = abinit
 

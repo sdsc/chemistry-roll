@@ -153,13 +153,7 @@ install::
           cd $(CACHE_DIR)/atompaw; \
           cp -r * $(PKGROOT); \
           cd $(CACHE_DIR)/libxc/lib; \
-          cp -r * $(PKGROOT)/lib; \
-	  if test "$(CUDABUILD)" == "yes"; then \
-            $(MODULE_LOAD_CUDA); \
-            cp $${CUDAHOME}/lib64/libcudart* $(PKGROOT)/lib; \
-            cp $${CUDAHOME}/lib64/libcublas* $(PKGROOT)/lib; \
-            cp $${CUDAHOME}/lib64/libcufft*  $(PKGROOT)/lib; \
-          fi \
+          cp -r * $(PKGROOT)/lib \
         ) 
 	$(PKGROOT_BIND_UMOUNT)
 	$(INSTALL_LICENSE_FILES)
