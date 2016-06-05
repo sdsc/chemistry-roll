@@ -138,7 +138,6 @@ END
     my $gpus = $ENV{'CUDA_VISIBLE_DEVICES'};
     $gpus =~ s/,//g;
     $output = `/bin/bash $TESTFILE.sh "--gpu_id $gpus" 2>&1`;
-    print $output;
     like($output, qr#Performance:\s+\d+(\.\d+)?#, 'gromacs cuda sample run');
   }
   `rm -rf  $TESTFILE*`;
@@ -171,7 +170,7 @@ END
     skip 'CUDA_VISIBLE_DEVICES undef', 1
       if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
     $output = `/bin/bash $TESTFILE.sh "-pk gpu $ENV{'CUDA_VISIBLE_DEVICES'}"`;
-    like($output, qr#900 atoms#, 'lammps sample run');
+    like($output, qr#900 atoms#, 'lammps cuda sample run');
   }
   `rm -rf $TESTFILE*`;
 }
