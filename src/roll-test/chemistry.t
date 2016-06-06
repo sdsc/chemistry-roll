@@ -87,21 +87,27 @@ SKIP: {
   skip 'cp2k not installed', 1 if ! -d $packageHome;
   skip 'cp2k test not installed', 1 if ! -d $testDir;
   `mkdir $TESTFILE.dir`;
+  `cp $testDir/* $TESTFILE.dir/`;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
 module load cp2k
 cd $TESTFILE.dir
-cp $testDir/* .
-output=`mpirun -np 8 cp2k.popt MC_QS.inp 2>&1`
+output=`mpirun -np 8 \$1 MC_QS.inp 2>&1`
 if [[ "\$output" =~ "run-as-root" ]]; then
-  output=`mpirun --allow-run-as-root -np 8 cp2k.popt MC_QS.inp 2>&1`
+  output=`mpirun --allow-run-as-root -np 8 \$1 MC_QS.inp 2>&1`
 fi
 echo \$output
 END
 close(OUT);
 
-  $output = `/bin/bash $TESTFILE.sh 2>&1`;
-  ok($output =~ /ENERGY.*-51.3432165/, 'cp2k test run');
+  $output = `/bin/bash $TESTFILE.sh cp2k.popt 2>&1`;
+  like($output, qr#ENERGY.*-51.3432165#, 'cp2k test run');
+  SKIP: {
+    skip 'CUDA_VISIBLE_DEVICES undef', 1
+      if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
+    $output = `/bin/bash $TESTFILE.sh cp2k.cuda.popt 2>&1`;
+    like($output, qr#ENERGY.*-51.3432165#, 'cp2k cuda test run');
+  }
   `rm -rf $TESTFILE*`;
 }
 
