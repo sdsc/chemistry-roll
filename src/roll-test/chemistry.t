@@ -35,14 +35,15 @@ SKIP: {
  print OUT <<END;
 module load abinit
 cd $TESTFILE.dir
-cp $packageHome/share/abinit-test/paral/Input/t01.in .
+cp $packageHome/share/abinit-test/gpu/Input/t01.in .
 cat <<ENDIT > t01.files
 t01.in
 t01.out
 t01_Xi
 t01_Xo
 t01_Xx
-$packageHome/share/abinit-test/Psps_for_tests/14si.psp
+$packageHome/share/abinit-test/Psps_for_tests/31ga.pspnc
+$packageHome/share/abinit-test/Psps_for_tests/33as.pspnc
 ENDIT
 output=`mpirun -np 4 $packageHome/bin/abinit <t01.files 2>&1`
 if [[ "\$output" =~ "run-as-root" ]]; then
@@ -53,7 +54,7 @@ END
 close(OUT);
   $output = `bash $TESTFILE.sh 2>&1`;
   $output=`cat $TESTFILE.dir/t01.out 2>&1`;
-  ok($output =~ /etotal     -8.593873/, 'abinit sample run');
+  ok($output =~ /etotal1    -1.070821.*E\Q+\E01/i, 'abinit sample run');
   `rm -rf $TESTFILE*`;
 }
 
@@ -130,7 +131,7 @@ $packageHome/bin/gmx_mpi grompp
 output=`mpirun -np 1 $packageHome/bin/gmx_mpi mdrun \$1 2>&1`
 if [[ "\$output" =~ "run-as-root" ]]; then
   # Recent openmpi requires special option for root user
-  output=`mpirun -np 1 --allow-run-as-root $packageHome/bin/gmx_mpi mdrun \$1 2>&1`
+  output=`mpirun -np 1 --allow-run-as-root $packageHome/bin/gmx_mpi mdrun -gpu_id 0 2>&1`
 fi
 echo \$output
 cat md.log
@@ -141,9 +142,7 @@ END
   SKIP: {
     skip 'CUDA_VISIBLE_DEVICES undef', 1
       if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
-    my $gpus = $ENV{'CUDA_VISIBLE_DEVICES'};
-    $gpus =~ s/,//g;
-    $output = `/bin/bash $TESTFILE.sh "--gpu_id $gpus" 2>&1`;
+    $output = `/bin/bash $TESTFILE.sh 2>&1`;
     like($output, qr#Performance:\s+\d+(\.\d+)?#, 'gromacs cuda sample run');
   }
   `rm -rf  $TESTFILE*`;
@@ -175,7 +174,7 @@ END
   SKIP: {
     skip 'CUDA_VISIBLE_DEVICES undef', 1
       if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
-    $output = `/bin/bash $TESTFILE.sh "-pk gpu $ENV{'CUDA_VISIBLE_DEVICES'}"`;
+    $output = `/bin/bash $TESTFILE.sh "-sf gpu -pk gpu 1"`;
     like($output, qr#900 atoms#, 'lammps cuda sample run');
   }
   `rm -rf $TESTFILE*`;
@@ -201,7 +200,7 @@ SKIP: {
       skip 'namd $version cuda version not installed', 1 if ! -f "$packageHome/$version/bin/namd2.cuda";
       skip 'CUDA_VISIBLE_DEVICES undef', 1
         if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
-      $output = `module load namd/$version;cd $TESTFILE.dir;namd2.cuda +devices $ENV{'CUDA_VISIBLE_DEVICES'} tiny.namd 2>&1`;
+      $output = `module load namd/$version;cd $TESTFILE.dir;namd2.cuda +idlepoll +devices $ENV{'CUDA_VISIBLE_DEVICES'} tiny.namd 2>&1`;
       like($output, qr#WRITING VELOCITIES#, "namd.cuda $version sample run");
     }
     `rm -rf $TESTFILE*`;
