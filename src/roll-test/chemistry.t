@@ -131,7 +131,7 @@ $packageHome/bin/gmx_mpi grompp
 output=`mpirun -np 1 $packageHome/bin/gmx_mpi mdrun \$1 2>&1`
 if [[ "\$output" =~ "run-as-root" ]]; then
   # Recent openmpi requires special option for root user
-  output=`mpirun -np 1 --allow-run-as-root $packageHome/bin/gmx_mpi mdrun -gpu_id 0 2>&1`
+  output=`mpirun -np 1 --allow-run-as-root $packageHome/bin/gmx_mpi mdrun \$1 2>&1`
 fi
 echo \$output
 cat md.log
@@ -142,7 +142,7 @@ END
   SKIP: {
     skip 'CUDA_VISIBLE_DEVICES undef', 1
       if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
-    $output = `/bin/bash $TESTFILE.sh 2>&1`;
+    $output = `/bin/bash $TESTFILE.sh "-gpu_id 0" 2>&1`;
     like($output, qr#Performance:\s+\d+(\.\d+)?#, 'gromacs cuda sample run');
   }
   `rm -rf  $TESTFILE*`;
