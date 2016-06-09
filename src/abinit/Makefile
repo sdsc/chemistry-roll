@@ -104,6 +104,7 @@ LICENSE: $(SRC_DIRS)
 CACHE_DIR=$(REDHAT.ROOT)/cache
 
 build: $(SRC_DIRS)
+	/bin/mv $(BIGDFT_PKG) $(WANNIER90_PKG) $(SOURCE_DIR)/fallbacks/
 	( \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MPI); \
@@ -152,13 +153,7 @@ install::
           cd $(CACHE_DIR)/atompaw; \
           cp -r * $(PKGROOT); \
           cd $(CACHE_DIR)/libxc/lib; \
-          cp -r * $(PKGROOT)/lib; \
-	  if test "$(CUDABUILD)" == "yes"; then \
-            $(MODULE_LOAD_CUDA); \
-            cp $${CUDAHOME}/lib64/libcudart* $(PKGROOT)/lib; \
-            cp $${CUDAHOME}/lib64/libcublas* $(PKGROOT)/lib; \
-            cp $${CUDAHOME}/lib64/libcufft*  $(PKGROOT)/lib; \
-          fi \
+          cp -r * $(PKGROOT)/lib \
         ) 
 	$(PKGROOT_BIND_UMOUNT)
 	$(INSTALL_LICENSE_FILES)

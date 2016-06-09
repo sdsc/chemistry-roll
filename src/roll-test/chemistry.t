@@ -35,14 +35,15 @@ SKIP: {
  print OUT <<END;
 module load abinit
 cd $TESTFILE.dir
-cp $packageHome/share/abinit-test/paral/Input/t01.in .
+cp $packageHome/share/abinit-test/gpu/Input/t01.in .
 cat <<ENDIT > t01.files
 t01.in
 t01.out
 t01_Xi
 t01_Xo
 t01_Xx
-$packageHome/share/abinit-test/Psps_for_tests/14si.psp
+$packageHome/share/abinit-test/Psps_for_tests/31ga.pspnc
+$packageHome/share/abinit-test/Psps_for_tests/33as.pspnc
 ENDIT
 output=`mpirun -np 4 $packageHome/bin/abinit <t01.files 2>&1`
 if [[ "\$output" =~ "run-as-root" ]]; then
@@ -53,7 +54,7 @@ END
 close(OUT);
   $output = `bash $TESTFILE.sh 2>&1`;
   $output=`cat $TESTFILE.dir/t01.out 2>&1`;
-  ok($output =~ /etotal     -8.593873/, 'abinit sample run');
+  ok($output =~ /etotal1    -1.070821.*E\Q+\E01/i, 'abinit sample run');
   `rm -rf $TESTFILE*`;
 }
 
@@ -87,17 +88,27 @@ SKIP: {
   skip 'cp2k not installed', 1 if ! -d $packageHome;
   skip 'cp2k test not installed', 1 if ! -d $testDir;
   `mkdir $TESTFILE.dir`;
+  `cp $testDir/* $TESTFILE.dir/`;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
 module load cp2k
 cd $TESTFILE.dir
-cp $testDir/* .
-mpirun -np 8 cp2k.popt MC_QS.inp
+output=`mpirun -np 8 \$1 MC_QS.inp 2>&1`
+if [[ "\$output" =~ "run-as-root" ]]; then
+  output=`mpirun --allow-run-as-root -np 8 \$1 MC_QS.inp 2>&1`
+fi
+echo \$output
 END
 close(OUT);
 
-  $output = `/bin/bash $TESTFILE.sh 2>&1`;
-  ok($output =~ /ENERGY.*-51.3432165/, 'cp2k test run');
+  $output = `/bin/bash $TESTFILE.sh cp2k.popt 2>&1`;
+  like($output, qr#ENERGY.*-51.3432165#, 'cp2k test run');
+  SKIP: {
+    skip 'CUDA_VISIBLE_DEVICES undef', 1
+      if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
+    $output = `/bin/bash $TESTFILE.sh cp2k.cuda.popt 2>&1`;
+    like($output, qr#ENERGY.*-51.3432165#, 'cp2k cuda test run');
+  }
   `rm -rf $TESTFILE*`;
 }
 
@@ -106,28 +117,34 @@ $packageHome = '/opt/gromacs';
 $testDir = "$packageHome/gmxtest/complex/acetonitrilRF";
 SKIP: {
 
-  skip 'gromacs not installed', 1 if ! -d $packageHome;
-  skip 'gromacs test not installed', 1 if ! -d $testDir;
+  skip 'gromacs not installed', 2 if ! -d $packageHome;
+  skip 'gromacs test not installed', 2 if ! -d $testDir;
   `mkdir $TESTFILE.dir`;
+  `cp -r $testDir/* $TESTFILE.dir`;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
 module load gromacs
 export OMP_NUM_THREADS=1
-cp -r $testDir/* $TESTFILE.dir
 cd $TESTFILE.dir
 rm -f md.log
 $packageHome/bin/gmx_mpi grompp
-output=`mpirun -np 1 $packageHome/bin/gmx_mpi mdrun 2>&1`
+output=`mpirun -np 1 $packageHome/bin/gmx_mpi mdrun \$1 2>&1`
 if [[ "\$output" =~ "run-as-root" ]]; then
   # Recent openmpi requires special option for root user
-  output=`mpirun -np 1 --allow-run-as-root $packageHome/bin/gmx_mpi mdrun 2>&1`
+  output=`mpirun -np 1 --allow-run-as-root $packageHome/bin/gmx_mpi mdrun \$1 2>&1`
 fi
 echo \$output
 cat md.log
 END
   close(OUT);
   $output = `/bin/bash $TESTFILE.sh 2>&1`;
-  ok($output =~ /Performance:\s+\d+(\.\d+)?/, 'gromacs sample run');
+  like($output, qr#Performance:\s+\d+(\.\d+)?#, 'gromacs sample run');
+  SKIP: {
+    skip 'CUDA_VISIBLE_DEVICES undef', 1
+      if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
+    $output = `/bin/bash $TESTFILE.sh "-gpu_id 0" 2>&1`;
+    like($output, qr#Performance:\s+\d+(\.\d+)?#, 'gromacs cuda sample run');
+  }
   `rm -rf  $TESTFILE*`;
 }
 
@@ -139,68 +156,59 @@ SKIP: {
   skip 'lammps not installed', 1 if ! -d $packageHome;
   skip 'lammps test not installed', 1 if ! -d $testDir;
   `mkdir $TESTFILE.dir`;
+  `cp $testDir/* $TESTFILE.dir/`;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
 module load lammps
 cd $TESTFILE.dir
-cp $packageHome/examples/colloid/* .
-output=`mpirun -np 1 $packageHome/bin/lammps < in.colloid 2>&1`
+output=`mpirun -np 1 $packageHome/bin/lammps \$1 < in.colloid 2>&1`
 if [[ "\$output" =~ "run-as-root" ]]; then
   # Recent openmpi requires special option for root user
-  output=`mpirun -np 1 --allow-run-as-root $packageHome/bin/lammps < in.colloid 2>&1`
+  output=`mpirun -np 1 --allow-run-as-root $packageHome/bin/lammps \$1 < in.colloid 2>&1`
 fi
 echo \$output
 END
   close(OUT);
   $output = `/bin/bash $TESTFILE.sh`;
-  ok($output =~ /900 atoms/, 'lammps sample run');
+  like($output, qr#900 atoms#, 'lammps sample run');
+  SKIP: {
+    skip 'CUDA_VISIBLE_DEVICES undef', 1
+      if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
+    $output = `/bin/bash $TESTFILE.sh "-sf gpu -pk gpu 1"`;
+    like($output, qr#900 atoms#, 'lammps cuda sample run');
+  }
   `rm -rf $TESTFILE*`;
 }
 
 # namd
-$packageHome = '/opt/namd/2.10';
-$testDir = '/opt/namd/2.10/tiny';
+$packageHome = '/opt/namd';
 SKIP: {
 
   skip 'namd not installed', 1 if ! -d $packageHome;
-  skip 'namd test not installed', 1 if ! -d $testDir;
-  `mkdir $TESTFILE.dir`;
-  open(OUT, ">$TESTFILE.sh");
-  print OUT <<END;
-module load namd
-cd $TESTFILE.dir
-cp $testDir/* .
-$packageHome/bin/namd2 tiny.namd
-END
-  close(OUT);
-  $output = `/bin/bash $TESTFILE.sh`;
-  ok($output =~ /WRITING VELOCITIES/, 'namd 2.10 sample run');
-  `rm -rf  $TESTFILE*`;
+
+  $output = `ls $packageHome`;
+  chomp($output);
+
+  foreach my $version(split(/\s+/, $output)) {
+    skip "namd $version test not installed", 2
+      if ! -d "$packageHome/$version/tiny";
+    `mkdir $TESTFILE.dir`;
+    `cp $packageHome/$version/tiny/* $TESTFILE.dir/`;
+    $output = `module load namd/$version;cd $TESTFILE.dir;namd2 tiny.namd 2>&1`;
+    like($output, qr#WRITING VELOCITIES#, "namd $version sample run");
+    SKIP: {
+      skip 'namd $version cuda version not installed', 1 if ! -f "$packageHome/$version/bin/namd2.cuda";
+      skip 'CUDA_VISIBLE_DEVICES undef', 1
+        if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
+      $output = `module load namd/$version;cd $TESTFILE.dir;namd2.cuda +idlepoll +devices $ENV{'CUDA_VISIBLE_DEVICES'} tiny.namd 2>&1`;
+      like($output, qr#WRITING VELOCITIES#, "namd.cuda $version sample run");
+    }
+    `rm -rf $TESTFILE*`;
+  }
+
 }
 
-
-# namd
-$packageHome = '/opt/namd/2.9';
-$testDir = '/opt/namd/2.9/tiny';
 SKIP: {
-
-  skip 'namd not installed', 1 if ! -d $packageHome;
-  skip 'namd test not installed', 1 if ! -d $testDir;
-  `mkdir $TESTFILE.dir`;
-  open(OUT, ">$TESTFILE.sh");
-  print OUT <<END;
-module load namd/2.9
-cd $TESTFILE.dir
-cp $testDir/* .
-$packageHome/bin/namd2 tiny.namd
-END
-  close(OUT);
-  $output = `/bin/bash $TESTFILE.sh`;
-  ok($output =~ /WRITING VELOCITIES/, 'namd 2.9 sample run');
-  `rm -rf  $TESTFILE*`;
-}
-SKIP: {
-
   foreach my $package(@packages) {
     skip "$package not installed", 3 if ! -d "/opt/$package";
     my ($noVersion) = $package =~ m#([^/]+)#;
@@ -211,5 +219,4 @@ SKIP: {
     ok(-l "/opt/modulefiles/applications/$noVersion/.version",
        "$package version module link created");
   }
-
 }
