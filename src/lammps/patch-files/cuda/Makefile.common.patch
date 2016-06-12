@@ -1,5 +1,5 @@
 --- lammps-16Feb16/lib/cuda/Makefile.common	2012-10-10 08:44:38.000000000 -0700
-+++ patch-files/cuda/Makefile.common	2016-04-12 13:42:47.443105460 -0700
++++ patch-files/cuda/Makefile.common	2016-06-11 16:46:44.495974135 -0700
 @@ -14,7 +14,7 @@
  
  # System-specific settings
@@ -9,11 +9,49 @@
  #CUDA_INSTALL_PATH = /home/crtrott/lib/cuda
  # e.g. in Gentoo
  # CUDA_INSTALL_PATH = /opt/cuda
-@@ -117,6 +117,7 @@
-   endif
+@@ -81,42 +81,9 @@
  endif
  
-+SMVERSIONFLAGS = -gencode arch=compute_35,code=sm_35
+ # make architecture settings
+-ifeq ($(strip $(arch)), 13)
+-	CUDA_FLAGS += -DCUDA_ARCH=13
+-	SMVERSIONFLAGS	:= -arch sm_13
+-else
+-  ifeq ($(strip $(arch)), 20)
+-	 CUDA_FLAGS += -DCUDA_ARCH=20 
+-	 #NVCC_FLAGS += -ftz=false -prec-div=true -prec-sqrt=true
+-	 NVCC_FLAGS += -ftz=true -prec-div=false -prec-sqrt=false
+-	 SMVERSIONFLAGS	:= -arch sm_20
+-  else
+-     ifeq ($(strip $(arch)), 21)
+-	   CUDA_FLAGS += -DCUDA_ARCH=20 
+-	   #NVCC_FLAGS += -ftz=false -prec-div=true -prec-sqrt=true
+-	   NVCC_FLAGS += -ftz=true -prec-div=false -prec-sqrt=false
+-	   SMVERSIONFLAGS	:= -arch sm_21
+-     else
+-       ifeq ($(strip $(arch)), 30)
+-           CUDA_FLAGS += -DCUDA_ARCH=20
+-           #NVCC_FLAGS += -ftz=false -prec-div=true -prec-sqrt=true
+-           NVCC_FLAGS += -ftz=true -prec-div=false -prec-sqrt=false
+-           SMVERSIONFLAGS       := -arch sm_30
+-       else
+-         ifeq ($(strip $(arch)), 35)
+-           CUDA_FLAGS += -DCUDA_ARCH=20
+-           #NVCC_FLAGS += -ftz=false -prec-div=true -prec-sqrt=true
+-           NVCC_FLAGS += -ftz=true -prec-div=false -prec-sqrt=false
+-           SMVERSIONFLAGS       := -arch sm_35
+-         else         
+-           CUDA_FLAGS += -DCUDA_ARCH=99  
+-           SMVERSIONFLAGS	:= -arch sm_13
+-         endif
+-       endif
+-     endif
+-  endif
+-endif
+-
++CUDA_FLAGS += -DCUDA_ARCH=20
++NVCC_FLAGS += -ftz=true -prec-div=false -prec-sqrt=false
++SMVERSIONFLAGS = -gencode arch=compute_20,code=sm_20 -gencode arch=compute_30,code=sm_30 -gencode arch=compute35,code=sm_35
  
  
  CCFLAGS := $(CCFLAGS) $(CUDA_FLAGS) \
