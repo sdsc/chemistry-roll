@@ -107,7 +107,7 @@ DESCRIPTION:
 	  $(DESCRIBE_PKG); \
 	  $(DESCRIBE_CC); \
 	  $(DESCRIBE_MPI); \
-          if test "$(CUDABUILD) = "yes"; then
+          if test "$(CUDABUILD)" = "yes"; then \
 	     $(DESCRIBE_CUDA); \
           fi \
 	) > $@
