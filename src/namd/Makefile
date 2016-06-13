@@ -73,7 +73,7 @@ endif
 CHARMARCH = mpi-linux-x86_64-mpicxx
 CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
 ifeq ("$(COMPILERNAME)", "intel")
-  CHARMBUILDOPTS = mpicxx  -O2  -xHOST
+  CHARMBUILDOPTS = mpicxx  -O2  -xHOST -fno-rtti
 else ifeq ("$(COMPILERNAME)", "pgi")
   CHARMBUILDOPTS = mpicxx  -O2  -fast
 else ifeq ("$(COMPILERNAME)", "gnu")
@@ -119,7 +119,6 @@ build: $(SRC_DIRS)
 	cd $(SOURCE_DIR) && tar xvf charm-*.tar
 	cp Linux-x86_64* $(SOURCE_DIR)/arch
 	perl -pi -e "s!COMPILE_FLAGS!$(COMPILE_FLAGS)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
-	patch $(SOURCE_DIR)/arch/Linux-x86_64.cuda patch-files/Linux-x86_64.cuda.patch
 	if test "$(COMPILERNAME)" != "intel"; then \
 	  perl -pi -e "s! -auto ! !" $(SOURCE_DIR)/charm*/src/arch/mpi-linux-x86_64/cc-mpicxx.sh; \
 	fi
