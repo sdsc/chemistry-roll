@@ -65,15 +65,14 @@ include $(SDSCDEVEL)/Rules.mk
 
 COMPILE_FLAGS = -O2
 ifeq ("$(COMPILERNAME)", "intel")
-  COMPILE_FLAGS = -ip -fno-rtti -xHOST
+  COMPILE_FLAGS = -ip -xHOST
 else ifeq ("$(COMPILERNAME)", "pgi")
   COMPILE_FLAGS = -fast
 endif
 
 CHARMARCH = mpi-linux-x86_64-mpicxx
-CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
 ifeq ("$(COMPILERNAME)", "intel")
-  CHARMBUILDOPTS = mpicxx  -O2  -xHOST -fno-rtti
+  CHARMBUILDOPTS = mpicxx  -O2  -xHOST
 else ifeq ("$(COMPILERNAME)", "pgi")
   CHARMBUILDOPTS = mpicxx  -O2  -fast
 else ifeq ("$(COMPILERNAME)", "gnu")
@@ -108,7 +107,9 @@ DESCRIPTION:
 	  $(DESCRIBE_PKG); \
 	  $(DESCRIBE_CC); \
 	  $(DESCRIBE_MPI); \
-	  $(DESCRIBE_CUDA) \
+          if test "$(CUDABUILD) = "yes"; then
+	     $(DESCRIBE_CUDA); \
+          fi \
 	) > $@
 
 LICENSE: $(SRC_DIRS)
@@ -125,7 +126,6 @@ build: $(SRC_DIRS)
 	( \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MPI); \
-	  $(MODULE_LOAD_CUDA); \
 	  cd $(SOURCE_DIR); \
 	  cd charm-*[0-9]; \
 	  ./build charm++ mpi-linux-x86_64 $(CHARMBUILDOPTS); \
@@ -139,6 +139,7 @@ build: $(SRC_DIRS)
          mkdir $(PWD)/bin; \
          cp {charmrun,flipbinpdb,flipdcd,namd2,psfgen} $(PWD)/bin; \
 	 if test "$(CUDABUILD)" = "yes"; then \
+	   $(MODULE_LOAD_CUDA); \
            cd .. ; \
            make  clean; \
 	   rm -rf Linux-x86_64-MPI-$(CC); \
@@ -158,9 +159,8 @@ install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/bin
 	cp -r tiny $(ROOT)/$(PKGROOT)
 	cp $(PWD)/bin/* $(ROOT)/$(PKGROOT)/bin
-	rm -rf $(PWD)/bin
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SRC_DIRS) $(FFTW_DIR) _arch DESCRIPTION LICENSE
+	rm -rf $(SRC_DIRS) $(FFTW_DIR) _arch DESCRIPTION LICENSE bin
