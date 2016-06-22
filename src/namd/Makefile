@@ -70,14 +70,33 @@ else ifeq ("$(COMPILERNAME)", "pgi")
   COMPILE_FLAGS = -fast
 endif
 
-CHARMARCH = mpi-linux-x86_64-mpicxx
-ifeq ("$(COMPILERNAME)", "intel")
-  CHARMBUILDOPTS = mpicxx  -O2  -xHOST
-else ifeq ("$(COMPILERNAME)", "pgi")
-  CHARMBUILDOPTS = mpicxx  -O2  -fast
-else ifeq ("$(COMPILERNAME)", "gnu")
-  CHARMBUILDOPTS = mpicxx  -O2
+IBVERBS = no
+ifneq ("$(MPINAME)","$(subst _ib,,$(MPINAME))")
+   IBVERBS = yes
 endif
+
+ifeq ($(IBVERBS),yes)
+  ifeq ("$(COMPILERNAME)", "intel")
+    CHARMBUILDOPTS = icc  -O2  -xHOST
+    CHARMARCH = verbs-linux-x86_64-icc
+  else ifeq ("$(COMPILERNAME)", "pgi")
+    CHARMBUILDOPTS = pgicc  -O2  -fast
+    CHARMARCH = verbs-linux-x86_64-pgcc
+  else ifeq ("$(COMPILERNAME)", "gnu")
+    CHARMBUILDOPTS = gcc  -O2
+    CHARMARCH = verbs-linux-x86_64-gcc
+  endif
+else
+  CHARMARCH = mpi-linux-x86_64-mpicxx
+  ifeq ("$(COMPILERNAME)", "intel")
+    CHARMBUILDOPTS = mpicxx  -O2  -xHOST
+  else ifeq ("$(COMPILERNAME)", "pgi")
+    CHARMBUILDOPTS = mpicxx  -O2  -fast
+  else ifeq ("$(COMPILERNAME)", "gnu")
+    CHARMBUILDOPTS = mpicxx  -O2
+  endif
+endif
+
 
 ifneq ("$(ROLLOPTS)", "$(subst avx2,,$(ROLLOPTS))")
   ifeq ("$(COMPILERNAME)", "gnu")
@@ -106,7 +125,9 @@ DESCRIPTION:
 	( \
 	  $(DESCRIBE_PKG); \
 	  $(DESCRIBE_CC); \
-	  $(DESCRIBE_MPI); \
+          if test "$(IBVERBS)" = "no"; then \
+	     $(DESCRIBE_MPI); \
+          fi; \
           if test "$(CUDABUILD)" = "yes"; then \
 	     $(DESCRIBE_CUDA); \
           fi \
@@ -124,17 +145,24 @@ build: $(SRC_DIRS)
 	  perl -pi -e "s! -auto ! !" $(SOURCE_DIR)/charm*/src/arch/mpi-linux-x86_64/cc-mpicxx.sh; \
 	fi
 	( \
+          module unload gnutools; \
 	  $(MODULE_LOAD_CC); \
-	  $(MODULE_LOAD_MPI); \
+          if test "$(IBVERBS)" = "no"; then \
+	     $(MODULE_LOAD_MPI); \
+          fi; \
 	  cd $(SOURCE_DIR); \
 	  cd charm-*[0-9]; \
-	  ./build charm++ mpi-linux-x86_64 $(CHARMBUILDOPTS); \
+          if test "$(IBVERBS)" = "yes"; then \
+	    ./build charm++ verbs-linux-x86_64 $(CHARMBUILDOPTS); \
+          else \
+	    ./build charm++ mpi-linux-x86_64 $(CHARMBUILDOPTS); \
+          fi; \
 	  cd ..; \
-	  ./config Linux-x86_64-MPI-$(CC) \
+	  ./config Linux-x86_64-$(CC) \
 	           --charm-arch $(CHARMARCH) \
 	           --fftw-prefix $(CURDIR)/$(FFTW_DIR) \
 	           --tcl-prefix $(CURDIR)/$(TCL_DIR) --without-cuda; \
-	 cd Linux-x86_64-MPI-$(CC); \
+	 cd Linux-x86_64-$(CC); \
 	 $(MAKE) -j 16; \
          mkdir $(PWD)/bin; \
          cp {charmrun,flipbinpdb,flipdcd,namd2,psfgen} $(PWD)/bin; \
@@ -142,8 +170,14 @@ build: $(SRC_DIRS)
 	   $(MODULE_LOAD_CUDA); \
            cd .. ; \
            make  clean; \
-	   rm -rf Linux-x86_64-MPI-$(CC); \
-	   ./config Linux-x86_64-MPI-$(CC) \
+	   rm -rf Linux-x86_64-$(CC); \
+           if test "$(IBVERBS)" = " no"; then \
+              rm -rf charm-*[0-9]; \
+              tar xvf charm-*.tar; \
+              cd charm-*[0-9]; \
+	      ./build charm++ multicore-linux64 $(CHARMBUILDOPTS); \
+           fi; \
+	   ./config Linux-x86_64-$(CC) \
 	           --charm-arch $(CHARMARCH) \
 	           --fftw-prefix $(CURDIR)/$(FFTW_DIR) \
 	           --tcl-prefix $(CURDIR)/$(TCL_DIR) \
