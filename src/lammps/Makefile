@@ -123,9 +123,6 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_MKL); \
 	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
 	  $(MODULE_LOAD_MPI); \
-	  if test "$(CUDABUILD)" = "yes"; then \
-	    $(MODULE_LOAD_CUDA); \
-	  fi; \
 # \
           patch $(SOURCE_DIR)/src/MAKE/Makefile.mpi patch-files/Makefile.mpi.patch; \
           patch $(SOURCE_DIR)/src/USER-CUDA/verlet_cuda.cpp patch-files/verlet_cuda.cpp.patch; \
@@ -225,6 +222,7 @@ build: $(SRC_DIRS)
 	  cp *.a ../../src; \
 	  cd ../../src; \
 	  if test "$(CUDABUILD)" = "yes"; then \
+	    $(MODULE_LOAD_CUDA); \
             make yes-USER-CUDA; \
             cd ../lib/gpu; \
             patch Makefile.linux $(REDHAT.ROOT)/src/lammps/patch-files/gpu/Makefile.linux.patch; \
