@@ -28,6 +28,7 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 <package>sdsc-lammps</package>
 <package>sdsc-lammps-modules</package>
 <package>sdsc-namd-2.9</package>
+<package>sdsc-namd-2.11</package>
 <package>sdsc-namd</package>
 <package>sdsc-namd-modules</package>
 <package>sdsc-chemistry-roll-test</package>
