@@ -8,7 +8,7 @@ ifndef ROLLMPI
 endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
-NAME           = sdsc-namd
+NAME           = sdsc-namd-$(VERSION)
 VERSION        = 2.11
 RELEASE        = 0
 
