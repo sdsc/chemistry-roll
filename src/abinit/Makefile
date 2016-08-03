@@ -126,7 +126,7 @@ build: $(SRC_DIRS)
           make; \
           make install; \
           cd ../$(ETSF_IO_DIR); \
-          ./configure --prefix=$(CACHE_DIR)/etsf_io --with-netcdf-prefix=$${NETCDFHOME}; \
+          ./configure --prefix=$(CACHE_DIR)/etsf_io --with-netcdf-prefix=$${NETCDFHOME} --with-netcdf-incs=-I$${NETCDFHOME}/include --with-netcdf-libs="-L$${NETCDFHOME}/lib -lnetcdff -lnetcdf" ; \
           make; \
           make install; \
           cd ../$(FOX_DIR); \
