@@ -1,0 +1,13 @@
+NAMD_ARCH = Linux-x86_64
+CHARMARCH = net-linux-x86_64-ibverbs-smp-icc
+CUDACC=$(CUDADIR)/bin/nvcc -O3 --maxrregcount 32 $(CUDAGENCODE) -Xcompiler "-m64" $(CUDA)
+CUDAGENCODE=-gencode arch=compute_20,code=sm_20 -gencode arch=compute_20,code=compute_20 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_35,code=compute_35 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_50,code=compute_50
+
+FLOATOPTS = -ip -no-vec
+
+CXX = icpc -std=c++11
+CXXOPTS = -static-intel -O2 $(FLOATOPTS)
+CXXNOALIASOPTS = -O2 -fno-alias $(FLOATOPTS)
+
+CC = icc
+COPTS = -static-intel -O2 $(FLOATOPTS)
