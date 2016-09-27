@@ -160,7 +160,6 @@ build: $(SRC_DIRS)
 	  perl -pi -e "s! -auto ! !" $(SOURCE_DIR)/charm*/src/arch/mpi-linux-x86_64/cc-mpicxx.sh; \
 	fi
 	( \
-          module unload gnutools; \
 	  $(MODULE_LOAD_CC); \
           if test "$(IBVERBS)" = "no"; then \
 	     $(MODULE_LOAD_MPI); \
