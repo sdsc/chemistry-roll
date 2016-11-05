@@ -104,7 +104,8 @@ LICENSE: $(SRC_DIRS)
 CACHE_DIR=$(REDHAT.ROOT)/cache
 
 build: $(SRC_DIRS)
-	/bin/mv $(BIGDFT_PKG) $(WANNIER90_PKG) $(SOURCE_DIR)/fallbacks/
+	/bin/mkdir -p .abinit/tarballs
+	/bin/cp *gz .abinit/tarballs/
 	( \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MPI); \
