@@ -25,9 +25,9 @@ FCFLAGS  = $(DFLAGS) -I$(FFTW_INC) -I$(LIBXC_INC) -O2 -xW -heap-arrays -funroll-
 LDFLAGS  = $(FCFLAGS) -LMKLROOT/lib/intel64
 #If you want to use BLACS and SCALAPACK use the libraries below
 LIBS     = -lmkl_scalapack_lp64 -lmkl_blacs_INTELMPITYPE_lp64 \
-           -lpthread -lm -LLIBINTPATH -L$(LIBXC_LIB) -lxc -lxcf90 -lderiv -lint -lr12 -lz -ldl -lplumed -lstdc++ CUDALIBS
+           -lpthread -lm -LLIBINTPATH -L$(LIBXC_LIB) -LLIBPLUMEDPATH/lib -lxc -lxcf90 -lderiv -lint -lr12 -lz -ldl -lplumed -lstdc++ CUDALIBS
 
 OBJECTS_ARCHITECTURE = machine_intel.o
 NVCC = NVCCPATH
 NVFLAGS = $(DFLAGS) -O2 -gencode arch=compute_20,code=sm_20 -gencode arch=compute_30,code=sm_30 -gencode arch=compute_50,code=sm_50
-include $(PWD)/plumed
+include LIBPLUMEDPATH

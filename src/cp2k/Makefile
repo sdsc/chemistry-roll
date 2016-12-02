@@ -150,6 +150,7 @@ build: $(SRC_DIRS)
 	  perl -pi -e "s!CUDALIBS!!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!NVCCPATH!!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!LIBXCPATH!$(PWD)/$(SOURCE_DIR)/libxc!g" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!LIBPLUMEDPATH!$(PWD)/$(SOURCE_DIR)/plumed!g" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  export CC=$(CC); \
 	  export CFLAGS="$(COMPILE_FLAGS)"; \
 	  export FC=$(FC); \
@@ -157,10 +158,6 @@ build: $(SRC_DIRS)
 	  export CXX=$(CXX); \
 	  export CXXFLAGS="$(COMPILE_FLAGS)"; \
 	  export FFLAGS="$(COMPILE_FLAGS)"; \
-          cd $(PLUMED_DIR); \
-          ./configure --enable-mpi  --enable-shared --prefix=$(PWD)/plumed; \
-          make; \
-          make install; \
 	  cd ../$(SOURCE_DIR); \
           mv ../$(LIBINT_DIR) .; \
           cd $(LIBINT_DIR); \
@@ -177,6 +174,11 @@ build: $(SRC_DIRS)
           mv ../$(LIBXC_DIR) .; \
           cd $(LIBXC_DIR); \
           ./configure --prefix=`pwd`/../libxc --enable-fortran --enable-shared; \
+          make; \
+          make install; \
+          cd ..; \
+          mv ../$(PLUMED_DIR) .; \
+           ./configure --enable-mpi  --enable-shared --prefix=`pwd`/../plumed; \
           make; \
           make install; \
           cd ../makefiles; \
@@ -222,4 +224,4 @@ install::
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SOURCE_DIR) DESCRIPTION LICENSE plumed
+	rm -rf $(SOURCE_DIR) DESCRIPTION LICENSE
