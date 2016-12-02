@@ -158,7 +158,7 @@ build: $(SRC_DIRS)
 	  export CXX=$(CXX); \
 	  export CXXFLAGS="$(COMPILE_FLAGS)"; \
 	  export FFLAGS="$(COMPILE_FLAGS)"; \
-	  cd ../$(SOURCE_DIR); \
+	  cd $(SOURCE_DIR); \
           mv ../$(LIBINT_DIR) .; \
           cd $(LIBINT_DIR); \
           if test ! -f configure; then \
@@ -178,6 +178,7 @@ build: $(SRC_DIRS)
           make install; \
           cd ..; \
           mv ../$(PLUMED_DIR) .; \
+          cd $(PLUMED_DIR); \
            ./configure --enable-mpi  --enable-shared --prefix=`pwd`/../plumed; \
           make; \
           make install; \
