@@ -73,7 +73,7 @@ endif
 MODULE_LOAD_CP2K_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
 DESCRIBE_CP2K_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSION))
 
-ifneq (,$(findstring mvapich,$(MPINAME)))
+ifneq (,$(filter $(MPINAME),  mvapich intelmpi ))
   INTELMPITYPE=intelmpi
 else
   INTELMPITYPE=openmpi
@@ -118,7 +118,6 @@ DESCRIPTION:
 	( \
 	  $(DESCRIBE_PKG); \
 	  $(DESCRIBE_CC); \
-	  $(DESCRIBE_MKL); \
 	  $(DESCRIBE_MPI); \
 	  $(DESCRIBE_FFTW); \
           if test "$(CUDABUILD)" = "yes"; then \
@@ -134,11 +133,12 @@ build: $(SRC_DIRS)
 	cp Linux-x86-64-gnu.popt $(SOURCE_DIR)/arch
 	cp Linux-x86-64-intel.popt $(SOURCE_DIR)/arch
 	( \
-          if test "$(COMPILERNAME)" = "intel"; then \
-	     patch $(SOURCE_DIR)/makefiles/Makefile patch-files/Makefile.patch; \
-          fi; \
+#          if test "$(COMPILERNAME)" = "intel"; then \
+#	     patch $(SOURCE_DIR)/makefiles/Makefile patch-files/Makefile.patch; \
+#          fi; \
+          module unload gnutools; \
 	  $(MODULE_LOAD_CC); \
-	  $(MODULE_LOAD_MKL); \
+          module load mkl/11.3.3; \
 	  $(MODULE_LOAD_MPI); \
 	  $(MODULE_LOAD_FFTW); \
 	  perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
@@ -157,7 +157,11 @@ build: $(SRC_DIRS)
 	  export CXX=$(CXX); \
 	  export CXXFLAGS="$(COMPILE_FLAGS)"; \
 	  export FFLAGS="$(COMPILE_FLAGS)"; \
-	  cd $(SOURCE_DIR); \
+          cd $(PLUMED_DIR); \
+          ./configure --enable-mpi  --enable-shared --prefix=$(PWD)/plumed; \
+          make; \
+          make install; \
+	  cd ../$(SOURCE_DIR); \
           mv ../$(LIBINT_DIR) .; \
           cd $(LIBINT_DIR); \
           if test ! -f configure; then \
@@ -167,7 +171,7 @@ build: $(SRC_DIRS)
           ./configure --with-cc-optflags="$(COMPILE_FLAGS)" \
             --with-cxx-optflags="$(COMPILE_FLAGS)" --with-libint-max-am=5 \
             --with-libderiv-max-am1=4 --prefix=`pwd`/../libint; \
-          $(MAKE) -j 16; \
+          $(MAKE); \
           $(MAKE) install; \
           cd ..; \
           mv ../$(LIBXC_DIR) .; \
@@ -193,7 +197,7 @@ build: $(SRC_DIRS)
   	      perl -pi -e "s!CUDADEFS!$${CUDADEFS}!" ../arch/$(ROLLMAKEFILE).popt; \
  	      perl -pi -e "s!CUDALIBS!$${CUDALIBS}!" ../arch/$(ROLLMAKEFILE).popt; \
               make realclean ARCH=$(ROLLMAKEFILE) VERSION=popt; \
-              $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt ; \
+              $(MAKE)CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt ; \
               exes=`find ../exe/Linux-x86-64-$(COMPILERNAME) -name \*.popt -print`; \
               for exe in $${exes}; do \
                    name=`basename $${exe}`; \
@@ -213,6 +217,7 @@ install::
 	cp -r $(SOURCE_DIR)/tests/MC/*/* $(ROOT)/$(PKGROOT)/test/
 	cp -r $(SOURCE_DIR)/data/* $(ROOT)/$(PKGROOT)/data
 	cp -r $(SOURCE_DIR)/libxc/lib/* $(ROOT)/$(PKGROOT)/lib/
+	cp -r $(PWD)/plumed/lib/* $(ROOT)/$(PKGROOT)/lib/
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
 

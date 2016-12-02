@@ -17,7 +17,7 @@ MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 NAME           = sdsc-cp2k
 VERSION        = 3.0
 RELEASE        = 2
-PKGROOT        = /opt/cp2k
+PKGROOT        = /share/apps/compute/cp2k
 
 SRC_SUBDIR     = cp2k
 
@@ -39,7 +39,14 @@ LIBXC_VERSION = 2.2.2
 LIBXC_PKG     = $(LIBXC_NAME)-$(LIBXC_VERSION).$(LIBXC_SUFFIX)
 LIBXC_DIR     = $(LIBXC_PKG:%.$(LIBXC_SUFFIX)=%)
 
+PLUMED_NAME    = plumed
+PLUMED_SUFFIX  = tgz
+PLUMED_VERSION = 2.2.3
+PLUMED_PKG     = $(PLUMED_NAME)-$(PLUMED_VERSION).$(PLUMED_SUFFIX)
+PLUMED_DIR     = $(PLUMED_PKG:%.$(PLUMED_SUFFIX)=%)
+
 TAR_BZ2_PKGS   = $(SOURCE_PKG)
 TAR_GZ_PKGS    = $(LIBINT_PKG) $(LIBXC_PKG)
+TGZ_PKGS       = $(PLUMED_PKG)
 
 RPM.EXTRAS     = AutoReq:No
