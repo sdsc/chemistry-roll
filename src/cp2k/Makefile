@@ -220,7 +220,7 @@ install::
 	cp -r $(SOURCE_DIR)/tests/MC/*/* $(ROOT)/$(PKGROOT)/test/
 	cp -r $(SOURCE_DIR)/data/* $(ROOT)/$(PKGROOT)/data
 	cp -r $(SOURCE_DIR)/libxc/lib/* $(ROOT)/$(PKGROOT)/lib/
-	cp -r $(PWD)/plumed/lib/* $(ROOT)/$(PKGROOT)/lib/
+	cp -r $(SOURCE_DIR)/plumed/lib/* $(ROOT)/$(PKGROOT)/lib/
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
 
