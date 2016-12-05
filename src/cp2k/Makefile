@@ -73,7 +73,7 @@ endif
 MODULE_LOAD_CP2K_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
 DESCRIBE_CP2K_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSION))
 
-ifneq (,$(filter $(MPINAME),  mvapich intelmpi ))
+ifneq (,$(filter mvapich% intelmpi%,$(MPINAME) ))
   INTELMPITYPE=intelmpi
 else
   INTELMPITYPE=openmpi
@@ -183,7 +183,7 @@ build: $(SRC_DIRS)
           make; \
           make install; \
           cd ../makefiles; \
-          $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt; \
+          $(MAKE) CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt; \
           mv ../exe/Linux-x86-64-$(COMPILERNAME)/*.popt ..; \
           if test "$(CUDABUILD)" = "yes"; then \
               $(MODULE_LOAD_CP2K_CUDA); \
@@ -197,10 +197,11 @@ build: $(SRC_DIRS)
               perl -pi -e "s!LIBINTPATH!$(PWD)/$(SOURCE_DIR)/libint/lib!" ../arch/$(ROLLMAKEFILE).popt; \
               perl -pi -e "s!NVCCPATH!$${NVCCPATH}!" ../arch/$(ROLLMAKEFILE).popt; \
 	      perl -pi -e "s!LIBXCPATH!$(PWD)/$(SOURCE_DIR)/libxc!g" ../arch/$(ROLLMAKEFILE).popt; \
+	      perl -pi -e "s!LIBPLUMEDPATH!$(PWD)/$(SOURCE_DIR)/plumed!g" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
   	      perl -pi -e "s!CUDADEFS!$${CUDADEFS}!" ../arch/$(ROLLMAKEFILE).popt; \
  	      perl -pi -e "s!CUDALIBS!$${CUDALIBS}!" ../arch/$(ROLLMAKEFILE).popt; \
               make realclean ARCH=$(ROLLMAKEFILE) VERSION=popt; \
-              $(MAKE)CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt ; \
+              $(MAKE) CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt ; \
               exes=`find ../exe/Linux-x86-64-$(COMPILERNAME) -name \*.popt -print`; \
               for exe in $${exes}; do \
                    name=`basename $${exe}`; \
