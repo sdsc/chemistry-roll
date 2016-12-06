@@ -197,7 +197,7 @@ build: $(SRC_DIRS)
               perl -pi -e "s!LIBINTPATH!$(PWD)/$(SOURCE_DIR)/libint/lib!" ../arch/$(ROLLMAKEFILE).popt; \
               perl -pi -e "s!NVCCPATH!$${NVCCPATH}!" ../arch/$(ROLLMAKEFILE).popt; \
 	      perl -pi -e "s!LIBXCPATH!$(PWD)/$(SOURCE_DIR)/libxc!g" ../arch/$(ROLLMAKEFILE).popt; \
-	      perl -pi -e "s!LIBPLUMEDPATH!$(PWD)/$(SOURCE_DIR)/plumed!g" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
+	      perl -pi -e "s!LIBPLUMEDPATH!$(PWD)/$(SOURCE_DIR)/plumed!g" ../arch/$(ROLLMAKEFILE).popt; \
   	      perl -pi -e "s!CUDADEFS!$${CUDADEFS}!" ../arch/$(ROLLMAKEFILE).popt; \
  	      perl -pi -e "s!CUDALIBS!$${CUDALIBS}!" ../arch/$(ROLLMAKEFILE).popt; \
               make realclean ARCH=$(ROLLMAKEFILE) VERSION=popt; \
