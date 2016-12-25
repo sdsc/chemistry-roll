@@ -101,6 +101,7 @@ endif
 
 CUDABUILD=no
 
+CUDAVARS=no
 ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
      CUDAVARS =  \
        CUDADEFS="-D__ACC -D__DBCSR_ACC -D__PW_CUDA"; \
@@ -119,6 +120,7 @@ DESCRIPTION:
 	  $(DESCRIBE_PKG); \
 	  $(DESCRIBE_CC); \
 	  $(DESCRIBE_MPI); \
+          $(DESCRIBE_MKL); \
 	  $(DESCRIBE_FFTW); \
           if test "$(CUDABUILD)" = "yes"; then \
             $(DESCRIBE_CP2K_CUDA); \
@@ -136,9 +138,8 @@ build: $(SRC_DIRS)
 #          if test "$(COMPILERNAME)" = "intel"; then \
 #	     patch $(SOURCE_DIR)/makefiles/Makefile patch-files/Makefile.patch; \
 #          fi; \
-          module unload gnutools; \
 	  $(MODULE_LOAD_CC); \
-          module load mkl/11.3.3; \
+          $(MODULE_LOAD_MKL); \
 	  $(MODULE_LOAD_MPI); \
 	  $(MODULE_LOAD_FFTW); \
 	  perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
@@ -174,6 +175,7 @@ build: $(SRC_DIRS)
           mv ../$(LIBXC_DIR) .; \
           cd $(LIBXC_DIR); \
           ./configure --prefix=`pwd`/../libxc --enable-fortran --enable-shared; \
+          patch xc_version.h $(REDHAT.ROOT)src/cp2k/patch-files/xc_version.h.patch; \
           make; \
           make install; \
           cd ..; \
