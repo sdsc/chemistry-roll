@@ -1,5 +1,0 @@
-#%Module1.0
-prepend-path PATH /opt/abinit/bin
-prepend-path LD_LIBRARY_PATH /opt/abinit/lib
-prepend-path LD_LIBRARY_PATH /opt/cp2k/lib
-module load ROLLCOMPILER mkl ROLLMPI netcdf ROLLCUDA

@@ -1,6 +1,6 @@
 NAME       = sdsc-chemistry-roll-test
-VERSION    = 1.1
-RELEASE    = 5
+VERSION    = 1.2
+RELEASE    = 0
 PKGROOT    = /root/rolltests
 
 RPM.EXTRAS = AutoReq:No
