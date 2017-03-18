@@ -225,7 +225,7 @@ build: $(SRC_DIRS)
 	  cp *.a ../../src; \
 	  cd ../../src; \
 	  $(MAKE) -j 16 ROOT=lmp mpi; \
-	  cp lmp_mpi $(ROOT)/$(PKGROOT)/bin/lammps; \
+	  mv lmp_mpi $(ROOT)/$(PKGROOT)/bin/lammps; \
 	  if test "$(CUDABUILD)" = "yes"; then \
             export LD_LIBRARY_PATH=/usr/lib64/nvidia:$${LD_LIBRARY_PATH}; \
             make yes-USER-CUDA; \
@@ -242,7 +242,7 @@ build: $(SRC_DIRS)
 	    cp *.a ../../src; \
             cd ../../src; \
 	    $(MAKE) -j 16 ROOT=lmp mpi; \
-    	    cp lmp_mpi $(ROOT)/$(PKGROOT)/bin/lammps.cuda; \
+    	    mv lmp_mpi $(ROOT)/$(PKGROOT)/bin/lammps.cuda; \
 	  fi \
 	)
 	@echo "::: Package $(NAME) build complete :::"
