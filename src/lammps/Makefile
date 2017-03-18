@@ -119,6 +119,7 @@ LICENSE: $(SRC_DIRS)
 build: $(SRC_DIRS)
 	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
 	( \
+          module unload gnutools; \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \
 	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
@@ -224,6 +225,8 @@ build: $(SRC_DIRS)
 	  $(MAKE) -f Makefile.colvars; \
 	  cp *.a ../../src; \
 	  cd ../../src; \
+	  $(MAKE) -j 16 ROOT=lmp mpi; \
+	  cp lmp_mpi $(ROOT)/$(PKGROOT)/bin/lammps \
 	  if test "$(CUDABUILD)" = "yes"; then \
             make yes-USER-CUDA; \
             cd ../lib/gpu; \
@@ -238,9 +241,9 @@ build: $(SRC_DIRS)
 	    $(MAKE); \
 	    cp *.a ../../src; \
             cd ../../src; \
+	    $(MAKE) -j 16 ROOT=lmp mpi; \
+    	    cp lmp_mpi $(ROOT)/$(PKGROOT)/bin/lammps.cuda \
 	  fi; \
-	  $(MAKE) -j 16 ROOT=lmp mpi; \
-	  cp lmp_mpi $(ROOT)/$(PKGROOT)/bin/lammps \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
