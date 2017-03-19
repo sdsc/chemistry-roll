@@ -62,6 +62,8 @@ include Rules.mk
 include $(SDSCDEVEL)/Pull.mk
 include $(SDSCDEVEL)/Rules.mk
 
+CACHE_DIR=$(REDHAT.ROOT)/cache
+
 ROLLWARNINGS=
 FORTRANTYPE=gf
 COMPILERTYPE=gnu
@@ -117,7 +119,7 @@ LICENSE: $(SRC_DIRS)
 	echo GPL > $@
 
 build: $(SRC_DIRS)
-	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
+	mkdir -p $(CACHE_DIR)/lammps/bin
 	( \
           module unload gnutools; \
 	  $(MODULE_LOAD_CC); \
@@ -226,7 +228,7 @@ build: $(SRC_DIRS)
 	  cp *.a ../../src; \
 	  cd ../../src; \
 	  $(MAKE) -j 16 ROOT=lmp mpi; \
-	  mv lmp_mpi $(ROOT)/$(PKGROOT)/bin/lammps; \
+	  mv lmp_mpi $(CACHE_DIR)/lammps/bin/lammps; \
 	  if test "$(CUDABUILD)" = "yes"; then \
             export LD_LIBRARY_PATH=/usr/lib64/nvidia:$${LD_LIBRARY_PATH}; \
             make yes-USER-CUDA; \
@@ -243,12 +245,14 @@ build: $(SRC_DIRS)
 	    cp *.a ../../src; \
             cd ../../src; \
 	    $(MAKE) -j 16 ROOT=lmp mpi; \
-    	    mv lmp_mpi $(ROOT)/$(PKGROOT)/bin/lammps.cuda; \
+    	    mv lmp_mpi $(CACHE_DIR)/lammps/bin/lammps.cuda; \
 	  fi \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
+	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
+	cp $(CACHE_DIR)/lammps/bin/* $(ROOT)/$(PKGROOT)/bin
 	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
