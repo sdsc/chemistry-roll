@@ -12,10 +12,6 @@ $(VERSION_INC): $(VERSION_SRC)
 build:
 
 install:: typical-modulefile-install
-	for V in $(VERSION) $(EXTRA_MODULE_VERSIONS); do \
-	  perl -pi -e 's#ROLLCUDA#$(ROLLCUDA)#g;' \
-	    $(ROOT)/$(PKGROOT)/.version.$${V} $(ROOT)/$(PKGROOT)/$${V}; \
-	done
 
 clean::
 	rm -f $(VERSION_INC)

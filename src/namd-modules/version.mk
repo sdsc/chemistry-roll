@@ -1,8 +1,3 @@
-ROLLCUDA =
-ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
-  ROLLCUDA = cuda
-endif
-
 PACKAGE     = namd
 CATEGORY    = applications
 
