@@ -121,7 +121,6 @@ LICENSE: $(SRC_DIRS)
 build: $(SRC_DIRS)
 	mkdir -p $(CACHE_DIR)/lammps/bin
 	( \
-          module unload gnutools; \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \
 	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
@@ -230,7 +229,6 @@ build: $(SRC_DIRS)
 	  $(MAKE) -j 16 ROOT=lmp mpi; \
 	  mv lmp_mpi $(CACHE_DIR)/lammps/bin/lammps; \
 	  if test "$(CUDABUILD)" = "yes"; then \
-            export LD_LIBRARY_PATH=/usr/lib64/nvidia:$${LD_LIBRARY_PATH}; \
             make yes-USER-CUDA; \
             cd ../lib/gpu; \
             patch Makefile.linux $(REDHAT.ROOT)/src/lammps/patch-files/gpu/Makefile.linux.patch; \
