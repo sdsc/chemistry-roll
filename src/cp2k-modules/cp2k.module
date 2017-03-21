@@ -3,4 +3,4 @@ setenv CP2KHOME /opt/cp2k
 setenv CP2K_DATA_DIR /opt/cp2k/data
 prepend-path PATH /opt/cp2k/bin
 prepend-path LD_LIBRARY_PATH /opt/cp2k/lib
-module load ROLLCOMPILER ROLLMPI fftw ROLLCUDA
+module load ROLLCOMPILER ROLLMPI fftw
