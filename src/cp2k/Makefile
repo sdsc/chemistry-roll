@@ -100,7 +100,9 @@ endif
 
 
 CUDABUILD=no
-CUDAVARS="\#"
+
+CUDAVARS=\#
+NVCCPATH=""
 ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
      CUDAVARS =  \
        CUDADEFS="-D__ACC -D__DBCSR_ACC -D__PW_CUDA"; \
@@ -133,7 +135,7 @@ LICENSE: $(SRC_DIRS)
 build: $(SRC_DIRS)
 	cp Linux-x86-64-gnu.popt $(SOURCE_DIR)/arch
 	cp Linux-x86-64-intel.popt $(SOURCE_DIR)/arch
-	( \
+	-( \
           if test "$(COMPILERNAME)" = "intel"; then \
 	     patch $(SOURCE_DIR)/makefiles/Makefile patch-files/Makefile.patch; \
           fi; \
@@ -141,7 +143,7 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_MKL); \
 	  $(MODULE_LOAD_MPI); \
 	  $(MODULE_LOAD_FFTW); \
-	  perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!MKLROOT!$${MKL_ROOT}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!INTELMPITYPE!$(INTELMPITYPE)!g" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLFFTW!$${FFTWHOME}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLLIBINT!$(PWD)/$(SOURCE_DIR)/libint/lib!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
@@ -177,24 +179,32 @@ build: $(SRC_DIRS)
           make install; \
           cd ../makefiles; \
           $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt; \
+          if test "$(COMPILERNAME)" = "intel"; then \
+              export CUDAL=""; \
+              make -f ../../Makefile.libcp2k_unittest; \
+          fi; \
           mv ../exe/Linux-x86-64-$(COMPILERNAME)/*.popt ..; \
           if test "$(CUDABUILD)" = "yes"; then \
               $(MODULE_LOAD_CP2K_CUDA); \
               $(CUDAVARS); \
               cp ../../Linux-x86-64-gnu.popt ../arch; \
               cp ../../Linux-x86-64-intel.popt ../arch; \
-              perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" ../arch/$(ROLLMAKEFILE).popt; \
+              perl -pi -e "s!MKLROOT!$${MKL_ROOT}!" ../arch/$(ROLLMAKEFILE).popt; \
               perl -pi -e "s!INTELMPITYPE!$(INTELMPITYPE)!g" ../arch/$(ROLLMAKEFILE).popt; \
               perl -pi -e "s!ROLLFFTW!$${FFTWHOME}!" ../arch/$(ROLLMAKEFILE).popt; \
               perl -pi -e "s!ROLLLIBINT!$(PWD)/$(SOURCE_DIR)/libint/lib!" ../arch/$(ROLLMAKEFILE).popt; \
               perl -pi -e "s!LIBINTPATH!$(PWD)/$(SOURCE_DIR)/libint/lib!" ../arch/$(ROLLMAKEFILE).popt; \
-              perl -pi -e "s!NVCCPATH!$${NVCCPATH}!" ../arch/$(ROLLMAKEFILE).popt; \
-	      perl -pi -e "s!LIBXCPATH!$(PWD)/$(SOURCE_DIR)/libxc!g" ../arch/$(ROLLMAKEFILE).popt; \
+                  perl -pi -e "s!NVCCPATH!$${NVCCPATH}!" ../arch/$(ROLLMAKEFILE).popt; \
+              perl -pi -e "s!LIBXCPATH!$(PWD)/$(SOURCE_DIR)/libxc!g" ../arch/$(ROLLMAKEFILE).popt; \
   	      perl -pi -e "s!CUDADEFS!$${CUDADEFS}!" ../arch/$(ROLLMAKEFILE).popt; \
- 	      perl -pi -e "s!CUDALIBS!$${CUDALIBS}!" ../arch/$(ROLLMAKEFILE).popt; \
+              perl -pi -e "s!CUDALIBS!$${CUDALIBS}!" ../arch/$(ROLLMAKEFILE).popt; \
               make realclean ARCH=$(ROLLMAKEFILE) VERSION=popt; \
               $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt ; \
               exes=`find ../exe/Linux-x86-64-$(COMPILERNAME) -name \*.popt -print`; \
+              if test "$(COMPILERNAME)" = "intel"; then \
+                    export CUDAL="-lcp2kpwcuda -lcusmm -lcp2kacccuda"; \
+                    make -f ../../Makefile.libcp2k_unittest; \
+              fi; \
               for exe in $${exes}; do \
                    name=`basename $${exe}`; \
                    name=`echo $${name} |sed 's/\.popt/.cuda.popt/'`; \

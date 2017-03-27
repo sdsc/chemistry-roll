@@ -1,13 +1,12 @@
-CUDAVERSION=cuda
-ifneq ("$(ROLLOPTS)", "$(subst cp2k_othercuda=,,$(ROLLOPTS))")
-  CUDAVERSION = $(subst cp2k_othercuda=,,$(filter cp2k_othercuda=%,$(ROLLOPTS)))
-endif
-
-
 ifndef ROLLCOMPILER
   ROLLCOMPILER = gnu
 endif
 COMPILERNAME := $(firstword $(subst /, ,$(ROLLCOMPILER)))
+
+CUDAVERSION=cuda
+ifneq ("$(ROLLOPTS)", "$(subst cp2k_othercuda=,,$(ROLLOPTS))")
+  CUDAVERSION = $(subst cp2k_othercuda=,,$(filter cp2k_othercuda=%,$(ROLLOPTS)))
+endif
 
 ifndef ROLLMPI
   ROLLMPI = rocks-openmpi
@@ -15,8 +14,8 @@ endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 NAME           = sdsc-cp2k
-VERSION        = 3.0
-RELEASE        = 2
+VERSION        = 4.1
+RELEASE        = 0
 PKGROOT        = /opt/cp2k
 
 SRC_SUBDIR     = cp2k
