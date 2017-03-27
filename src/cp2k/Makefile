@@ -100,7 +100,7 @@ endif
 
 
 CUDABUILD=no
-
+CUDAVARS="\#"
 ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
      CUDAVARS =  \
        CUDADEFS="-D__ACC -D__DBCSR_ACC -D__PW_CUDA"; \

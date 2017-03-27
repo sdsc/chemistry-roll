@@ -1,13 +1,8 @@
-ROLLCUDA =
-ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
-  ROLLCUDA = cuda
-endif
-
 PACKAGE     = cp2k
 CATEGORY    = applications
 
 NAME        = sdsc-$(PACKAGE)-modules
-RELEASE     = 13
+RELEASE     = 14
 PKGROOT     = /opt/modulefiles/$(CATEGORY)/$(PACKAGE)
 
 VERSION_SRC = $(REDHAT.ROOT)/src/$(PACKAGE)/version.mk

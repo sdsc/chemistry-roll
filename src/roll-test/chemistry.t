@@ -9,7 +9,7 @@ use Test::More qw(no_plan);
 my $appliance = $#ARGV >= 0 ? $ARGV[0] :
                 -d '/export/rocks/install' ? 'Frontend' : 'Compute';
 my $installedOnAppliancesPattern = '^(?!Frontend).';
-my @packages = ('abinit','apbs', 'cp2k', 'gromacs', 'lammps', 'namd');
+my @packages = ('apbs', 'cp2k', 'gromacs', 'lammps', 'namd');
 my $output;
 my $TESTFILE = 'tmpchemistry';
 
@@ -20,42 +20,6 @@ foreach my $package(@packages) {
   } else {
     ok(! -d "/opt/$package", "$package not installed");
   }
-}
-
-
-# abinit
-my $packageHome = '/opt/abinit';
-my $testDir = "$packageHome/share/abinit-test/paral/Input";
-SKIP: {
-
-  skip 'abinit not installed', 1 if ! -d $packageHome;
-  skip 'abinit test not installed', 1 if ! -d $testDir;
- `mkdir $TESTFILE.dir`;
- open(OUT, ">$TESTFILE.sh");
- print OUT <<END;
-module load abinit
-cd $TESTFILE.dir
-cp $packageHome/share/abinit-test/gpu/Input/t01.in .
-cat <<ENDIT > t01.files
-t01.in
-t01.out
-t01_Xi
-t01_Xo
-t01_Xx
-$packageHome/share/abinit-test/Psps_for_tests/31ga.pspnc
-$packageHome/share/abinit-test/Psps_for_tests/33as.pspnc
-ENDIT
-output=`mpirun -np 4 $packageHome/bin/abinit <t01.files 2>&1`
-if [[ "\$output" =~ "run-as-root" ]]; then
-  output=`mpirun --allow-run-as-root -np 4 $packageHome/bin/abinit <t01.files 2>&1`
-fi
-echo \$output
-END
-close(OUT);
-  $output = `bash $TESTFILE.sh 2>&1`;
-  $output=`cat $TESTFILE.dir/t01.out 2>&1`;
-  ok($output =~ /etotal1    -1.070821.*E\Q+\E01/i, 'abinit sample run');
-  `rm -rf $TESTFILE*`;
 }
 
 
@@ -91,7 +55,7 @@ SKIP: {
   `cp $testDir/* $TESTFILE.dir/`;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
-module load cp2k
+module load cp2k \$2
 cd $TESTFILE.dir
 output=`mpirun -np 8 \$1 MC_QS.inp 2>&1`
 if [[ "\$output" =~ "run-as-root" ]]; then
@@ -106,7 +70,7 @@ close(OUT);
   SKIP: {
     skip 'CUDA_VISIBLE_DEVICES undef', 1
       if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
-    $output = `/bin/bash $TESTFILE.sh cp2k.cuda.popt 2>&1`;
+    $output = `/bin/bash $TESTFILE.sh cp2k.cuda.popt CP2K_CUDAVER 2>&1`;
     like($output, qr#ENERGY.*-51.3432165#, 'cp2k cuda test run');
   }
   `rm -rf $TESTFILE*`;
@@ -123,7 +87,7 @@ SKIP: {
   `cp -r $testDir/* $TESTFILE.dir`;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
-module load gromacs
+module load gromacs \$2
 export OMP_NUM_THREADS=1
 cd $TESTFILE.dir
 rm -f md.log
@@ -142,7 +106,7 @@ END
   SKIP: {
     skip 'CUDA_VISIBLE_DEVICES undef', 1
       if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
-    $output = `/bin/bash $TESTFILE.sh "-gpu_id 0" 2>&1`;
+    $output = `/bin/bash $TESTFILE.sh "-gpu_id 0" CHEMISTRY_CUDA 2>&1`;
     like($output, qr#Performance:\s+\d+(\.\d+)?#, 'gromacs cuda sample run');
   }
   `rm -rf  $TESTFILE*`;
@@ -159,9 +123,9 @@ SKIP: {
   `cp $testDir/* $TESTFILE.dir/`;
   open(OUT, ">$TESTFILE.sh");
   print OUT <<END;
-module load lammps
+module load lammps \$2
 cd $TESTFILE.dir
-output=`mpirun -np 1 $packageHome/bin/lammps \$1 < in.colloid 2>&1`
+output=`mpirun -np 1 $packageHome/bin/lammps\$3 \$1 < in.colloid 2>&1`
 if [[ "\$output" =~ "run-as-root" ]]; then
   # Recent openmpi requires special option for root user
   output=`mpirun -np 1 --allow-run-as-root $packageHome/bin/lammps \$1 < in.colloid 2>&1`
@@ -174,7 +138,7 @@ END
   SKIP: {
     skip 'CUDA_VISIBLE_DEVICES undef', 1
       if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
-    $output = `/bin/bash $TESTFILE.sh "-sf gpu -pk gpu 1"`;
+    $output = `/bin/bash $TESTFILE.sh "-sf gpu -pk gpu 1" CHEMISTRY_CUDA .cuda`;
     like($output, qr#900 atoms#, 'lammps cuda sample run');
   }
   `rm -rf $TESTFILE*`;
@@ -200,7 +164,7 @@ SKIP: {
       skip 'namd $version cuda version not installed', 1 if ! -f "$packageHome/$version/bin/namd2.cuda";
       skip 'CUDA_VISIBLE_DEVICES undef', 1
         if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
-      $output = `module load namd/$version;cd $TESTFILE.dir;namd2.cuda +idlepoll +devices $ENV{'CUDA_VISIBLE_DEVICES'} tiny.namd 2>&1`;
+      $output = `module load namd/$version CHEMISTRY_CUDA;cd $TESTFILE.dir;namd2.cuda +idlepoll +devices $ENV{'CUDA_VISIBLE_DEVICES'} tiny.namd 2>&1`;
       like($output, qr#WRITING VELOCITIES#, "namd.cuda $version sample run");
     }
     `rm -rf $TESTFILE*`;

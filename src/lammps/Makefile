@@ -62,6 +62,8 @@ include Rules.mk
 include $(SDSCDEVEL)/Pull.mk
 include $(SDSCDEVEL)/Rules.mk
 
+CACHE_DIR=$(REDHAT.ROOT)/cache
+
 ROLLWARNINGS=
 FORTRANTYPE=gf
 COMPILERTYPE=gnu
@@ -117,7 +119,7 @@ LICENSE: $(SRC_DIRS)
 	echo GPL > $@
 
 build: $(SRC_DIRS)
-	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
+	mkdir -p $(CACHE_DIR)/lammps/bin
 	( \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \
@@ -224,6 +226,8 @@ build: $(SRC_DIRS)
 	  $(MAKE) -f Makefile.colvars; \
 	  cp *.a ../../src; \
 	  cd ../../src; \
+	  $(MAKE) -j 16 ROOT=lmp mpi; \
+	  mv lmp_mpi $(CACHE_DIR)/lammps/bin/lammps; \
 	  if test "$(CUDABUILD)" = "yes"; then \
             make yes-USER-CUDA; \
             cd ../lib/gpu; \
@@ -238,17 +242,16 @@ build: $(SRC_DIRS)
 	    $(MAKE); \
 	    cp *.a ../../src; \
             cd ../../src; \
-	  fi; \
-	  $(MAKE) -j 16 ROOT=lmp mpi; \
-	  cp lmp_mpi $(ROOT)/$(PKGROOT)/bin/lammps \
+	    $(MAKE) -j 16 ROOT=lmp mpi; \
+    	    mv lmp_mpi $(CACHE_DIR)/lammps/bin/lammps.cuda; \
+	  fi \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
 	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
-	cp $(SOURCE_DIR)/src/lmp_mpi $(ROOT)/$(PKGROOT)/bin/lammps
+	cp $(CACHE_DIR)/lammps/bin/* $(ROOT)/$(PKGROOT)/bin
 	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)
-	cp $(SOURCE_DIR)/src/lmp_mpi $(ROOT)/$(PKGROOT)/bin/lammps
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
 
