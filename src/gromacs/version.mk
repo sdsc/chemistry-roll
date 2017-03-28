@@ -11,11 +11,16 @@ else ifndef ROLLMPI
   ROLLMPI = rocks-openmpi
 endif
 
+CUDAVERSION=cuda
+ifneq ("$(ROLLOPTS)", "$(subst gromacs_othercuda=,,$(ROLLOPTS))")
+  CUDAVERSION = $(subst gromacs_othercuda=,,$(filter gromacs_othercuda=%,$(ROLLOPTS)))
+endif
+
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 NAME           = sdsc-gromacs
-VERSION        = 5.1.2
-RELEASE        = 1
+VERSION        = 2016.3
+RELEASE        = 0
 PKGROOT        = /opt/gromacs
 
 SRC_SUBDIR     = gromacs

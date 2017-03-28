@@ -10,7 +10,6 @@ For SLURM:
 #SBATCH -J test
 #SBATCH --export=ALL
 
-module unload mvapich2_ib
 module load gromacs
 ibrun /opt/gromacs/bin/gmx_mpi mdrun  -v -s test.tpr -deffnm test.out
 
