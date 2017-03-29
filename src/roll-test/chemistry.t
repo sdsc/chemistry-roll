@@ -106,7 +106,7 @@ END
   SKIP: {
     skip 'CUDA_VISIBLE_DEVICES undef', 1
       if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
-    $output = `/bin/bash $TESTFILE.sh "-gpu_id 0" CHEMISTRY_CUDA 2>&1`;
+    $output = `/bin/bash $TESTFILE.sh "-gpu_id 0" GROMACS_CUDAVER 2>&1`;
     like($output, qr#Performance:\s+\d+(\.\d+)?#, 'gromacs cuda sample run');
   }
   `rm -rf  $TESTFILE*`;
