@@ -116,7 +116,7 @@ build: $(SRC_DIRS)
 	           -DGMX_BUILD_OWN_FFTW_URL="../../$(FFTW_PKG)" \
 	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
 	           -DGMX_MPI=ON \
-                   -DBUILD_TESTING=ON -DGMX_BUILD_UNITTESTS=ON \
+                   -DREGRESSIONTEST_DOWNLOAD \
 	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
 	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) $(CUDA); \
 	  $(MAKE) \
