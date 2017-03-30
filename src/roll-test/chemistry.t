@@ -71,7 +71,7 @@ close(OUT);
     skip 'CUDA_VISIBLE_DEVICES undef', 1
       if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
     $output = `/bin/bash $TESTFILE.sh cp2k.cuda.popt CP2K_CUDAVER 2>&1`;
-    like($output, qr#ENERGY.*-51.3432165#, 'cp2k cuda test run');
+    like($output, qr#ENERGY.*--51.3490955#, 'cp2k cuda test run');
   }
   `rm -rf $TESTFILE*`;
 }
@@ -91,7 +91,11 @@ module load gromacs \$2
 export OMP_NUM_THREADS=1
 cd $TESTFILE.dir
 rm -f md.log
-$packageHome/bin/gmx_mpi grompp
+output=`mpirun $packageHome/bin/gmx_mpi grompp 2>&1 `
+if [[ "\$output" =~ "run-as-root" ]]; then
+  # Recent openmpi requires special option for root user
+  output=`mpirun -np 1 --allow-run-as-root  $packageHome/bin/gmx_mpi grompp 2>&1`
+fi
 output=`mpirun -np 1 $packageHome/bin/gmx_mpi mdrun \$1 2>&1`
 if [[ "\$output" =~ "run-as-root" ]]; then
   # Recent openmpi requires special option for root user
@@ -106,7 +110,7 @@ END
   SKIP: {
     skip 'CUDA_VISIBLE_DEVICES undef', 1
       if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
-    $output = `/bin/bash $TESTFILE.sh "-gpu_id 0" GROMACS_CUDAVER 2>&1`;
+    $output = `/bin/bash $TESTFILE.sh "-gpu_id 0" CHEMISTRY_CUDA 2>&1`;
     like($output, qr#Performance:\s+\d+(\.\d+)?#, 'gromacs cuda sample run');
   }
   `rm -rf  $TESTFILE*`;
@@ -164,7 +168,7 @@ SKIP: {
       skip 'namd $version cuda version not installed', 1 if ! -f "$packageHome/$version/bin/namd2.cuda";
       skip 'CUDA_VISIBLE_DEVICES undef', 1
         if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
-      $output = `module load namd/$version CHEMISTRY_CUDA;cd $TESTFILE.dir;namd2.cuda +idlepoll +devices 0 tiny.namd 2>&1`;
+      $output = `module load namd/$version CHEMISTRY_CUDA;cd $TESTFILE.dir;namd2.cuda +idlepoll +devices $ENV{'CUDA_VISIBLE_DEVICES'} tiny.namd 2>&1`;
       like($output, qr#WRITING VELOCITIES#, "namd.cuda $version sample run");
     }
     `rm -rf $TESTFILE*`;
