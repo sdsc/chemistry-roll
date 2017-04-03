@@ -136,7 +136,9 @@ build: $(SRC_DIRS)
 	cp Linux-x86-64-gnu.popt $(SOURCE_DIR)/arch
 	cp Linux-x86-64-intel.popt $(SOURCE_DIR)/arch
 	-( \
-          module unload gnutools; \
+          if test "$(COMPILERNAME)" = "intel"; then \
+	     patch $(SOURCE_DIR)/makefiles/Makefile patch-files/Makefile.patch; \
+          fi; \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \
 	  $(MODULE_LOAD_MPI); \
