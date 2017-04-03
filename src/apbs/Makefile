@@ -90,7 +90,6 @@ LICENSE: $(SRC_DIRS)
 	echo BSD and MIT > $@
 
 build: $(SRC_DIRS)
-	patch $(SOURCE_DIR)/CMakeLists.txt patch-files/CMakeLists.txt.patch
 	( \
 	  $(MODULE_LOAD_CC); \
           $(MODULE_LOAD_CMAKE); \
@@ -114,7 +113,7 @@ build: $(SRC_DIRS)
           cd ../$(MC_SOURCE_DIR); \
           mkdir ../$(SOURCE_DIR)/externals/fetk/mc; \
           cp -r * ../$(SOURCE_DIR)/externals/fetk/mc; \
-          cd ../$(SOURCE_DIR); \
+          cd ../$(SOURCE_DIR)/apbs; \
           mkdir build; \
           cd build; \
           cmake -DCMAKE_INSTALL_PREFIX=$(PKGROOT) -DENABLE_MPI=ON -DCMAKE_CXX_FLAGS="$(COMPILE_FLAGS)" -DCMAKE_CXX_COMPILER=mpicxx  -DBUILD_SHARED_LIBS=ON -DCHECK_EPSILON=ON -DENABLE_BEM=ON -DENABLE_FETK=ON ENABLE_FAST=ON -DENABLE_INLINE=ON  -DENABLE_PYTHON=ON -DENABLE_OPENMP=ON -DBUILD_TOOLS=ON  -DBUILD_DOC=OFF .. ;  \
@@ -134,7 +133,7 @@ install::
           export CC=mpicc; \
           export CXX=mpicxx; \
           export FC=mpif90; \
-          cd $(SOURCE_DIR)/build; \
+          cd $(SOURCE_DIR)/apbs/build; \
           $(MAKE) install \
 	)
 	$(INSTALL_LICENSE_FILES)

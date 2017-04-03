@@ -9,14 +9,14 @@ endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 NAME           = sdsc-apbs
-VERSION        = 1.4.2
-RELEASE        = 1
+VERSION        = 1.5
+RELEASE        = 0
 PKGROOT        = /opt/apbs
 
 SRC_SUBDIR     = apbs
 
 SOURCE_NAME    = apbs
-SOURCE_SUFFIX  = tgz
+SOURCE_SUFFIX  = zip
 SOURCE_VERSION = $(VERSION)
 SOURCE_PKG     = $(SOURCE_NAME)-$(SOURCE_VERSION).$(SOURCE_SUFFIX)
 SOURCE_DIR     = $(SOURCE_PKG:%.$(SOURCE_SUFFIX)=%)
@@ -45,7 +45,7 @@ MC_SOURCE_VERSION = 1.5
 MC_SOURCE_PKG     = $(MC_SOURCE_NAME)-$(MC_SOURCE_VERSION).$(MC_SOURCE_SUFFIX)
 MC_SOURCE_DIR     = mc
 
-TGZ_PKGS       = $(SOURCE_PKG)
+ZIP_PKGS       = $(SOURCE_PKG)
 TAR_GZ_PKGS    = $(MALOC_SOURCE_PKG) $(PUNC_SOURCE_PKG) $(GAMER_SOURCE_PKG) $(MC_SOURCE_PKG)
 
 RPM.EXTRAS     = AutoReq:No
