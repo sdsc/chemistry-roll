@@ -181,7 +181,7 @@ build: $(SRC_DIRS)
           $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt; \
           mv ../exe/Linux-x86-64-$(COMPILERNAME)/*.popt ..; \
           if test "$(CUDABUILD)" = "yes"; then \
-              extra CUDAEXTRALIBS="-lcp2kpwcuda -lcusmm -lcp2kacccuda"; \
+              export CUDAEXTRALIBS="-lcp2kpwcuda -lcusmm -lcp2kacccuda"; \
               $(MODULE_LOAD_CP2K_CUDA); \
               $(CUDAVARS); \
               cp ../../Linux-x86-64-gnu.popt ../arch; \
