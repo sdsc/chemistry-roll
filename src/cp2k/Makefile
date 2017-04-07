@@ -143,7 +143,7 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_MKL); \
 	  $(MODULE_LOAD_MPI); \
 	  $(MODULE_LOAD_FFTW); \
-	  perl -pi -e "s!MKLROOT!$${MKL_ROOT}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!INTELMPITYPE!$(INTELMPITYPE)!g" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLFFTW!$${FFTWHOME}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLLIBINT!$(PWD)/$(SOURCE_DIR)/libint/lib!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
@@ -186,7 +186,7 @@ build: $(SRC_DIRS)
               $(CUDAVARS); \
               cp ../../Linux-x86-64-gnu.popt ../arch; \
               cp ../../Linux-x86-64-intel.popt ../arch; \
-              perl -pi -e "s!MKLROOT!$${MKL_ROOT}!" ../arch/$(ROLLMAKEFILE).popt; \
+              perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" ../arch/$(ROLLMAKEFILE).popt; \
               perl -pi -e "s!INTELMPITYPE!$(INTELMPITYPE)!g" ../arch/$(ROLLMAKEFILE).popt; \
               perl -pi -e "s!ROLLFFTW!$${FFTWHOME}!" ../arch/$(ROLLMAKEFILE).popt; \
               perl -pi -e "s!ROLLLIBINT!$(PWD)/$(SOURCE_DIR)/libint/lib!" ../arch/$(ROLLMAKEFILE).popt; \
