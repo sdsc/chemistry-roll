@@ -159,6 +159,9 @@ build: $(SRC_DIRS)
 	  export CXX=$(CXX); \
 	  export CXXFLAGS="$(COMPILE_FLAGS)"; \
 	  export FFLAGS="$(COMPILE_FLAGS)"; \
+          export OMPI_FCFLAGS=$${FCFLAGS}; \
+          export OMPI_CFLAGS=$${CFLAGS}; \
+          export OMPI_CXXFLAGS=$${CXXFLAGS}; \
 	  cd $(SOURCE_DIR); \
           mv ../$(LIBINT_DIR) .; \
           cd $(LIBINT_DIR); \
