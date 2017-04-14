@@ -100,7 +100,9 @@ endif
 
 
 CUDABUILD=no
-CUDAVARS="\#"
+
+CUDAVARS=\#
+NVCCPATH=""
 ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
      CUDAVARS =  \
        CUDADEFS="-D__ACC -D__DBCSR_ACC -D__PW_CUDA"; \
@@ -133,7 +135,7 @@ LICENSE: $(SRC_DIRS)
 build: $(SRC_DIRS)
 	cp Linux-x86-64-gnu.popt $(SOURCE_DIR)/arch
 	cp Linux-x86-64-intel.popt $(SOURCE_DIR)/arch
-	( \
+	-( \
           if test "$(COMPILERNAME)" = "intel"; then \
 	     patch $(SOURCE_DIR)/makefiles/Makefile patch-files/Makefile.patch; \
           fi; \
@@ -157,6 +159,9 @@ build: $(SRC_DIRS)
 	  export CXX=$(CXX); \
 	  export CXXFLAGS="$(COMPILE_FLAGS)"; \
 	  export FFLAGS="$(COMPILE_FLAGS)"; \
+          export OMPI_FCFLAGS=$${FCFLAGS}; \
+          export OMPI_CFLAGS=$${CFLAGS}; \
+          export OMPI_CXXFLAGS=$${CXXFLAGS}; \
 	  cd $(SOURCE_DIR); \
           mv ../$(LIBINT_DIR) .; \
           cd $(LIBINT_DIR); \
@@ -179,6 +184,7 @@ build: $(SRC_DIRS)
           $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt; \
           mv ../exe/Linux-x86-64-$(COMPILERNAME)/*.popt ..; \
           if test "$(CUDABUILD)" = "yes"; then \
+              export CUDAEXTRALIBS="-lcp2kpwcuda -lcusmm -lcp2kacccuda"; \
               $(MODULE_LOAD_CP2K_CUDA); \
               $(CUDAVARS); \
               cp ../../Linux-x86-64-gnu.popt ../arch; \
@@ -188,10 +194,10 @@ build: $(SRC_DIRS)
               perl -pi -e "s!ROLLFFTW!$${FFTWHOME}!" ../arch/$(ROLLMAKEFILE).popt; \
               perl -pi -e "s!ROLLLIBINT!$(PWD)/$(SOURCE_DIR)/libint/lib!" ../arch/$(ROLLMAKEFILE).popt; \
               perl -pi -e "s!LIBINTPATH!$(PWD)/$(SOURCE_DIR)/libint/lib!" ../arch/$(ROLLMAKEFILE).popt; \
-              perl -pi -e "s!NVCCPATH!$${NVCCPATH}!" ../arch/$(ROLLMAKEFILE).popt; \
-	      perl -pi -e "s!LIBXCPATH!$(PWD)/$(SOURCE_DIR)/libxc!g" ../arch/$(ROLLMAKEFILE).popt; \
+                  perl -pi -e "s!NVCCPATH!$${NVCCPATH}!" ../arch/$(ROLLMAKEFILE).popt; \
+              perl -pi -e "s!LIBXCPATH!$(PWD)/$(SOURCE_DIR)/libxc!g" ../arch/$(ROLLMAKEFILE).popt; \
   	      perl -pi -e "s!CUDADEFS!$${CUDADEFS}!" ../arch/$(ROLLMAKEFILE).popt; \
- 	      perl -pi -e "s!CUDALIBS!$${CUDALIBS}!" ../arch/$(ROLLMAKEFILE).popt; \
+              perl -pi -e "s!CUDALIBS!$${CUDALIBS}!" ../arch/$(ROLLMAKEFILE).popt; \
               make realclean ARCH=$(ROLLMAKEFILE) VERSION=popt; \
               $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt ; \
               exes=`find ../exe/Linux-x86-64-$(COMPILERNAME) -name \*.popt -print`; \

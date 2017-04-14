@@ -66,12 +66,12 @@ END
 close(OUT);
 
   $output = `/bin/bash $TESTFILE.sh cp2k.popt 2>&1`;
-  like($output, qr#ENERGY.*-51.3432165#, 'cp2k test run');
+  like($output, qr#ENERGY.*-51.3490955#, 'cp2k test run');
   SKIP: {
     skip 'CUDA_VISIBLE_DEVICES undef', 1
       if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
     $output = `/bin/bash $TESTFILE.sh cp2k.cuda.popt CP2K_CUDAVER 2>&1`;
-    like($output, qr#ENERGY.*-51.3432165#, 'cp2k cuda test run');
+    like($output, qr#ENERGY.*-51.3490955#, 'cp2k cuda test run');
   }
   `rm -rf $TESTFILE*`;
 }
