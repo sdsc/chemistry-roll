@@ -143,7 +143,7 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_MKL); \
 	  $(MODULE_LOAD_MPI); \
 	  $(MODULE_LOAD_FFTW); \
-	  perl -pi -e "s!MKLROOT!$${MKL_ROOT}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
+	  perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!INTELMPITYPE!$(INTELMPITYPE)!g" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLFFTW!$${FFTWHOME}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLLIBINT!$(PWD)/$(SOURCE_DIR)/libint/lib!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
@@ -159,6 +159,9 @@ build: $(SRC_DIRS)
 	  export CXX=$(CXX); \
 	  export CXXFLAGS="$(COMPILE_FLAGS)"; \
 	  export FFLAGS="$(COMPILE_FLAGS)"; \
+          export OMPI_FCFLAGS=$${FCFLAGS}; \
+          export OMPI_CFLAGS=$${CFLAGS}; \
+          export OMPI_CXXFLAGS=$${CXXFLAGS}; \
 	  cd $(SOURCE_DIR); \
           mv ../$(LIBINT_DIR) .; \
           cd $(LIBINT_DIR); \
@@ -179,17 +182,14 @@ build: $(SRC_DIRS)
           make install; \
           cd ../makefiles; \
           $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt; \
-          if test "$(COMPILERNAME)" = "intel"; then \
-              export CUDAL=""; \
-              make -f ../../Makefile.libcp2k_unittest; \
-          fi; \
           mv ../exe/Linux-x86-64-$(COMPILERNAME)/*.popt ..; \
           if test "$(CUDABUILD)" = "yes"; then \
+              export CUDAEXTRALIBS="-lcp2kpwcuda -lcusmm -lcp2kacccuda"; \
               $(MODULE_LOAD_CP2K_CUDA); \
               $(CUDAVARS); \
               cp ../../Linux-x86-64-gnu.popt ../arch; \
               cp ../../Linux-x86-64-intel.popt ../arch; \
-              perl -pi -e "s!MKLROOT!$${MKL_ROOT}!" ../arch/$(ROLLMAKEFILE).popt; \
+              perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" ../arch/$(ROLLMAKEFILE).popt; \
               perl -pi -e "s!INTELMPITYPE!$(INTELMPITYPE)!g" ../arch/$(ROLLMAKEFILE).popt; \
               perl -pi -e "s!ROLLFFTW!$${FFTWHOME}!" ../arch/$(ROLLMAKEFILE).popt; \
               perl -pi -e "s!ROLLLIBINT!$(PWD)/$(SOURCE_DIR)/libint/lib!" ../arch/$(ROLLMAKEFILE).popt; \
@@ -201,10 +201,6 @@ build: $(SRC_DIRS)
               make realclean ARCH=$(ROLLMAKEFILE) VERSION=popt; \
               $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt ; \
               exes=`find ../exe/Linux-x86-64-$(COMPILERNAME) -name \*.popt -print`; \
-              if test "$(COMPILERNAME)" = "intel"; then \
-                    export CUDAL="-lcp2kpwcuda -lcusmm -lcp2kacccuda"; \
-                    make -f ../../Makefile.libcp2k_unittest; \
-              fi; \
               for exe in $${exes}; do \
                    name=`basename $${exe}`; \
                    name=`echo $${name} |sed 's/\.popt/.cuda.popt/'`; \
