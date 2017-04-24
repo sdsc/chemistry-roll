@@ -1,13 +1,13 @@
 --- lammps-16Feb16/lib/cuda/Makefile.lammps	2014-10-28 08:21:46.000000000 -0700
-+++ patch-files/cuda/Makefile.lammps	2017-04-24 14:40:53.487625272 -0700
++++ patch-files/cuda/Makefile.lammps	2017-04-24 14:58:25.050406459 -0700
 @@ -1,7 +1,7 @@
  # Settings that the LAMMPS build will import when this package library is used
 -CUDA_FLAGS := -I/usr/local/cuda/include -DUNIX  -DFFT_CUFFT -DCUDA_PRECISION=2 -DCUDA_ARCH=20 
 -CUDA_USRLIB_CONDITIONAL := -L/usr/local/cuda/lib -L/usr/local/cuda/lib64
 +CUDA_FLAGS := -I${CUDAHOME}/include -DUNIX  -DFFT_CUFFT -DCUDA_PRECISION=2 -DCUDA_ARCH=20 
-+CUDA_USRLIB_CONDITIONAL := -L${CUDAHOME}/lib -L${CUDAHOME}/lib64 -L/usr/lib64/nvidia -lnvidia-fatbinaryloader -lcufft
++CUDA_USRLIB_CONDITIONAL := -L${CUDAHOME}/lib -L${CUDAHOME}/lib64
   
  user-cuda_SYSINC = ${CUDA_FLAGS}
 -user-cuda_SYSLIB =  -lcufft -lcuda -lcudart 
-+user-cuda_SYSLIB =  -lcufft -lcuda -lcudart -lnvidia-fatbinaryloader
++user-cuda_SYSLIB =  -L/usr/lib64/nvidia -lcufft -lcuda -lcudart -lnvidia-fatbinaryloader
  user-cuda_SYSPATH = $(CUDA_USRLIB_CONDITIONAL)
