@@ -121,7 +121,6 @@ LICENSE: $(SRC_DIRS)
 build: $(SRC_DIRS)
 	mkdir -p $(CACHE_DIR)/lammps/bin
 	( \
-          module unload gnutools; \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \
 	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
@@ -241,9 +240,9 @@ build: $(SRC_DIRS)
             patch Makefile.common $(REDHAT.ROOT)/src/lammps/patch-files/cuda/Makefile.common.patch; \
             patch Makefile.lammps $(REDHAT.ROOT)/src/lammps/patch-files/cuda/Makefile.lammps.patch; \
             if test -e /usr/lib64/nvidia; then \
-                 perl -pi -e "s!EXTRACUDALIBRARY!-L/usr/lib64/nvidia -lnvidia-fatbinaryloader!g" $(SOURCE_DIR)/lib/cuda/Makefile.lammps; \
+                 perl -pi -e "s!EXTRACUDALIBRARY!-L/usr/lib64/nvidia -lnvidia-fatbinaryloader!g" Makefile.lammps; \
             else \
-                 perl -pi -e "s!EXTRACUDALIBRARY!g" $(SOURCE_DIR)/lib/cuda/Makefile.lammps; \
+                 perl -pi -e "s!EXTRACUDALIBRARY!g" Makefile.lammps; \
             fi; \
 	    $(MAKE); \
 	    cp *.a ../../src; \
