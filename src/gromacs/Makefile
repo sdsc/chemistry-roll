@@ -133,7 +133,6 @@ install::
 	  cd $(SOURCE_DIR)/build; \
 	  $(MAKE) prefix=$(PKGROOT) install; \
           cd $(PKGROOT)/bin; \
-          mv gmx_mpi gmx_mpi.real \
 	)
 	cp gmx_mpi $(PKGROOT)/bin
 	$(PKGROOT_BIND_UMOUNT)
