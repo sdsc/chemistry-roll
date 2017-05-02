@@ -134,10 +134,8 @@ install::
 	  $(MAKE) prefix=$(PKGROOT) install; \
           cd $(PKGROOT)/bin; \
 	)
-	cp gmx_mpi $(PKGROOT)/bin
 	$(PKGROOT_BIND_UMOUNT)
 	$(INSTALL_LICENSE_FILES)
-	cp -r gmxtest $(ROOT)/$(PKGROOT)
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
