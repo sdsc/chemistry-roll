@@ -242,7 +242,7 @@ build: $(SRC_DIRS)
             if test -e /usr/lib64/nvidia; then \
                  perl -pi -e "s!EXTRACUDALIBRARY!-L/usr/lib64/nvidia -lnvidia-fatbinaryloader!g" Makefile.lammps; \
             else \
-                 perl -pi -e "s!EXTRACUDALIBRARY!g" Makefile.lammps; \
+                 perl -pi -e "s!EXTRACUDALIBRARY!!g" Makefile.lammps; \
             fi; \
 	    $(MAKE); \
 	    cp *.a ../../src; \
