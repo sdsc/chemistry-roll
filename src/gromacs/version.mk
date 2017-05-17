@@ -20,7 +20,7 @@ MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 NAME           = sdsc-gromacs
 VERSION        = 2016.3
-RELEASE        = 0
+RELEASE        = 1
 PKGROOT        = /opt/gromacs
 
 SRC_SUBDIR     = gromacs
@@ -43,6 +43,13 @@ GMXTEST_SUFFIX = tar.gz
 GMXTEST_PKG    = $(GMXTEST_NAME).$(GMXTEST_SUFFIX)
 GMXTEST_DIR    = $(GMXTEST_PKG:%.$(GMXTEST_SUFFIX)=%)
 
+PLUMED_NAME    = plumed
+PLUMED_SUFFIX  = tgz
+PLUMED_VERSION = 2.3.1
+PLUMED_PKG     = $(PLUMED_NAME)-$(PLUMED_VERSION).$(PLUMED_SUFFIX)
+PLUMED_DIR     = $(PLUMED_PKG:%.$(PLUMED_SUFFIX)=%)
+
 TAR_GZ_PKGS    = $(SOURCE_PKG) $(FFTW_PKG) $(GMXTEST_PKG)
+TGZ_PKGS       = $(PLUMED_PKG)
 
 RPM.EXTRAS     = AutoReq:No

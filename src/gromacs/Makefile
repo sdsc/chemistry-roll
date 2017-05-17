@@ -101,9 +101,15 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MPI); \
-	  cd $(SOURCE_DIR); \
-	  mkdir build; \
-	  cd build; \
+          cd $(PLUMED_DIR); \
+          ./configure --enable-mpi --prefix=$(PWD)/plumed; \
+          make; \
+          make install; \
+          cd ../$(SOURCE_DIR); \
+          ../plumed/bin/plumed-patch -p -e gromacs-$(VERSION); \
+          mkdir build; \
+          cd build; \
+
 	  export CC=mpicc; \
 	  export CXX=mpicxx; \
           if test "$(CUDABUILD)" = "YES"; then \
@@ -144,5 +150,5 @@ install::
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SRC_DIRS) DESCRIPTION LICENSE
+	rm -rf $(SRC_DIRS) plumed DESCRIPTION LICENSE
 
