@@ -1,6 +1,6 @@
 NAME       = sdsc-chemistry-roll-test
 VERSION    = 1.2
-RELEASE    = 3
+RELEASE    = 4
 PKGROOT    = /root/rolltests
 
 CP2K_CUDAVER=
