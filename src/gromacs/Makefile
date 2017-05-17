@@ -109,7 +109,6 @@ build: $(SRC_DIRS)
           ../plumed/bin/plumed-patch -p -e gromacs-$(VERSION); \
           mkdir build; \
           cd build; \
-
 	  export CC=mpicc; \
 	  export CXX=mpicxx; \
           if test "$(CUDABUILD)" = "YES"; then \
