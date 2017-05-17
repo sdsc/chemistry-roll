@@ -123,6 +123,8 @@ build: $(SRC_DIRS)
 	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
 	           -DGMX_MPI=ON \
 	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
+                   -DBUILD_SHARED_LIBS=OFF \
+                   -DGMX_PREFER_STATIC_LIBS=ON \
 	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) $(CUDA); \
 	  $(MAKE) \
 	)
