@@ -88,7 +88,9 @@ DESCRIPTION:
 	  $(DESCRIBE_PKG); \
 	  $(DESCRIBE_CC); \
 	  $(DESCRIBE_MPI); \
- 	  $(DESCRIBE_GROMACS_CUDA) \
+          if test "$(CUDABUILD)" = "yes"; then \
+              $(DESCRIBE_GROMACS_CUDA) \
+          fi \
 	) > $@
 
 LICENSE: $(SRC_DIRS)
