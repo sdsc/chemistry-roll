@@ -89,7 +89,7 @@ DESCRIPTION:
 	  $(DESCRIBE_CC); \
 	  $(DESCRIBE_MPI); \
           if test "$(CUDABUILD)" = "yes"; then \
-              $(DESCRIBE_GROMACS_CUDA) \
+              $(DESCRIBE_GROMACS_CUDA); \
           fi \
 	) > $@
 
