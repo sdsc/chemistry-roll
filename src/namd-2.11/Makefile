@@ -78,36 +78,39 @@ endif
 ifeq ($(IBVERBS),yes)
   CHARMARCH = net-linux-x86_64
   ifeq ("$(COMPILERNAME)", "intel")
-    CHARMBUILDOPTS = ibverbs icc 
+    CHARMBUILDOPTS = ibverbs icc  --with-production
     CHARMFILEEXTENSION = ibverbs-icc
-    CHARMCUDABUILDOPTS = ibverbs smp icc
+    CHARMCUDABUILDOPTS = ibverbs smp icc --with-production
     CHARMCUDAFILEEXTENSION = ibverbs-smp-icc
     CHARMFLAGS = -O2  -xHOST
   else ifeq ("$(COMPILERNAME)", "pgi")
-    CHARMBUILDOPTS = ibverbs pgcc
+    CHARMBUILDOPTS = ibverbs pgcc --with-production
     CHARMFILEEXTENSION = ibverbs-pgcc
-    CHARMCUDABUILDOPTS = ibverbs smp pgcc
+    CHARMCUDABUILDOPTS = ibverbs smp pgcc --with-production
     CHARMCUDAFILEEXTENSION = ibverbs-smp-pgcc
     CHARMFLAGS = -O2  -fast
   else ifeq ("$(COMPILERNAME)", "gnu")
-    CHARMBUILDOPTS = ibverbs g++
+    CHARMBUILDOPTS = ibverbs g++ --with-production
     CHARMFILEEXTENSION = ibverbs-g++
-    CHARMCUDABUILDOPTS = ibverbs smp g++
+    CHARMCUDABUILDOPTS = ibverbs smp g++ --with-production
     CHARMCUDAFILEEXTENSION = ibverbs-smp-g++
     CHARMFLAGS = -O2
   endif
 else
   CHARMARCH = mpi-linux-x86_64
   CHARMARCHCUDA = multicore-linux64-mpicxx
-  CHARMBUILDOPTS = mpicxx
+  CHARMBUILDOPTS = mpicxx --with-production
   CHARMFILEXTENSION = mpicxx
   ifeq ("$(COMPILERNAME)", "intel")
     CHARMFLAGS = -O2  -xHOST
+    CHARMCUDABUILDOPTS = smp icc --with-production
   else ifeq ("$(COMPILERNAME)", "pgi")
-    CHARMBUILDOPTS = mpicxx
+    CHARMBUILDOPTS = mpicxx --with-production
     CHARMFLAGS = -O2  -fast
+    CHARMCUDABUILDOPTS = smp pgcc --with-production
   else ifeq ("$(COMPILERNAME)", "gnu")
-    CHARMBUILDOPTS = mpicxx
+    CHARMBUILDOPTS = mpicxx --with-production
+    CHARMCUDABUILDOPTS = smp g++ --with-production
     CHARMFLAGS = -O2
   endif
 endif
