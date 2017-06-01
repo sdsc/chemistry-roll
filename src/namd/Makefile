@@ -71,13 +71,13 @@ else ifeq ("$(COMPILERNAME)", "pgi")
 endif
 
 CHARMARCH = mpi-linux-x86_64-mpicxx
-CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
+CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE --with-production
 ifeq ("$(COMPILERNAME)", "intel")
-  CHARMBUILDOPTS = mpicxx  -O2  -xHOST
+  CHARMBUILDOPTS = mpicxx  -O2  -xHOST --with-production
 else ifeq ("$(COMPILERNAME)", "pgi")
-  CHARMBUILDOPTS = mpicxx  -O2  -fast
+  CHARMBUILDOPTS = mpicxx  -O2  -fast --with-production
 else ifeq ("$(COMPILERNAME)", "gnu")
-  CHARMBUILDOPTS = mpicxx  -O2
+  CHARMBUILDOPTS = mpicxx  -O2 --with-production
 endif
 
 ifneq ("$(ROLLOPTS)", "$(subst avx2,,$(ROLLOPTS))")
