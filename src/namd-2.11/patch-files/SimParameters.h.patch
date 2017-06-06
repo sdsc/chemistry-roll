@@ -1,0 +1,24 @@
+--- NAMD_2.11_Source/src/SimParameters.h	2015-09-04 15:20:03.000000000 -0700
++++ GaMD_NAMD-2.11/src_namd2.11/SimParameters.h	2016-11-13 22:59:15.000000000 -0800
+@@ -512,7 +512,20 @@
+         BigReal accelMDTE;              //  E for total potential in the dual boost mode
+         BigReal accelMDTalpha;          //  alpha for total potential in the dual boost mode
+ 
+-        /* Begin Adaptive Temperature Sampling */
++	Bool accelMDG;                  //  Perform Gaussian accelMD calculation
++	int accelMDGiE;                 //  Flag to set the mode iE in Gaussian accelMD
++	int accelMDGcMDSteps;              //  No. of cMD steps
++	int accelMDGEquiSteps;		//  No. of quilibration steps after adding boost potential
++	int accelMDGcMDPrepSteps;		//  No. of preparation cMD steps
++	int accelMDGEquiPrepSteps;		//  No. of preparation equilibration steps
++	BigReal accelMDGSigma0P;	//  upper limit of std of total potential
++	BigReal accelMDGSigma0D;	//  upper limit of std of dihedral potential
++	Bool accelMDGRestart;		//  Flag to set use restart file in Gaussian accelMD
++	char accelMDGRestartFile[128];	//  restart file name
++	Bool accelMDGresetVaftercmd;	//  Flag to reset potential after first accelMDGcMDSteps steps
++
++
++	/* Begin Adaptive Temperature Sampling */
+         Bool adaptTempOn;                      //  is adaptTempOn
+         Bool adaptTempDebug;                   //  Debuggin adaptive temperature sampling
+         int adaptTempFirstStep;                //  First adaptTemp step

@@ -162,6 +162,10 @@ build: $(SRC_DIRS)
 	if test "$(COMPILERNAME)" != "intel"; then \
 	  perl -pi -e "s! -auto ! !" $(SOURCE_DIR)/charm*/src/arch/mpi-linux-x86_64/cc-mpicxx.sh; \
 	fi
+	patch $(SOURCE_DIR)/src/Controller.C patch-files/Controller.C.patch
+	patch $(SOURCE_DIR)/src/Controller.h patch-files/Controller.h.patch
+	patch $(SOURCE_DIR)/src/SimParameters.C patch-files/SimParameters.C.patch
+	patch $(SOURCE_DIR)/src/SimParameters.h patch-files/SimParameters.h.patch
 	( \
 	  $(MODULE_LOAD_CC); \
           if test "$(IBVERBS)" = "no"; then \
