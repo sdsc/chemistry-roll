@@ -70,6 +70,14 @@ else ifeq ("$(COMPILERNAME)", "pgi")
   COMPILE_FLAGS = -fPIC -fast --c++11
 endif
 
+# The Intel compilers use the C++ libraries that are packaged with the first
+# gnu compiler found in PATH. Since the default system gnu doesn't support
+# C++11, for Intel we have to load /opt/gnu to get the updated library.
+MODULE_LOAD_CXX11_LIB =
+ifeq ("$(COMPILERNAME)", "intel")
+  MODULE_LOAD_CXX11_LIB = $(call MODULE_LOAD_COMPILER, gnu, gcc)
+endif
+
 CUDA=-DGMX_GPU=OFF
 CUDABUILD=NO
 ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
@@ -88,9 +96,9 @@ DESCRIPTION:
 	  $(DESCRIBE_PKG); \
 	  $(DESCRIBE_CC); \
 	  $(DESCRIBE_MPI); \
-          if test "$(CUDABUILD)" = "yes"; then \
-              $(DESCRIBE_GROMACS_CUDA); \
-          fi \
+	  if test "$(CUDABUILD)" = "yes"; then \
+	    $(DESCRIBE_GROMACS_CUDA); \
+	  fi \
 	) > $@
 
 LICENSE: $(SRC_DIRS)
@@ -99,7 +107,7 @@ LICENSE: $(SRC_DIRS)
 
 build: $(SRC_DIRS)
 	( \
-          $(call MODULE_LOAD_COMPILER, gnu, gcc); \
+	  $(MODULE_LOAD_CXX11_LIB); \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MPI); \
@@ -108,13 +116,13 @@ build: $(SRC_DIRS)
 	  cd build; \
 	  export CC=mpicc; \
 	  export CXX=mpicxx; \
-          if test "$(CUDABUILD)" = "YES"; then \
-               $(MODULE_LOAD_GROMACS_CUDA); \
-               export CUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME}; \
-               export CUDA_NVCC_EXECUTABLE=$${CUDAHOME}/bin/nvcc; \
-               export CUDA_INCLUDE_DIRS=$${CUDAHOME}/include; \
-               export CUDA_CUDART_LIBRARY=$${CUDAHOME}/lib64/libcudart.so; \
-          fi; \
+	  if test "$(CUDABUILD)" = "YES"; then \
+	    $(MODULE_LOAD_GROMACS_CUDA); \
+	    export CUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME}; \
+	    export CUDA_NVCC_EXECUTABLE=$${CUDAHOME}/bin/nvcc; \
+	    export CUDA_INCLUDE_DIRS=$${CUDAHOME}/include; \
+	    export CUDA_CUDART_LIBRARY=$${CUDAHOME}/lib64/libcudart.so; \
+	  fi; \
 	  cmake .. -DGMX_BUILD_OWN_FFTW=ON \
 	           -DGMX_BUILD_OWN_FFTW_URL="../../$(FFTW_PKG)" \
 	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
@@ -129,16 +137,15 @@ install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
 	$(PKGROOT_BIND_MOUNT)
 	( \
-          $(call MODULE_LOAD_COMPILER, gnu, gcc); \
+	  $(MODULE_LOAD_CXX11_LIB); \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MPI); \
-          if test "$(CUDABUILD)" = "YES"; then \
-               $(MODULE_LOAD_GROMACS_CUDA); \
-          fi; \
+	  if test "$(CUDABUILD)" = "YES"; then \
+	    $(MODULE_LOAD_GROMACS_CUDA); \
+	  fi; \
 	  cd $(SOURCE_DIR)/build; \
-	  $(MAKE) prefix=$(PKGROOT) install; \
-          cd $(PKGROOT)/bin; \
+	  $(MAKE) prefix=$(PKGROOT) install \
 	)
 	$(PKGROOT_BIND_UMOUNT)
 	$(INSTALL_LICENSE_FILES)
