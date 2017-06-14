@@ -1,6 +1,6 @@
---- cp2k-3.0/makefiles/Makefile	2015-10-28 06:34:43.798103000 -0700
-+++ patch-files/Makefile	2016-05-17 21:51:57.244757368 -0700
-@@ -374,6 +374,7 @@
+--- cp2k-4.1/makefiles/Makefile	2016-08-26 00:38:50.713064000 -0700
++++ patch-files/Makefile	2017-04-03 12:48:56.020171047 -0700
+@@ -381,6 +381,7 @@
  endif
  	@echo "Resolving dependencies for $(ONEVERSION) ... "
  	@$(TOOLSRC)/build_utils/makedep.py $(OBJDIR)/all.dep $(MODDEPS) $(MAKEDEPMODE) $(ARCHIVE_EXT) $(OBJ_SRC_FILES)

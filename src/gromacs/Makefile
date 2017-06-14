@@ -88,7 +88,9 @@ DESCRIPTION:
 	  $(DESCRIBE_PKG); \
 	  $(DESCRIBE_CC); \
 	  $(DESCRIBE_MPI); \
- 	  $(DESCRIBE_GROMACS_CUDA) \
+          if test "$(CUDABUILD)" = "yes"; then \
+              $(DESCRIBE_GROMACS_CUDA); \
+          fi \
 	) > $@
 
 LICENSE: $(SRC_DIRS)
@@ -97,6 +99,7 @@ LICENSE: $(SRC_DIRS)
 
 build: $(SRC_DIRS)
 	( \
+          $(call MODULE_LOAD_COMPILER, gnu, gcc); \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MPI); \
@@ -126,16 +129,17 @@ install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
 	$(PKGROOT_BIND_MOUNT)
 	( \
+          $(call MODULE_LOAD_COMPILER, gnu, gcc); \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MPI); \
-          $(MODULE_LOAD_CUDA); \
+          if test "$(CUDABUILD)" = "YES"; then \
+               $(MODULE_LOAD_GROMACS_CUDA); \
+          fi; \
 	  cd $(SOURCE_DIR)/build; \
 	  $(MAKE) prefix=$(PKGROOT) install; \
           cd $(PKGROOT)/bin; \
-          mv gmx_mpi gmx_mpi.real \
 	)
-	cp gmx_mpi $(PKGROOT)/bin
 	$(PKGROOT_BIND_UMOUNT)
 	$(INSTALL_LICENSE_FILES)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)

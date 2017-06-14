@@ -19,12 +19,13 @@ LIBXC_LIB  = LIBXCPATH/lib
 DFLAGS = -D__INTEL -D__FFTSG -D__parallel -D__BLACS -D__SCALAPACK -D__FFTW3 -D__LIBINT -D__LIBXC2 -D__LIBINT_MAX_AM=6 -D__LIBDERIV_MAX_AM1=5 CUDADEFS
 FFTW_INC = ROLLFFTW/include
 CPPFLAGS = -C $(DFLAGS) -P -traditional -I$(FFTW_INC) -I$(LIBXC_INC)
-FCFLAGS  = $(DFLAGS) -I$(FFTW_INC) -I$(LIBXC_INC) -O2 -xW -heap-arrays -funroll-loops -fpp -free -mkl=sequential
+FCFLAGS  = $(DFLAGS) -I$(FFTW_INC) -I$(LIBXC_INC) -O2 -xW -heap-arrays -funroll-loops -fpp -free
+INTEL_LIB = MKL_ROOT/lib/intel64
 #verify if the path to the mkl libraries is already defined and/or differs from this
 LDFLAGS  = $(FCFLAGS) -LMKLROOT/lib/intel64
 #If you want to use BLACS and SCALAPACK use the libraries below
-LIBS     = -lmkl_scalapack_lp64 -lmkl_blacs_INTELMPITYPE_lp64 \
-           -lpthread -LLIBINTPATH -L$(LIBXC_LIB) -lxc -lxcf90 -lderiv -lint -lr12 -lstdc++ CUDALIBS -lm
+
+LIBS     = $(INTEL_LIB)/libmkl_scalapack_lp64.a  -Wl,--start-group $(INTEL_LIB)/libmkl_intel_lp64.a $(INTEL_LIB)/libmkl_sequential.a $(INTEL_LIB)/libmkl_core.a $(INTEL_LIB)/libmkl_blacs_INTELMPITYPE_lp64.a -Wl,--end-group -lpthread  -LROLLFFTW/lib -lfftw3 -LLIBINTPATH -L$(LIBXC_LIB) -lxc -lxcf90 -lderiv -lint -lr12 -lstdc++ -ldl CUDALIBS -lm
 
 OBJECTS_ARCHITECTURE = machine_intel.o
 NVCC = NVCCPATH
