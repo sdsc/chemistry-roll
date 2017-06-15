@@ -63,11 +63,19 @@ include Rules.mk
 include $(SDSCDEVEL)/Pull.mk
 include $(SDSCDEVEL)/Rules.mk
 
-COMPILE_FLAGS = -fPIC -O2
+COMPILE_FLAGS = -fPIC -O2 -std=c++11
 ifeq ("$(COMPILERNAME)", "intel")
-  COMPILE_FLAGS = -fPIC -O2 -xHost
+  COMPILE_FLAGS = -fPIC -O2 -xHost -std=c++11
 else ifeq ("$(COMPILERNAME)", "pgi")
-  COMPILE_FLAGS = -fPIC -fast
+  COMPILE_FLAGS = -fPIC -fast --c++11
+endif
+
+# The Intel compilers use the C++ libraries that are packaged with the first
+# gnu compiler found in PATH. Since the default system gnu doesn't support
+# C++11, for Intel we have to load /opt/gnu to get the updated library.
+MODULE_LOAD_CXX11_LIB =
+ifeq ("$(COMPILERNAME)", "intel")
+  MODULE_LOAD_CXX11_LIB = $(call MODULE_LOAD_COMPILER, gnu, gcc)
 endif
 
 CUDA=-DGMX_GPU=OFF
@@ -77,6 +85,9 @@ ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
   CUDA = -DGMX_GPU=ON -DCUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME} -DCUDA_HOST_COMPILER=$${MPIHOME}/bin/mpicc
 endif
 
+MODULE_LOAD_GROMACS_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
+DESCRIBE_GROMACS_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSION))
+
 $(NAME).spec: DESCRIPTION LICENSE
 
 DESCRIPTION:
@@ -85,7 +96,9 @@ DESCRIPTION:
 	  $(DESCRIBE_PKG); \
 	  $(DESCRIBE_CC); \
 	  $(DESCRIBE_MPI); \
-	  $(DESCRIBE_CUDA) \
+	  if test "$(CUDABUILD)" = "yes"; then \
+	    $(DESCRIBE_GROMACS_CUDA); \
+	  fi \
 	) > $@
 
 LICENSE: $(SRC_DIRS)
@@ -94,21 +107,22 @@ LICENSE: $(SRC_DIRS)
 
 build: $(SRC_DIRS)
 	( \
+	  $(MODULE_LOAD_CXX11_LIB); \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MPI); \
-          $(MODULE_LOAD_CUDA); \
 	  cd $(SOURCE_DIR); \
 	  mkdir build; \
 	  cd build; \
 	  export CC=mpicc; \
 	  export CXX=mpicxx; \
-          if test "CUDABUILD" = "YES"; then \
-               export CUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME}; \
-               export CUDA_NVCC_EXECUTABLE=$${CUDAHOME}/bin/nvcc; \
-               export CUDA_INCLUDE_DIRS=$${CUDAHOME}/include; \
-               export CUDA_CUDART_LIBRARY=$${CUDAHOME}/lib64/libcudart.so; \
-          fi; \
+	  if test "$(CUDABUILD)" = "YES"; then \
+	    $(MODULE_LOAD_GROMACS_CUDA); \
+	    export CUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME}; \
+	    export CUDA_NVCC_EXECUTABLE=$${CUDAHOME}/bin/nvcc; \
+	    export CUDA_INCLUDE_DIRS=$${CUDAHOME}/include; \
+	    export CUDA_CUDART_LIBRARY=$${CUDAHOME}/lib64/libcudart.so; \
+	  fi; \
 	  cmake .. -DGMX_BUILD_OWN_FFTW=ON \
 	           -DGMX_BUILD_OWN_FFTW_URL="../../$(FFTW_PKG)" \
 	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
@@ -123,16 +137,16 @@ install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
 	$(PKGROOT_BIND_MOUNT)
 	( \
+	  $(MODULE_LOAD_CXX11_LIB); \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MPI); \
-          $(MODULE_LOAD_CUDA); \
+	  if test "$(CUDABUILD)" = "YES"; then \
+	    $(MODULE_LOAD_GROMACS_CUDA); \
+	  fi; \
 	  cd $(SOURCE_DIR)/build; \
-	  $(MAKE) prefix=$(PKGROOT) install; \
-          cd $(PKGROOT)/bin; \
-          mv gmx_mpi gmx_mpi.real \
+	  $(MAKE) prefix=$(PKGROOT) install \
 	)
-	cp gmx_mpi $(PKGROOT)/bin
 	$(PKGROOT_BIND_UMOUNT)
 	$(INSTALL_LICENSE_FILES)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)

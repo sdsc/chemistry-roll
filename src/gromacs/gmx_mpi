@@ -1,9 +1,0 @@
-#!/bin/bash
-if test `echo $LD_LIBRARY_PATH|grep -c '/opt/gnu/gcc/lib64:'` -ge 1; then
-   LD_LIBRARY_PATH=`echo $LD_LIBRARY_PATH|sed s'/\/opt\/gnu\/gcc\/lib64://'`
-   LD_LIBRARY_PATH=/opt/gnu/gcc/lib64:/usr/lib64:$LD_LIBRARY_PATH
-else
-   LD_LIBRARY_PATH=/usr/lib64:$LD_LIBRARY_PATH
-fi
-export LD_LIBRARY_PATH
-/opt/gromacs/bin/gmx_mpi.real $@
