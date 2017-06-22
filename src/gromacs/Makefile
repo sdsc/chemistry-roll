@@ -141,6 +141,7 @@ install::
           if test "$(CUDABUILD)" = "YES"; then \
                $(MODULE_LOAD_GROMACS_CUDA); \
           fi; \
+          cp $(PWD)/plumed/lib/* $(ROOT)/$(PKGROOT)/lib64; \
 	  cd $(SOURCE_DIR)/build; \
 	  $(MAKE) prefix=$(PKGROOT) install; \
           cd $(PKGROOT)/bin; \
