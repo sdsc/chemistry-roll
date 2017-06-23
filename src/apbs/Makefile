@@ -90,7 +90,6 @@ LICENSE: $(SRC_DIRS)
 	echo BSD and MIT > $@
 
 build: $(SRC_DIRS)
-	patch $(SOURCE_DIR)/CMakeLists.txt patch-files/CMakeLists.txt.patch
 	( \
 	  $(MODULE_LOAD_CC); \
           $(MODULE_LOAD_CMAKE); \
@@ -103,21 +102,21 @@ build: $(SRC_DIRS)
           export LDFLAGS=-L$(PWD)/$(SOURCE_DIR)/build/fetk/lib; \
 	  $(MODULE_LOAD_MPI); \
           cd $(MALOC_SOURCE_DIR); \
-          mkdir ../$(SOURCE_DIR)/externals/fetk/maloc; \
-          cp -r * ../$(SOURCE_DIR)/externals/fetk/maloc; \
+          mkdir ../$(SOURCE_DIR)/apbs/externals/fetk/maloc; \
+          cp -r * ../$(SOURCE_DIR)/apbs/externals/fetk/maloc; \
           cd ../$(PUNC_SOURCE_DIR); \
-          mkdir ../$(SOURCE_DIR)/externals/fetk/punc; \
-          cp -r * ../$(SOURCE_DIR)/externals/fetk/punc; \
+          mkdir ../$(SOURCE_DIR)/apbs/externals/fetk/punc; \
+          cp -r * ../$(SOURCE_DIR)/apbs/externals/fetk/punc; \
           cd ../$(GAMER_SOURCE_DIR); \
-          mkdir ../$(SOURCE_DIR)/externals/fetk/gamer; \
-          cp -r * ../$(SOURCE_DIR)/externals/fetk/gamer; \
+          mkdir ../$(SOURCE_DIR)/apbs/externals/fetk/gamer; \
+          cp -r * ../$(SOURCE_DIR)/apbs/externals/fetk/gamer; \
           cd ../$(MC_SOURCE_DIR); \
-          mkdir ../$(SOURCE_DIR)/externals/fetk/mc; \
-          cp -r * ../$(SOURCE_DIR)/externals/fetk/mc; \
-          cd ../$(SOURCE_DIR); \
+          mkdir ../$(SOURCE_DIR)/apbs/externals/fetk/mc; \
+          cp -r * ../$(SOURCE_DIR)/apbs/externals/fetk/mc; \
+          cd ../$(SOURCE_DIR)/apbs; \
           mkdir build; \
           cd build; \
-          cmake -DCMAKE_INSTALL_PREFIX=$(PKGROOT) -DENABLE_MPI=ON -DCMAKE_CXX_FLAGS="$(COMPILE_FLAGS)" -DCMAKE_CXX_COMPILER=mpicxx  -DBUILD_SHARED_LIBS=ON -DCHECK_EPSILON=ON -DENABLE_BEM=ON -DENABLE_FETK=ON ENABLE_FAST=ON -DENABLE_INLINE=ON  -DENABLE_PYTHON=ON -DENABLE_OPENMP=ON -DBUILD_TOOLS=ON  -DBUILD_DOC=OFF .. ;  \
+          cmake -DCMAKE_INSTALL_PREFIX=$(PKGROOT) -DENABLE_MPI=ON -DCMAKE_CXX_FLAGS="$(COMPILE_FLAGS)" -DCMAKE_CXX_COMPILER=mpicxx  -DBUILD_SHARED_LIBS=ON -DCHECK_EPSILON=ON -DENABLE_BEM=OFF -DENABLE_FETK=ON ENABLE_FAST=ON -DENABLE_INLINE=ON  -DENABLE_PYTHON=ON -DENABLE_OPENMP=ON -DBUILD_TOOLS=ON  -DBUILD_DOC=OFF .. ;  \
            $(MAKE) \
 	)
 	@echo "::: Package $(NAME) build complete :::"
@@ -134,14 +133,14 @@ install::
           export CC=mpicc; \
           export CXX=mpicxx; \
           export FC=mpif90; \
-          cd $(SOURCE_DIR)/build; \
+          cd $(SOURCE_DIR)/apbs/build; \
           $(MAKE) install \
 	)
 	$(INSTALL_LICENSE_FILES)
 	$(PKGROOT_BIND_UMOUNT)
-	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)
-	cp -r $(SOURCE_DIR)/build/fetk/lib/* $(ROOT)/$(PKGROOT)/lib
-	cp $(SOURCE_DIR)/tools/manip/psize.py $(ROOT)/$(PKGROOT)/examples/actin-dimer/
+	cp -r $(SOURCE_DIR)/apbs/examples $(ROOT)/$(PKGROOT)
+	cp -r $(SOURCE_DIR)/apbs/build/fetk/lib/* $(ROOT)/$(PKGROOT)/lib
+	cp $(SOURCE_DIR)/apbs/tools/manip/psize.py $(ROOT)/$(PKGROOT)/examples/actin-dimer/
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::

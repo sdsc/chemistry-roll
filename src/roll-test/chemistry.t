@@ -40,7 +40,7 @@ $packageHome/bin/apbs apbs-smol-auto.in
 END
   close(OUT);
   $output = `/bin/bash $TESTFILE.sh 2>&1`;
-  ok($output =~ /Global.*energy.*\d+\.\d+.*kJ\/mol/, 'apbs sample run');
+  ok($output =~ /Global net ELEC energy = 1.09584.*E\+02 kJ\/mol/, 'apbs sample run');
   `rm -rf $TESTFILE*`;
 }
 
