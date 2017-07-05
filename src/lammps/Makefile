@@ -210,6 +210,7 @@ build: $(SRC_DIRS)
 	  $(MAKE) yes-asphere; \
           $(MAKE) yes-user-drude; \
           $(MAKE) yes-user-fep; \
+          $(MAKE) yes-qeq; \
           cd ../lib/atc; \
 	  $(MAKE) -f Makefile.atc; \
 	  cp *.a ../../src; \
