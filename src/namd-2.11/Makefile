@@ -75,6 +75,10 @@ ifneq ("$(MPINAME)","$(subst _ib,,$(MPINAME))")
    IBVERBS = yes
 endif
 
+
+MODULE_LOAD_NAMD_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
+DESCRIBE_NAMD_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSION))
+
 ifeq ($(IBVERBS),yes)
   CHARMARCH = net-linux-x86_64
   ifeq ("$(COMPILERNAME)", "intel")
@@ -144,7 +148,7 @@ DESCRIPTION:
 	     $(DESCRIBE_MPI); \
           fi; \
           if test "$(CUDABUILD)" = "yes"; then \
-	     $(DESCRIBE_CUDA); \
+	     $(DESCRIBE_NAMD_CUDA); \
           fi \
 	) > $@
 
@@ -177,7 +181,7 @@ build: $(SRC_DIRS)
          mkdir $(PWD)/bin; \
          cp {charmrun,flipbinpdb,flipdcd,namd2,psfgen} $(PWD)/bin; \
 	 if test "$(CUDABUILD)" = "yes"; then \
-	   $(MODULE_LOAD_CUDA); \
+	   $(MODULE_LOAD_NAMD_CUDA); \
            cd ..; \
            rm -rf Linux-x86_64-$(CC); \
            rm -rf charm-*[0-9]; \

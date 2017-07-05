@@ -12,6 +12,9 @@ else ifndef ROLLMPI
 endif
 
 CUDAVERSION=cuda
+ifneq ("$(ROLLOPTS)", "$(subst cuda=,,$(ROLLOPTS))")
+  CUDAVERSION = $(subst cuda=,,$(filter cuda=%,$(ROLLOPTS)))
+endif
 ifneq ("$(ROLLOPTS)", "$(subst gromacs_othercuda=,,$(ROLLOPTS))")
   CUDAVERSION = $(subst gromacs_othercuda=,,$(filter gromacs_othercuda=%,$(ROLLOPTS)))
 endif

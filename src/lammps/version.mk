@@ -9,6 +9,10 @@ endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 CUDAVERSION=cuda
+ifneq ("$(ROLLOPTS)", "$(subst cuda=,,$(ROLLOPTS))")
+  CUDAVERSION = $(subst cuda=,,$(filter cuda=%,$(ROLLOPTS)))
+endif
+
 ifneq ("$(ROLLOPTS)", "$(subst lammps_othercuda=,,$(ROLLOPTS))")
   CUDAVERSION = $(subst lammps_othercuda=,,$(filter lammps_othercuda=%,$(ROLLOPTS)))
 endif
