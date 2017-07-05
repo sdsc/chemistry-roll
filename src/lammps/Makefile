@@ -110,7 +110,7 @@ DESCRIPTION:
 	  $(DESCRIBE_MKL); \
 	  $(DESCRIBE_MPI); \
 	  if test "$(CUDABUILD)" = "yes"; then \
-	    $(DESCRIBE_CUDA); \
+	    $(DESCRIBE_LAMMPS_CUDA); \
 	  fi \
 	) > $@
 
@@ -126,11 +126,10 @@ build: $(SRC_DIRS)
 	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
 	  $(MODULE_LOAD_MPI); \
 	  if test "$(CUDABUILD)" = "yes"; then \
-	    $(MODULE_LOAD_CUDA); \
+	    $(MODULE_LOAD_LAMMPS_CUDA); \
 	  fi; \
 # \
           patch $(SOURCE_DIR)/src/MAKE/Makefile.mpi patch-files/Makefile.mpi.patch; \
-          patch $(SOURCE_DIR)/src/USER-CUDA/verlet_cuda.cpp patch-files/verlet_cuda.cpp.patch; \
           perl -pi -e "s!FORTRANTYPE!$(FORTRANTYPE)!g" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
 	  perl -pi -e "s!COMPILERTYPE!$(COMPILERTYPE)!g" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
 	  perl -pi -e "s!GNULIBS!$(GNULIBS)!g" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
@@ -142,12 +141,13 @@ build: $(SRC_DIRS)
 # meam \
           patch -o $(SOURCE_DIR)/lib/meam/Makefile.meam $(SOURCE_DIR)/lib/meam/Makefile.ifort patch-files/meam/Makefile.ifort.patch; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/meam/Makefile.meam; \
-          patch -o $(SOURCE_DIR)/lib/meam/Makefile.lammps $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort patch-files/meam/Makefile.lammps.ifort.patch; \
-          perl -pi -e "s!INTELLIBS!$(INTELLIBS)!" $(SOURCE_DIR)/lib/meam/Makefile.lammps; \
 # atc \
+          patch $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort patch-files/meam/Makefile.lammps.ifort.patch; \
+          perl -pi -e "s!INTELLIBS!$(INTELLIBS)!" $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort; \
           patch -o  $(SOURCE_DIR)/lib/atc/Makefile.atc $(SOURCE_DIR)/lib/atc/Makefile.mpic++ patch-files/atc/Makefile.mpic++.patch; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/atc/Makefile.atc; \
           patch $(SOURCE_DIR)/lib/atc/Makefile.lammps.installed patch-files/atc/Makefile.lammps.installed.patch; \
+          patch $(SOURCE_DIR)/lib/atc/Matrix.h patch-files/atc/Matrix.h.patch; \
 #awpmd \
           patch -o  $(SOURCE_DIR)/lib/awpmd/Makefile.awpmd $(SOURCE_DIR)/lib/awpmd/Makefile.mpicc patch-files/awpmd/Makefile.mpicc.patch; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/awpmd/Makefile.awpmd; \
@@ -167,6 +167,7 @@ build: $(SRC_DIRS)
 # colvars \
           patch -o $(SOURCE_DIR)/lib/colvars/Makefile.colvars $(SOURCE_DIR)/lib/colvars/Makefile.g++ patch-files/colvars/Makefile.g++.patch; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/colvars/Makefile.colvars; \
+          patch $(SOURCE_DIR)/lib/kokkos/Makefile.kokkos patch-files/kokkos/Makefile.kokkos.patch; \
 # \
 	  cd $(SOURCE_DIR)/src; \
 	  perl -pi -e "s!MKLLIB!$${MKLLIB}!" MAKE/Makefile.mpi; \
@@ -174,7 +175,6 @@ build: $(SRC_DIRS)
 	  $(MAKE) yes-class2; \
 	  $(MAKE) yes-colloid; \
 	  $(MAKE) yes-dipole; \
-	  $(MAKE) yes-fld; \
 	  $(MAKE) yes-granular; \
 	  $(MAKE) yes-kspace; \
 	  $(MAKE) yes-body; \
@@ -202,11 +202,12 @@ build: $(SRC_DIRS)
 	  $(MAKE) yes-shock; \
 	  $(MAKE) yes-snap; \
 	  $(MAKE) yes-srd; \
-	  $(MAKE) yes-xtc; \
 	  $(MAKE) yes-rigid; \
 	  $(MAKE) yes-user-reaxc; \
 	  $(MAKE) yes-user-cg-cmm; \
 	  $(MAKE) yes-asphere; \
+          $(MAKE) yes-user-drude; \
+          $(MAKE) yes-user-fep; \
           cd ../lib/atc; \
 	  $(MAKE) -f Makefile.atc; \
 	  cp *.a ../../src; \
@@ -229,26 +230,26 @@ build: $(SRC_DIRS)
 	  $(MAKE) -j 16 ROOT=lmp mpi; \
 	  mv lmp_mpi $(CACHE_DIR)/lammps/bin/lammps; \
 	  if test "$(CUDABUILD)" = "yes"; then \
-            make yes-USER-CUDA; \
+            make yes-gpu; \
             cd ../lib/gpu; \
             patch Makefile.linux $(REDHAT.ROOT)/src/lammps/patch-files/gpu/Makefile.linux.patch; \
 	    $(MAKE) -f Makefile.linux; \
 	    cp *.a ../../src; \
-	    cd ../../src; \
-	    make yes-gpu; \
-	    cd ../lib/cuda; \
-            patch Makefile.common $(REDHAT.ROOT)/src/lammps/patch-files/cuda/Makefile.common.patch; \
-            patch Makefile.lammps $(REDHAT.ROOT)/src/lammps/patch-files/cuda/Makefile.lammps.patch; \
-            if test -e /usr/lib64/nvidia; then \
-                 perl -pi -e "s!EXTRACUDALIBRARY!-L/usr/lib64/nvidia -lnvidia-fatbinaryloader!g" Makefile.lammps; \
-            else \
-                 perl -pi -e "s!EXTRACUDALIBRARY!!g" Makefile.lammps; \
+            cd ../../src;  \
+            patch -o MAKE/OPTIONS/Makefile.kokkos_cuda  MAKE/OPTIONS/Makefile.kokkos_cuda_openmpi $(REDHAT.ROOT)/src/lammps/patch-files/kokkos/Makefile.kokkos_cuda.patch; \
+            perl -pi -e "s!MKLLIB!$${MKLLIB}!" MAKE/OPTIONS/Makefile.kokkos_cuda; \
+            perl -pi -e "s!COMPILERTYPE!$(COMPILERTYPE)!g" MAKE/OPTIONS/Makefile.kokkos_cuda; \
+            perl -pi -e "s!GNULIBS!$(GNULIBS)!g" MAKE/OPTIONS/Makefile.kokkos_cuda; \
+            perl -pi -e "s!INTELLIB!$(INTELLIBS2)!" MAKE/OPTIONS/Makefile.kokkos_cuda; \
+            perl -pi -e "s!FORTRANTYPE!$(FORTRANTYPE)!g" MAKE/OPTIONS/Makefile.kokkos_cuda; \
+            if [[ $(MPINAME) == *"openmpi"* ]]; then \
+                   perl -pi -e "s!MPITYPE!OMPI_CXX!" MAKE/OPTIONS/Makefile.kokkos_cuda; \
+            elif [[ $(MPINAME) == *"mvapich2"* ]]; then \
+                   perl -pi -e "s!MPITYPE!MPICH_CXX!" MAKE/OPTIONS/Makefile.kokkos_cuda; \
             fi; \
-	    $(MAKE); \
-	    cp *.a ../../src; \
-            cd ../../src; \
-	    $(MAKE) -j 16 ROOT=lmp mpi; \
-    	    mv lmp_mpi $(CACHE_DIR)/lammps/bin/lammps.cuda; \
+            cp *.a ../../src; \
+	    $(MAKE) -j 16 ROOT=lmp kokkos_cuda; \
+    	    mv lmp_kokkos_cuda  $(CACHE_DIR)/lammps/bin/lammps.cuda; \
 	  fi \
 	)
 	@echo "::: Package $(NAME) build complete :::"
