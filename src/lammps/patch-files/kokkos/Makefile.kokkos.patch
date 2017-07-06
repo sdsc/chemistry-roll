@@ -1,0 +1,11 @@
+--- lammps-31Mar17/lib/kokkos/Makefile.kokkos	2017-02-21 14:56:21.000000000 -0800
++++ patch-files/kokkos/Makefile.kokkos	2017-04-21 09:46:20.680704223 -0700
+@@ -613,7 +613,7 @@
+ 	KOKKOS_HEADERS += $(wildcard $(KOKKOS_PATH)/core/src/Cuda/*.hpp)
+ 	KOKKOS_CXXFLAGS += -I$(CUDA_PATH)/include
+ 	KOKKOS_LDFLAGS += -L$(CUDA_PATH)/lib64 
+-	KOKKOS_LIBS += -lcudart -lcuda
++	KOKKOS_LIBS += -lcudart -lcuda -L/usr/lib64/nvidia  -lnvidia-fatbinaryloader
+ endif
+ 
+ ifeq ($(KOKKOS_INTERNAL_USE_PTHREADS), 1)

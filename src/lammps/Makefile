@@ -75,7 +75,7 @@ ifeq ("$(COMPILERNAME)","intel")
   ROLLWARNINGS=-Wall -Wcheck -wd869,981,1572
   FORTRANTYPE=intel
   COMPILERTYPE=intel
-  INTELLIBS=-lifcore -lsvml -limf
+  INTELLIBS=-lifcore -lsvml -limf -lintlc
   INTELLIBS2=-liomp5
 endif
 
