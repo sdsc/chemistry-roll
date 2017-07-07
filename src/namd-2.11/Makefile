@@ -94,10 +94,10 @@ ifeq ($(IBVERBS),yes)
     CHARMCUDAFILEEXTENSION = ibverbs-smp-pgcc
     CHARMFLAGS = -O2  -fast
   else ifeq ("$(COMPILERNAME)", "gnu")
-    CHARMBUILDOPTS = ibverbs g++
-    CHARMFILEEXTENSION = ibverbs-g++
-    CHARMCUDABUILDOPTS = ibverbs smp g++
-    CHARMCUDAFILEEXTENSION = ibverbs-smp-g++
+    CHARMBUILDOPTS = ibverbs gcc
+    CHARMFILEEXTENSION = ibverbs-gcc
+    CHARMCUDABUILDOPTS = ibverbs smp gcc
+    CHARMCUDAFILEEXTENSION = ibverbs-smp-gcc
     CHARMFLAGS = -O2
   endif
 else
