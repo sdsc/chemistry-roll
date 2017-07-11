@@ -236,6 +236,7 @@ build: $(SRC_DIRS)
             make yes-gpu; \
             cd ../lib/gpu; \
             patch Makefile.linux $(REDHAT.ROOT)/src/lammps/patch-files/gpu/Makefile.linux.patch; \
+            patch Nvidia.makefile .linux $(REDHAT.ROOT)/src/lammps/patch-files/gpu/Nvidia.makefile..patch; \
 	    $(MAKE) -f Makefile.linux; \
 	    cp *.a ../../src; \
             cd ../../src;  \

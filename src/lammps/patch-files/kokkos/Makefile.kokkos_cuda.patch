@@ -1,5 +1,5 @@
 --- lammps-31Mar17/src/MAKE/OPTIONS/Makefile.kokkos_cuda_openmpi	2016-06-22 09:51:57.000000000 -0700
-+++ patch-files/kokkos/Makefile.kokkos_cuda_openmpi	2017-07-06 14:35:33.407225493 -0700
++++ patch-files/kokkos/Makefile.kokkos_cuda_openmpi	2017-07-11 09:22:07.530043202 -0700
 @@ -1,28 +1,29 @@
 -# kokkos_cuda = KOKKOS/CUDA package, OpenMPI with nvcc compiler, Kepler GPU
 +# kokkos_cuda = KOKKOS package with CUDA support, OpenMPI, nvcc/mpicxx compiler
@@ -33,7 +33,7 @@
  SHLIBFLAGS =	-shared
  KOKKOS_DEVICES = Cuda, OpenMP
 -KOKKOS_ARCH =   Kepler35
-+KOKKOS_ARCH = Kepler37
++KOKKOS_ARCH = Kepler37:Maxwell50:Maxwell52:Kepler60
  
  # ---------------------------------------------------------------------
  # LAMMPS-specific settings, all OPTIONAL
