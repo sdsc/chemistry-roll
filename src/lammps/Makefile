@@ -252,9 +252,9 @@ cpu: $(SRC_DIRS)
 $(GPUS):
 	 if test "$(CUDABUILD)" = "yes"; then \
              case $@ in \
-                 K80) GPUNAME=k80; \
+                 37) GPUNAME=k80; \
                    ;; \
-                 P100) GPUNAME=p100; \
+                 60) GPUNAME=p100; \
                    ;; \
              esac; \
 	     $(MODULE_LOAD_CC); \
