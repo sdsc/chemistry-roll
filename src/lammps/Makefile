@@ -251,9 +251,6 @@ cpu: $(SRC_DIRS)
 
 $(GPUS):
 	 if test "$(CUDABUILD)" = "yes"; then \
-test=1
-
-testit:
              case $@ in \
                  K80) GPUNAME=k80; \
                    ;; \
