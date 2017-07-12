@@ -175,7 +175,7 @@ cpu: $(SRC_DIRS)
           patch $(SOURCE_DIR)/lib/kokkos/Makefile.kokkos patch-files/kokkos/Makefile.kokkos.patch; \
           patch -o $(SOURCE_DIR)/src/MAKE/OPTIONS/Makefile.kokkos_cuda  $(SOURCE_DIR)/src/MAKE/OPTIONS/Makefile.kokkos_cuda_openmpi patch-files/kokkos/Makefile.kokkos_cuda.patch; \
           patch $(SOURCE_DIR)/lib/gpu/Makefile.linux patch-files/gpu/Makefile.linux.patch; \
-          cp $(SOURCE_DIR)/lib/gpu/Makefile.linux $(SOURCE)/lib/gpu/Makefile.linux.tmp; \
+          cp $(SOURCE_DIR)/lib/gpu/Makefile.linux $(SOURCE_DIR)/lib/gpu/Makefile.linux.tmp; \
           perl -pi -e "s!MKLLIB!$${MKLLIB}!" $(SOURCE_DIR)/src/MAKE/OPTIONS/Makefile.kokkos_cuda; \
           perl -pi -e "s!COMPILERTYPE!$(COMPILERTYPE)!g" $(SOURCE_DIR)/src/MAKE/OPTIONS/Makefile.kokkos_cuda; \
           perl -pi -e "s!GNULIBS!$(GNULIBS)!g" $(SOURCE_DIR)/src/MAKE/OPTIONS/Makefile.kokkos_cuda; \
