@@ -10,7 +10,6 @@ my $appliance = $#ARGV >= 0 ? $ARGV[0] :
                 -d '/export/rocks/install' ? 'Frontend' : 'Compute';
 my $installedOnAppliancesPattern = '^(?!Frontend).';
 my @packages = ('apbs', 'cp2k', 'gromacs', 'lammps', 'namd');
-my gputypes = ('k80','p100');
 my $output;
 my $TESTFILE = 'tmpchemistry';
 
@@ -143,10 +142,8 @@ END
   SKIP: {
     skip 'CUDA_VISIBLE_DEVICES undef', 1
       if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
-    foreach my $gputype(@gputyeps) {
-       $output = `/bin/bash $TESTFILE.sh "-sf gpu -pk gpu 1" LAMMPS_CUDAVER .${gputype}.cuda`;
-       like($output, qr#900 atoms#, 'lammps cuda sample run');
-    }
+      $output = `/bin/bash $TESTFILE.sh "-sf gpu -pk gpu 1" LAMMPS_CUDAVER .cuda`;
+      like($output, qr#900 atoms#, 'lammps cuda sample run');
   }
   `rm -rf $TESTFILE*`;
 }

@@ -175,6 +175,7 @@ cpu: $(SRC_DIRS)
           patch $(SOURCE_DIR)/lib/kokkos/Makefile.kokkos patch-files/kokkos/Makefile.kokkos.patch; \
           patch -o $(SOURCE_DIR)/src/MAKE/OPTIONS/Makefile.kokkos_cuda  $(SOURCE_DIR)/src/MAKE/OPTIONS/Makefile.kokkos_cuda_openmpi patch-files/kokkos/Makefile.kokkos_cuda.patch; \
           patch $(SOURCE_DIR)/lib/gpu/Makefile.linux patch-files/gpu/Makefile.linux.patch; \
+          cp $(SOURCE_DIR)/lib/gpu/Makefile.linux $(SOURCE)/lib/gpu/Makefile.linux.tmp; \
           perl -pi -e "s!MKLLIB!$${MKLLIB}!" $(SOURCE_DIR)/src/MAKE/OPTIONS/Makefile.kokkos_cuda; \
           perl -pi -e "s!COMPILERTYPE!$(COMPILERTYPE)!g" $(SOURCE_DIR)/src/MAKE/OPTIONS/Makefile.kokkos_cuda; \
           perl -pi -e "s!GNULIBS!$(GNULIBS)!g" $(SOURCE_DIR)/src/MAKE/OPTIONS/Makefile.kokkos_cuda; \
@@ -264,22 +265,21 @@ $(GPUS):
              cd $(SOURCE_DIR)/src; \
              make yes-gpu; \
              cd ../lib/gpu; \
-             cp Makefile.linux Makefile.linux.tmp; \
              perl -pi -e "s!CUDA_CAPABILITY!$@!g" Makefile.linux; \
 	     $(MAKE) -f Makefile.linux; \
 	     cp *.a ../../src; \
+             cp Makefile.linux.tmp Makefile.linux; \
              cd ../../src;  \
              cp *.a ../../src; \
 	     $(MAKE) -j 16 ROOT=lmp kokkos_cuda; \
     	     mv lmp_kokkos_cuda  $(CACHE_DIR)/lammps/bin/lammps.$${GPUNAME}.cuda; \
              cd ../lib/kokkos; \
-             cp Makefile.linux.tmp Makefile.linux; \
              cd ../gpu; \
              rm -f *cubin*; \
              rm -f *.o; \
              rm -f libgpu.a; \
              rm -f nvc_get_devices; \
-             cd ../src; \
+             cd ../../src; \
              rm -f libgpu.a; \
              rm -f *gpu*; \
 	  fi
@@ -288,6 +288,7 @@ install::
 	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
 	cp $(CACHE_DIR)/lammps/bin/* $(ROOT)/$(PKGROOT)/bin
 	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)
+	cp lammps.cuda $(ROOT)/$(PKGROOT)/bin
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
 
