@@ -87,6 +87,8 @@ endif
 MODULE_LOAD_LAMMPS_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
 DESCRIBE_LAMMPS_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSION))
 
+GPUS=37 60
+
 AVX_FLAG=
 ifneq ("$(ROLLOPTS)", "$(subst avx2,,$(ROLLOPTS))")
   ifeq ("$(COMPILERNAME)", "gnu")
@@ -120,16 +122,17 @@ LICENSE: $(SRC_DIRS)
 	$(CHECK_LICENSE_FILES)
 	echo GPL > $@
 
-build: $(SRC_DIRS)
+build: cpu $(GPUS)
+	@echo "::: Package $(NAME) build complete :::"
+
+
+cpu: $(SRC_DIRS)
 	mkdir -p $(CACHE_DIR)/lammps/bin
 	( \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \
 	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
 	  $(MODULE_LOAD_MPI); \
-	  if test "$(CUDABUILD)" = "yes"; then \
-	    $(MODULE_LOAD_LAMMPS_CUDA); \
-	  fi; \
 # \
           patch $(SOURCE_DIR)/src/MAKE/Makefile.mpi patch-files/Makefile.mpi.patch; \
           perl -pi -e "s!FORTRANTYPE!$(FORTRANTYPE)!g" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
@@ -170,6 +173,18 @@ build: $(SRC_DIRS)
           patch -o $(SOURCE_DIR)/lib/colvars/Makefile.colvars $(SOURCE_DIR)/lib/colvars/Makefile.g++ patch-files/colvars/Makefile.g++.patch; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/colvars/Makefile.colvars; \
           patch $(SOURCE_DIR)/lib/kokkos/Makefile.kokkos patch-files/kokkos/Makefile.kokkos.patch; \
+          patch -o $(SOURCE_DIR)/src/MAKE/OPTIONS/Makefile.kokkos_cuda  $(SOURCE_DIR)/src/MAKE/OPTIONS/Makefile.kokkos_cuda_openmpi patch-files/kokkos/Makefile.kokkos_cuda.patch; \
+          patch $(SOURCE_DIR)/lib/gpu/Makefile.linux patch-files/gpu/Makefile.linux.patch; \
+          perl -pi -e "s!MKLLIB!$${MKLLIB}!" $(SOURCE_DIR)/src/MAKE/OPTIONS/Makefile.kokkos_cuda; \
+          perl -pi -e "s!COMPILERTYPE!$(COMPILERTYPE)!g" $(SOURCE_DIR)/src/MAKE/OPTIONS/Makefile.kokkos_cuda; \
+          perl -pi -e "s!GNULIBS!$(GNULIBS)!g" $(SOURCE_DIR)/src/MAKE/OPTIONS/Makefile.kokkos_cuda; \
+          perl -pi -e "s!INTELLIB!$(INTELLIBS2)!" $(SOURCE_DIR)/src/MAKE/OPTIONS/Makefile.kokkos_cuda; \
+          perl -pi -e "s!FORTRANTYPE!$(FORTRANTYPE)!g" $(SOURCE_DIR)/src/MAKE/OPTIONS/Makefile.kokkos_cuda; \
+          if [[ $(MPINAME) == *"openmpi"* ]]; then \
+               perl -pi -e "s!MPITYPE!OMPI_CXX!" $(SOURCE_DIR)/src/MAKE/OPTIONS/Makefile.kokkos_cuda; \
+          elif [[ $(MPINAME) == *"mvapich2"* ]]; then \
+                  perl -pi -e "s!MPITYPE!MPICH_CXX!" $(SOURCE_DIR)/src/MAKE/OPTIONS/Makefile.kokkos_cuda; \
+          fi; \
 # \
 	  cd $(SOURCE_DIR)/src; \
 	  perl -pi -e "s!MKLLIB!$${MKLLIB}!" MAKE/Makefile.mpi; \
@@ -231,32 +246,43 @@ build: $(SRC_DIRS)
 	  cp *.a ../../src; \
 	  cd ../../src; \
 	  $(MAKE) -j 16 ROOT=lmp mpi; \
-	  mv lmp_mpi $(CACHE_DIR)/lammps/bin/lammps; \
-	  if test "$(CUDABUILD)" = "yes"; then \
-            make yes-gpu; \
-            cd ../lib/gpu; \
-            patch Makefile.linux $(REDHAT.ROOT)/src/lammps/patch-files/gpu/Makefile.linux.patch; \
-            patch Nvidia.makefile $(REDHAT.ROOT)/src/lammps/patch-files/gpu/Nvidia.makefile.patch; \
-	    $(MAKE) -f Makefile.linux; \
-	    cp *.a ../../src; \
-            cd ../../src;  \
-            patch -o MAKE/OPTIONS/Makefile.kokkos_cuda  MAKE/OPTIONS/Makefile.kokkos_cuda_openmpi $(REDHAT.ROOT)/src/lammps/patch-files/kokkos/Makefile.kokkos_cuda.patch; \
-            perl -pi -e "s!MKLLIB!$${MKLLIB}!" MAKE/OPTIONS/Makefile.kokkos_cuda; \
-            perl -pi -e "s!COMPILERTYPE!$(COMPILERTYPE)!g" MAKE/OPTIONS/Makefile.kokkos_cuda; \
-            perl -pi -e "s!GNULIBS!$(GNULIBS)!g" MAKE/OPTIONS/Makefile.kokkos_cuda; \
-            perl -pi -e "s!INTELLIB!$(INTELLIBS2)!" MAKE/OPTIONS/Makefile.kokkos_cuda; \
-            perl -pi -e "s!FORTRANTYPE!$(FORTRANTYPE)!g" MAKE/OPTIONS/Makefile.kokkos_cuda; \
-            if [[ $(MPINAME) == *"openmpi"* ]]; then \
-                   perl -pi -e "s!MPITYPE!OMPI_CXX!" MAKE/OPTIONS/Makefile.kokkos_cuda; \
-            elif [[ $(MPINAME) == *"mvapich2"* ]]; then \
-                   perl -pi -e "s!MPITYPE!MPICH_CXX!" MAKE/OPTIONS/Makefile.kokkos_cuda; \
-            fi; \
-            cp *.a ../../src; \
-	    $(MAKE) -j 16 ROOT=lmp kokkos_cuda; \
-    	    mv lmp_kokkos_cuda  $(CACHE_DIR)/lammps/bin/lammps.cuda; \
-	  fi \
-	)
-	@echo "::: Package $(NAME) build complete :::"
+	  mv lmp_mpi $(CACHE_DIR)/lammps/bin/lammps \
+        )
+
+$(GPUS):
+	 if test "$(CUDABUILD)" = "yes"; then \
+             case $@ in: \
+             if test $@ -eq 37; then \
+                 GPUNAME=k80; \
+             elif test $@ -eq 60; then \
+                 GPUNAME=p100; \
+             fi; \
+	     $(MODULE_LOAD_CC); \
+	     $(MODULE_LOAD_MKL); \
+	     $(MODULE_LOAD_MPI); \
+             $(MODULE_LOAD_LAMMPS_CUDA); \
+             cd $(SOURCE_DIR)/src; \
+             make yes-gpu; \
+             cd ../lib/gpu; \
+             cp Makefile.linux Makefile.linux.tmp; \
+             perl -pi -e "s!CUDA_CAPABILITY!$@!g" Makefile.linux; \
+	     $(MAKE) -f Makefile.linux; \
+	     cp *.a ../../src; \
+             cd ../../src;  \
+             cp *.a ../../src; \
+	     $(MAKE) -j 16 ROOT=lmp kokkos_cuda; \
+    	     mv lmp_kokkos_cuda  $(CACHE_DIR)/lammps/bin/lammps.$${GPUNAME}.cuda; \
+             cd ../lib/kokkos; \
+             cp Makefile.linux.tmp Makefile.linux; \
+             cd ../gpu; \
+             rm -f *cubin*; \
+             rm -f *.o; \
+             rm -f libgpu.a; \
+             rm -f nvc_get_devices; \
+             cd ../src; \
+             rm -f libgpu.a; \
+             rm -f *gpu*; \
+	  fi
 
 install::
 	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin

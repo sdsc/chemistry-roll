@@ -1,5 +1,5 @@
 --- lammps-31Mar17/lib/gpu/Makefile.linux	2016-07-01 16:27:26.000000000 -0700
-+++ patch-files/gpu/Makefile.linux	2017-07-11 10:08:45.178444523 -0700
++++ patch-files/gpu/Makefile.linux	2017-07-11 13:32:37.240988450 -0700
 @@ -7,19 +7,12 @@
  
  EXTRAMAKE = Makefile.lammps.standard
@@ -18,7 +18,7 @@
 -# older CUDA
 -#CUDA_ARCH = -arch=sm_10 -DCUDA_PRE_THREE
 -CUDA_ARCH = -arch=sm_35
-+CUDA_ARCH = -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_60,code=sm_60
++CUDA_ARCH = -gencode arch=compute_CUDA_CAPABILITY,code=sm_CUDA_CAPABILITY
  
  # this setting should match LAMMPS Makefile
  # one of LAMMPS_SMALLBIG (default), LAMMPS_BIGBIG and LAMMPS_SMALLSMALL
