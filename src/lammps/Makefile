@@ -251,12 +251,15 @@ cpu: $(SRC_DIRS)
 
 $(GPUS):
 	 if test "$(CUDABUILD)" = "yes"; then \
-             case $@ in: \
-             if test $@ -eq 37; then \
-                 GPUNAME=k80; \
-             elif test $@ -eq 60; then \
-                 GPUNAME=p100; \
-             fi; \
+test=1
+
+testit:
+             case $@ in \
+                 K80) GPUNAME=k80; \
+                   ;; \
+                 P100) GPUNAME=p100; \
+                   ;; \
+             esac; \
 	     $(MODULE_LOAD_CC); \
 	     $(MODULE_LOAD_MKL); \
 	     $(MODULE_LOAD_MPI); \
