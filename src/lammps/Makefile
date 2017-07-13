@@ -289,6 +289,7 @@ install::
 	cp $(CACHE_DIR)/lammps/bin/* $(ROOT)/$(PKGROOT)/bin
 	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)
 	cp lammps.cuda $(ROOT)/$(PKGROOT)/bin
+	perl -pi -e "s!PKGROOT!$(PKGROOT)!g" $(ROOT)/$(PKGROOT)/bin/lammps.cuda
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
 
