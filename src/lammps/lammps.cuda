@@ -1,9 +1,9 @@
 #!/bin/bash
 gpudevice=`nvidia-smi 2>/dev/null`
 if test $? == 0; then
-   if `echo $gpudevice grep -c K80` -gt 0; then
+   if `echo $gpudevice| grep -c K80` -gt 0; then
          PKGROOT/bin/lammps.k80.cuda $@
-   elif `echo $gpudevice grep -c P100` -gt 0; then
+   elif `echo $gpudevice| grep -c P100` -gt 0; then
          PKGROOT/bin/lammps.p100.cuda $@
    fi
 fi
