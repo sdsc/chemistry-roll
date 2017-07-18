@@ -1,5 +1,5 @@
---- lammps-16Feb16/lib/atc/Makefile.mpic++	2014-12-01 18:12:19.000000000 -0800
-+++ patch-files/atc/Makefile.mpic++	2016-04-10 14:35:06.601721739 -0700
+--- lammps-31Mar17/lib/atc/Makefile.mpic++	2016-09-08 13:20:32.000000000 -0700
++++ patch-files/atc/Makefile.mpic++	2017-04-04 19:30:34.000000000 -0700
 @@ -14,8 +14,8 @@
  # include any MPI settings needed for the ATC library to build with
  # must be the same MPI library that LAMMPS is built with

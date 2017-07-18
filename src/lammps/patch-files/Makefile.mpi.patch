@@ -1,5 +1,5 @@
---- lammps-16Feb16/src/MAKE/Makefile.mpi	2015-07-14 13:10:46.000000000 -0700
-+++ patch-files/Makefile.mpi	2016-04-14 12:37:28.620555578 -0700
+--- lammps-31Mar17/src/MAKE/Makefile.mpi	2016-05-12 06:54:17.000000000 -0700
++++ patch-files/Makefile.mpi	2017-07-17 15:42:09.081841545 -0700
 @@ -7,13 +7,13 @@
  # specify flags and libraries needed for your compiler
  
@@ -17,3 +17,12 @@
  SIZE =		size
  
  ARCHIVE =	ar
+@@ -28,7 +28,7 @@
+ # LAMMPS ifdef settings
+ # see possible settings in Section 2.2 (step 4) of manual
+ 
+-LMP_INC =	-DLAMMPS_GZIP -DLAMMPS_MEMALIGN=64
++LMP_INC =	-DLAMMPS_GZIP -DLAMMPS_MEMALIGN=64 -DLAMMPS_FFMPEG
+ 
+ # MPI library
+ # see discussion in Section 2.2 (step 5) of manual
