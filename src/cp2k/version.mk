@@ -13,9 +13,15 @@ ifndef ROLLMPI
 endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
+
+ifneq ("$(ROLLOPTS)", "$(subst cuda=,,$(ROLLOPTS))")
+  CUDAVERSION = $(subst cuda=,,$(filter cuda=%,$(ROLLOPTS)))
+endif
+
+
 NAME           = sdsc-cp2k
 VERSION        = 4.1
-RELEASE        = 0
+RELEASE        = 1
 PKGROOT        = /opt/cp2k
 
 SRC_SUBDIR     = cp2k

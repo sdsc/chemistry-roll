@@ -142,8 +142,8 @@ END
   SKIP: {
     skip 'CUDA_VISIBLE_DEVICES undef', 1
       if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
-    $output = `/bin/bash $TESTFILE.sh "-sf gpu -pk gpu 1" CHEMISTRY_CUDA .cuda`;
-    like($output, qr#900 atoms#, 'lammps cuda sample run');
+      $output = `/bin/bash $TESTFILE.sh "-sf gpu -pk gpu 1" LAMMPS_CUDAVER .cuda`;
+      like($output, qr#900 atoms#, 'lammps cuda sample run');
   }
   `rm -rf $TESTFILE*`;
 }
@@ -168,7 +168,7 @@ SKIP: {
       skip 'namd $version cuda version not installed', 1 if ! -f "$packageHome/$version/bin/namd2.cuda";
       skip 'CUDA_VISIBLE_DEVICES undef', 1
         if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
-      $output = `module load namd/$version CHEMISTRY_CUDA;cd $TESTFILE.dir;namd2.cuda +idlepoll +devices  0 tiny.namd 2>&1`;
+      $output = `module load namd/$version NAMD_CUDAVER;cd $TESTFILE.dir;namd2.cuda +idlepoll +devices  0 tiny.namd 2>&1`;
       like($output, qr#WRITING VELOCITIES#, "namd.cuda $version sample run");
     }
     `rm -rf $TESTFILE*`;
