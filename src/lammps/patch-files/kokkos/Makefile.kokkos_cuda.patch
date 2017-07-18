@@ -1,5 +1,5 @@
 --- lammps-31Mar17/src/MAKE/OPTIONS/Makefile.kokkos_cuda_openmpi	2016-06-22 09:51:57.000000000 -0700
-+++ patch-files/kokkos/Makefile.kokkos_cuda_openmpi	2017-07-11 16:47:22.153164081 -0700
++++ patch-files/kokkos/Makefile.kokkos_cuda_openmpi	2017-07-17 15:44:37.696606069 -0700
 @@ -1,28 +1,45 @@
 -# kokkos_cuda = KOKKOS/CUDA package, OpenMPI with nvcc compiler, Kepler GPU
 +# kokkos_cuda = KOKKOS package with CUDA support, OpenMPI, nvcc/mpicxx compiler
@@ -53,6 +53,15 @@
  
  # ---------------------------------------------------------------------
  # LAMMPS-specific settings, all OPTIONAL
+@@ -32,7 +49,7 @@
+ # LAMMPS ifdef settings
+ # see possible settings in Section 2.2 (step 4) of manual
+ 
+-LMP_INC =	-DLAMMPS_GZIP
++LMP_INC =	-DLAMMPS_GZIP -DLAMMPS_FFMPEG
+ 
+ # MPI library
+ # see discussion in Section 2.2 (step 5) of manual
 @@ -115,10 +132,5 @@
  
  # Individual dependencies

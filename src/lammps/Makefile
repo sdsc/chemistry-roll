@@ -87,6 +87,10 @@ endif
 MODULE_LOAD_LAMMPS_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
 DESCRIBE_LAMMPS_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSION))
 
+MODULE_LOAD_LAMMPS_MKL = $(call MODULE_LOAD_PACKAGE, $(L_MKL_VERSION), MKLHOME)
+DESCRIBE_LAMMPS_MKL = echo built with mkl $(call GET_MODULE_VERSION, $(L_MKL_VERSION))
+
+
 GPUS=37 60
 
 AVX_FLAG=
@@ -111,7 +115,7 @@ DESCRIPTION:
 	( \
 	  $(DESCRIBE_PKG); \
 	  $(DESCRIBE_CC); \
-	  $(DESCRIBE_MKL); \
+	  $(DESCRIBE_LAMMPS_MKL); \
 	  $(DESCRIBE_MPI); \
 	  if test "$(CUDABUILD)" = "yes"; then \
 	    $(DESCRIBE_LAMMPS_CUDA); \
@@ -130,7 +134,7 @@ cpu: $(SRC_DIRS)
 	mkdir -p $(CACHE_DIR)/lammps/bin
 	( \
 	  $(MODULE_LOAD_CC); \
-	  $(MODULE_LOAD_MKL); \
+	  $(MODULE_LOAD_LAMMPS_MKL); \
 	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
 	  $(MODULE_LOAD_MPI); \
 # \

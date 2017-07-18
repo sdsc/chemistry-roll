@@ -17,6 +17,12 @@ ifneq ("$(ROLLOPTS)", "$(subst lammps_othercuda=,,$(ROLLOPTS))")
   CUDAVERSION = $(subst lammps_othercuda=,,$(filter lammps_othercuda=%,$(ROLLOPTS)))
 endif
 
+L_MKL_VERSION=mkl
+ifneq ("$(ROLLOPTS)", "$(subst lammps_othermkl,,$(ROLLOPTS))")
+    L_MKL_VERSION = $(subst lammps_othermkl=,,$(filter lammps_othermkl=%,$(ROLLOPTS)))
+endif
+
+
 NAME           = sdsc-lammps
 VERSION        = $(shell date -d "$(SOURCE_VERSION)" +%Y%m%d)
 RELEASE        = 0
