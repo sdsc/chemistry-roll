@@ -243,11 +243,17 @@ cpu: $(SRC_DIRS)
 	  cp *.a ../../src; \
 	  cd ../../src; \
 	  $(MAKE) -j 16 ROOT=lmp mpi; \
-	  mv lmp_mpi $(CACHE_DIR)/lammps/bin/lammps \
+	  mv lmp_mpi $(CACHE_DIR)/lammps/bin/lammps; \
+          cd ../..; \
+          mkdir save; \
+          cp -r $(SOURCE_DIR)/* save \
         )
 
 $(GPUS):
 	 if test "$(CUDABUILD)" = "yes"; then \
+             rm -rf $(SOURCE_DIR); \
+             mkdir $(SOURCE_DIR); \
+             cp -r save/* $(SOURCE_DIR); \
 	     $(MODULE_LOAD_CC); \
 	     $(MODULE_LOAD_MKL); \
 	     $(MODULE_LOAD_MPI); \
@@ -270,14 +276,6 @@ $(GPUS):
              cp *.a ../../src; \
 	     $(MAKE) -j 16 ROOT=lmp mpi; \
     	     mv lmp_mpi  $(CACHE_DIR)/lammps/bin/lammps.$@.cuda; \
-             cd ../lib/gpu; \
-             rm -f *cubin*; \
-             rm -f *.o; \
-             rm -f libgpu.a; \
-             rm -f nvc_get_devices; \
-             cd ../../src; \
-             rm -f libgpu.a; \
-             rm -f *gpu*; \
 	  fi
 
 install::
@@ -292,4 +290,4 @@ install::
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SOURCE_DIR) DESCRIPTION LICENSE
+	rm -rf $(SOURCE_DIR) DESCRIPTION LICENSE save
