@@ -87,6 +87,11 @@ endif
 MODULE_LOAD_LAMMPS_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
 DESCRIBE_LAMMPS_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSION))
 
+MODULE_LOAD_LAMMPS_MKL = $(call MODULE_LOAD_PACKAGE, $(L_MKL_VERSION), MKLHOME)
+DESCRIBE_LAMMPS_MKL = echo built with mkl $(call GET_MODULE_VERSION, $(L_MKL_VERSION))
+
+
+GPUS=$(shell cat gpus.txt)
 
 AVX_FLAG=
 ifneq ("$(ROLLOPTS)", "$(subst avx2,,$(ROLLOPTS))")
@@ -110,7 +115,7 @@ DESCRIPTION:
 	( \
 	  $(DESCRIBE_PKG); \
 	  $(DESCRIBE_CC); \
-	  $(DESCRIBE_MKL); \
+	  $(DESCRIBE_LAMMPS_MKL); \
 	  $(DESCRIBE_MPI); \
 	  if test "$(CUDABUILD)" = "yes"; then \
 	    $(DESCRIBE_LAMMPS_CUDA); \
@@ -121,16 +126,20 @@ LICENSE: $(SRC_DIRS)
 	$(CHECK_LICENSE_FILES)
 	echo GPL > $@
 
-build: $(SRC_DIRS)
+build: cpu $(GPUS)
+	@echo "::: Package $(NAME) build complete :::"
+
+
+cpu: $(SRC_DIRS)
 	mkdir -p $(CACHE_DIR)/lammps/bin
 	( \
 	  $(MODULE_LOAD_CC); \
-	  $(MODULE_LOAD_MKL); \
+	  $(MODULE_LOAD_LAMMPS_MKL); \
 	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
 	  $(MODULE_LOAD_MPI); \
-	  if test "$(CUDABUILD)" = "yes"; then \
-	    $(MODULE_LOAD_CUDA); \
-	  fi; \
+          export CC=$(CC); \
+          export CXX=$(CXX); \
+          export FC=$(FC); \
 # \
           patch $(SOURCE_DIR)/src/MAKE/Makefile.mpi patch-files/Makefile.mpi.patch; \
           perl -pi -e "s!FORTRANTYPE!$(FORTRANTYPE)!g" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
@@ -145,7 +154,7 @@ build: $(SRC_DIRS)
           patch -o $(SOURCE_DIR)/lib/meam/Makefile.meam $(SOURCE_DIR)/lib/meam/Makefile.ifort patch-files/meam/Makefile.ifort.patch; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/meam/Makefile.meam; \
           patch $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort patch-files/meam/Makefile.lammps.ifort.patch; \
-          perl -pi -e "s!INTELLIBS!$(INTELLIBS)!" $(SOURCE_DIR)/lib/meam/Makefile.lammps; \
+          perl -pi -e "s!INTELLIBS!$(INTELLIBS)!" $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort; \
 # atc \
           patch -o  $(SOURCE_DIR)/lib/atc/Makefile.atc $(SOURCE_DIR)/lib/atc/Makefile.mpic++ patch-files/atc/Makefile.mpic++.patch; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/atc/Makefile.atc; \
@@ -170,6 +179,9 @@ build: $(SRC_DIRS)
 # colvars \
           patch -o $(SOURCE_DIR)/lib/colvars/Makefile.colvars $(SOURCE_DIR)/lib/colvars/Makefile.g++ patch-files/colvars/Makefile.g++.patch; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/colvars/Makefile.colvars; \
+          patch $(SOURCE_DIR)/lib/gpu/Makefile.linux patch-files/gpu/Makefile.linux.patch; \
+          cp $(SOURCE_DIR)/lib/gpu/Makefile.linux $(SOURCE_DIR)/lib/gpu/Makefile.linux.tmp; \
+          patch $(SOURCE_DIR)/lib/gpu/Makefile.lammps.standard  patch-files/gpu/Makefile.lammps.standard.patch; \
 # \
 	  cd $(SOURCE_DIR)/src; \
 	  perl -pi -e "s!MKLLIB!$${MKLLIB}!" MAKE/Makefile.mpi; \
@@ -231,24 +243,51 @@ build: $(SRC_DIRS)
 	  cp *.a ../../src; \
 	  cd ../../src; \
 	  $(MAKE) -j 16 ROOT=lmp mpi; \
-	  mv lmp_mpi $(CACHE_DIR)/lammps/bin/lammps; \
-	  if test "$(CUDABUILD)" = "yes"; then \
-            cd ../lib/gpu; \
-            patch Makefile.linux $(REDHAT.ROOT)/src/lammps/patch-files/gpu/Makefile.linux.patch; \
-	    $(MAKE) -f Makefile.linux; \
-	    cp *.a ../../src; \
-	    cd ../../src; \
-	    make yes-gpu; \
-	    $(MAKE) -j 16 ROOT=lmp mpi; \
-    	    mv lmp_mpi $(CACHE_DIR)/lammps/bin/lammps.cuda; \
-	  fi \
-	)
-	@echo "::: Package $(NAME) build complete :::"
+	  mv lmp_mpi $(CACHE_DIR)/lammps/bin/lammps \
+        )
+
+$(GPUS):
+	 if test "$(CUDABUILD)" = "yes"; then \
+	     $(MODULE_LOAD_CC); \
+	     $(MODULE_LOAD_MKL); \
+	     $(MODULE_LOAD_MPI); \
+             $(MODULE_LOAD_LAMMPS_CUDA); \
+             cd $(SOURCE_DIR)/src; \
+             make yes-gpu; \
+             cd ../lib/gpu; \
+             if test -e /usr/lib64/nvidia; then \
+                  perl -pi -e "s!EXTRACUDALIBS!-lnvidia-fatbinaryloader!g" Makefile.lammps.standard; \
+                  perl -pi -e "s!EXTRACUDAPATH!-L/usr/lib64/nvidia!g" Makefile.lammps.standard; \
+             else \
+                  perl -pi -e "s!EXTRACUDALIBS!!g" Makefile.lammps.standard; \
+                  perl -pi -e "s!EXTRACUDAPATH!!g" Makefile.lammps.standard; \
+             fi; \
+             perl -pi -e "s!CUDA_CAPABILITY!$@!g" Makefile.linux; \
+	     $(MAKE) -f Makefile.linux; \
+	     cp *.a ../../src; \
+             cp Makefile.linux.tmp Makefile.linux; \
+             cd ../../src;  \
+             cp *.a ../../src; \
+	     $(MAKE) -j 16 ROOT=lmp mpi; \
+    	     mv lmp_mpi  $(CACHE_DIR)/lammps/bin/lammps.$@.cuda; \
+             cd ../lib/gpu; \
+             rm -f *cubin*; \
+             rm -f *.o; \
+             rm -f libgpu.a; \
+             rm -f nvc_get_devices; \
+             cd ../../src; \
+             rm -f libgpu.a; \
+             rm -f *gpu*; \
+	  fi
 
 install::
 	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
 	cp $(CACHE_DIR)/lammps/bin/* $(ROOT)/$(PKGROOT)/bin
+	cp deviceQuery $(ROOT)/$(PKGROOT)/bin
+	perl -pi -e "s!PKGROOT!$(PKGROOT)!g" $(ROOT)/$(PKGROOT)/bin/deviceQuery; \
 	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)
+	cp lammps.cuda $(ROOT)/$(PKGROOT)/bin
+	perl -pi -e "s!PKGROOT!$(PKGROOT)!g" $(ROOT)/$(PKGROOT)/bin/lammps.cuda
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
 

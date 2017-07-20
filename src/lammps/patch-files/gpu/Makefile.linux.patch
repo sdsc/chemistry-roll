@@ -1,5 +1,5 @@
 --- lammps-31Mar17/lib/gpu/Makefile.linux	2016-07-01 16:27:26.000000000 -0700
-+++ patch-files/gpu/Makefile.linux	2017-07-11 13:32:37.240988450 -0700
++++ patch-files/gpu/Makefile.linux	2017-07-19 14:17:28.928937013 -0700
 @@ -7,19 +7,12 @@
  
  EXTRAMAKE = Makefile.lammps.standard
@@ -22,12 +22,8 @@
  
  # this setting should match LAMMPS Makefile
  # one of LAMMPS_SMALLBIG (default), LAMMPS_BIGBIG and LAMMPS_SMALLSMALL
-@@ -34,10 +27,10 @@
- CUDA_PRECISION = -D_SINGLE_DOUBLE
- 
- CUDA_INCLUDE = -I$(CUDA_HOME)/include
--CUDA_LIB = -L$(CUDA_HOME)/lib64
-+CUDA_LIB = -L$(CUDA_HOME)/lib64 -L/usr/lib64/nvidia -lnvidia-fatbinaryloader
+@@ -37,7 +30,7 @@
+ CUDA_LIB = -L$(CUDA_HOME)/lib64
  CUDA_OPTS = -DUNIX -O3 -Xptxas -v --use_fast_math $(LMP_INC)
  
 -CUDR_CPP = mpic++ -DMPI_GERYON -DUCL_NO_EXIT -DMPICH_IGNORE_CXX_SEEK -DOMPI_SKIP_MPICXX=1 -fPIC

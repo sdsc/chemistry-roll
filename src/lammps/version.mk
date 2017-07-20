@@ -22,6 +22,13 @@ ifneq ("$(ROLLOPTS)", "$(subst lammps_othermkl,,$(ROLLOPTS))")
     L_MKL_VERSION = $(subst lammps_othermkl=,,$(filter lammps_othermkl=%,$(ROLLOPTS)))
 endif
 
+ifneq ("$(ROLLOPTS)", "$(subst lammps_othermpi=,,$(ROLLOPTS))")
+  override ROLLMPI = $(subst lammps_othermpi=,,$(filter lammps_othermpi=%,$(ROLLOPTS)))
+else ifndef ROLLMPI
+  ROLLMPI = rocks-openmpi
+endif
+
+
 
 NAME           = sdsc-lammps
 VERSION        = $(shell date -d "$(SOURCE_VERSION)" +%Y%m%d)
