@@ -223,6 +223,7 @@ cpu: $(SRC_DIRS)
           $(MAKE) yes-user-drude; \
           $(MAKE) yes-user-fep; \
           $(MAKE) yes-qeq; \
+          $(MAKE) yes-user-intel; \
           cd ../lib/atc; \
 	  $(MAKE) -f Makefile.atc; \
 	  cp *.a ../../src; \
