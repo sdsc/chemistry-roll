@@ -90,6 +90,8 @@ DESCRIBE_LAMMPS_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVER
 MODULE_LOAD_LAMMPS_MKL = $(call MODULE_LOAD_PACKAGE, $(L_MKL_VERSION), MKLHOME)
 DESCRIBE_LAMMPS_MKL = echo built with mkl $(call GET_MODULE_VERSION, $(L_MKL_VERSION))
 
+MODULE_LOAD_GNU = $(call MODULE_LOAD_COMPILER,gnu,gcc)
+
 
 GPUS=$(shell cat gpus.txt)
 
@@ -133,6 +135,7 @@ build: cpu $(GPUS)
 cpu: $(SRC_DIRS)
 	mkdir -p $(CACHE_DIR)/lammps/bin
 	( \
+          $(MODULE_LOAD_GNU); \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_LAMMPS_MKL); \
 	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
@@ -255,6 +258,7 @@ $(GPUS):
              rm -rf $(SOURCE_DIR); \
              mkdir $(SOURCE_DIR); \
              cp -r save/* $(SOURCE_DIR); \
+             $(MODULE_LOAD_GNU); \
 	     $(MODULE_LOAD_CC); \
 	     $(MODULE_LOAD_MKL); \
 	     $(MODULE_LOAD_MPI); \
