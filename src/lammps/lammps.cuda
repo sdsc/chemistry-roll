@@ -1,0 +1,5 @@
+#!/bin/bash
+cuda_capability=`PKGROOT/bin/deviceQuery 2>&1 | grep 'CUDA Capability' |uniq |awk  '{print $6}'|sed 's/\.//'`
+if test $cuda_capability != ""; then
+    PKGROOT/bin/lammps.$cuda_capability.cuda $@
+fi

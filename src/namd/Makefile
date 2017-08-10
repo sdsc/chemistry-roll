@@ -100,6 +100,9 @@ ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
   CUDABUILD = yes
 endif
 
+MODULE_LOAD_NAMD_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
+DESCRIBE_NAMD_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSION))
+
 $(NAME).spec: DESCRIPTION LICENSE
 
 DESCRIPTION:
@@ -108,7 +111,7 @@ DESCRIPTION:
 	  $(DESCRIBE_PKG); \
 	  $(DESCRIBE_CC); \
 	  $(DESCRIBE_MPI); \
-	  $(DESCRIBE_CUDA) \
+	  $(DESCRIBE_NAMD_CUDA) \
 	) > $@
 
 LICENSE: $(SRC_DIRS)
@@ -126,7 +129,7 @@ build: $(SRC_DIRS)
 	( \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MPI); \
-	  $(MODULE_LOAD_CUDA); \
+	  $(MODULE_LOAD_NAMD_CUDA); \
 	  cd $(SOURCE_DIR); \
 	  cd charm-*[0-9]; \
 	  ./build charm++ mpi-linux-x86_64 $(CHARMBUILDOPTS); \

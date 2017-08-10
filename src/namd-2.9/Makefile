@@ -95,6 +95,9 @@ else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
   endif
 endif
 
+MODULE_LOAD_NAMD_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
+DESCRIBE_NAMD_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSION))
+
 CUDABUILD = no
 ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
   CUDA = --with-cuda
@@ -109,7 +112,7 @@ DESCRIPTION:
 	  $(DESCRIBE_PKG); \
 	  $(DESCRIBE_CC); \
 	  $(DESCRIBE_MPI); \
-	  $(DESCRIBE_CUDA) \
+	  $(DESCRIBE_NAMD_CUDA) \
 	) > $@
 
 LICENSE: $(SRC_DIRS)
@@ -130,7 +133,7 @@ build: $(SRC_DIRS)
 	( \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MPI); \
-	  $(MODULE_LOAD_CUDA); \
+	  $(MODULE_LOAD_NAMD_CUDA); \
           mv linux-$(ARCH) $(SOURCE_DIR); \
 	  perl -pi -e "s!ROLLCUDA!$${CUDAHOME}!g" $(SOURCE_DIR)/arch/Linux-x86_64.cuda; \
 	  cd $(SOURCE_DIR); \

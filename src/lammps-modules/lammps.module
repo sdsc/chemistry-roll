@@ -1,5 +1,4 @@
 #%Module1.0
 setenv LAMMPSHOME /opt/lammps
 prepend-path PATH /opt/lammps/bin
-prepend-path LD_LIBRARY_PATH /usr/lib64/nvidia
 module load ROLLCOMPILER ROLLMPI mkl

@@ -4,6 +4,9 @@ endif
 COMPILERNAME := $(firstword $(subst /, ,$(ROLLCOMPILER)))
 
 CUDAVERSION=cuda
+ifneq ("$(ROLLOPTS)", "$(subst cuda=,,$(ROLLOPTS))")
+  CUDAVERSION = $(subst cuda=,,$(filter cuda=%,$(ROLLOPTS)))
+endif
 ifneq ("$(ROLLOPTS)", "$(subst cp2k_othercuda=,,$(ROLLOPTS))")
   CUDAVERSION = $(subst cp2k_othercuda=,,$(filter cp2k_othercuda=%,$(ROLLOPTS)))
 endif
@@ -13,9 +16,12 @@ ifndef ROLLMPI
 endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
+
+
+
 NAME           = sdsc-cp2k
 VERSION        = 4.1
-RELEASE        = 0
+RELEASE        = 1
 PKGROOT        = /opt/cp2k
 
 SRC_SUBDIR     = cp2k

@@ -1,0 +1,11 @@
+--- lammps-31Mar17/lib/atc/Matrix.h	2014-12-01 18:12:19.000000000 -0800
++++ patch-files/atc/Matrix.h	2017-04-24 16:18:57.425974615 -0700
+@@ -356,7 +356,7 @@
+   int sz=this->size(); for(INDEX i=0; i<sz; i++)
+   {
+     double val = R[i];
+-    R[i] = pow(val,n);
++    R[i] = std::pow(val,n);
+   }
+   return R;
+ }

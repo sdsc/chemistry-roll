@@ -8,9 +8,17 @@ ifndef ROLLMPI
 endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
+CUDAVERSION=cuda
+ifneq ("$(ROLLOPTS)", "$(subst cuda=,,$(ROLLOPTS))")
+  CUDAVERSION = $(subst cuda=,,$(filter cuda=%,$(ROLLOPTS)))
+endif
+ifneq ("$(ROLLOPTS)", "$(subst namd_othercuda=,,$(ROLLOPTS))")
+  CUDAVERSION = $(subst namd_othercuda=,,$(filter namd_othercuda=%,$(ROLLOPTS)))
+endif
+
 VERSION        = 2.9
 NAME           = sdsc-namd-$(VERSION)
-RELEASE        = 13
+RELEASE        = 14
 PKGROOT        = /opt/namd/$(VERSION)
 
 SRC_SUBDIR     = namd

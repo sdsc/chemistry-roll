@@ -1,14 +1,5 @@
---- lammps-16Feb16/lib/meam/Makefile.ifort	2013-05-30 12:43:25.000000000 -0700
-+++ patch-files/meam/Makefile.ifort	2016-04-10 14:04:40.376946987 -0700
-@@ -11,7 +11,7 @@
- 
- # which file will be copied to Makefile.lammps
- 
--EXTRAMAKE = Makefile.lammps.ifort
-+EXTRAMAKE = Makefile.lammps
- 
- # ------ FILES ------
- 
+--- lammps-31Mar17/lib/meam/Makefile.ifort	2016-05-03 09:11:34.000000000 -0700
++++ patch-files/meam/Makefile.ifort	2017-04-05 08:24:07.000000000 -0700
 @@ -26,8 +26,8 @@
  
  # ------ SETTINGS ------
