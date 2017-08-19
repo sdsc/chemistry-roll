@@ -103,7 +103,7 @@ else
   CHARMARCH = mpi-linux-x86_64
   CHARMARCHCUDA = multicore-linux64-mpicxx
   CHARMBUILDOPTS = mpicxx
-  CHARMFILEXTENSION = mpicxx
+  CHARMFILEEXTENSION = mpicxx
   ifeq ("$(COMPILERNAME)", "intel")
     CHARMFLAGS = -O2  -xHOST
   else ifeq ("$(COMPILERNAME)", "pgi")
