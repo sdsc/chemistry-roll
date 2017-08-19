@@ -1,0 +1,4 @@
+166c166
+< 	model_valid = false;
+---
+> 	model_valid = new bool(false);
