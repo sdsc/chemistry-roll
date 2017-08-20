@@ -124,6 +124,7 @@ build: $(SRC_DIRS)
 	patch $(SOURCE_DIR)/arch/Linux-x86_64.fftw patch-files/Linux-x86_64.fftw.patch
 	patch $(SOURCE_DIR)/arch/Linux-x86_64.tcl patch-files/Linux-x86_64.tcl.patch
 	patch $(SOURCE_DIR)/arch/Linux-x86_64.cuda patch-files/Linux-x86_64.cuda.patch
+	patch $(SOURCE_DIR)/charm-*/src/ck-ldb/CentralLB.h patch-files/CentralLB.h.patch
 	cp Linux-x86_64* $(SOURCE_DIR)/arch
 	perl -pi -e "s!ROOTDIR!`pwd`/$(SOURCE_DIR)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
 	perl -pi -e "s!COMPILE_FLAGS!$(COMPILE_FLAGS)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
@@ -136,6 +137,7 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_NAMD_CUDA); \
           mv linux-$(ARCH) $(SOURCE_DIR); \
 	  perl -pi -e "s!ROLLCUDA!$${CUDAHOME}!g" $(SOURCE_DIR)/arch/Linux-x86_64.cuda; \
+	  export CXXFLAGS='-std=c++98'; \
 	  cd $(SOURCE_DIR); \
 	  cd charm-*[0-9]; \
 	  ./build charm++ mpi-linux-x86_64 $(CHARMBUILDOPTS); \
