@@ -1,5 +1,4 @@
-NAMD_ARCH = Linux-x86_64
-CHARMARCH = net-linux-x86_64-ibverbs-pgcc
+NAMD_ARCH=Linux-x86_64
 FLOATOPTS = COMPILE_FLAGS
 
 CXX = pgCC
@@ -8,4 +7,3 @@ CXXNOALIASOPTS = $(FLOATOPTS)
 
 CC = pgcc
 COPTS = $(FLOATOPTS)
-

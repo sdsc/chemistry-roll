@@ -73,37 +73,28 @@ endif
 IBVERBS = no
 ifneq ("$(MPINAME)","$(subst _ib,,$(MPINAME))")
    IBVERBS = yes
+else ifeq ("$(MPINAME)","intelmpi")
+   IBVERBS = yes
 endif
 
 MODULE_LOAD_NAMD_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
 DESCRIBE_NAMD_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSION))
 
 ifeq ($(IBVERBS),yes)
-  CHARMARCH = net-linux-x86_64
+  CHARMARCH = verbs-linux-x86_64
   ifeq ("$(COMPILERNAME)", "intel")
-    CHARMBUILDOPTS = ibverbs icc 
-    CHARMFILEEXTENSION = ibverbs-icc
-    CHARMCUDABUILDOPTS = ibverbs smp icc
-    CHARMCUDAFILEEXTENSION = ibverbs-smp-icc
     CHARMFLAGS = -O2  -xHOST
+    CHARMBUILDOPTS = smp icc
   else ifeq ("$(COMPILERNAME)", "pgi")
-    CHARMBUILDOPTS = ibverbs pgcc
-    CHARMFILEEXTENSION = ibverbs-pgcc
-    CHARMCUDABUILDOPTS = ibverbs smp pgcc
-    CHARMCUDAFILEEXTENSION = ibverbs-smp-pgcc
     CHARMFLAGS = -O2  -fast
+    CHARMBUILDOPTS = smp pgcc
   else ifeq ("$(COMPILERNAME)", "gnu")
-    CHARMBUILDOPTS = ibverbs gcc
-    CHARMFILEEXTENSION = ibverbs-gcc
-    CHARMCUDABUILDOPTS = ibverbs smp gcc
-    CHARMCUDAFILEEXTENSION = ibverbs-smp-gcc
     CHARMFLAGS = -O2
+    CHARMBUILDOPTS = smp gcc
   endif
 else
   CHARMARCH = mpi-linux-x86_64
-  CHARMARCHCUDA = multicore-linux64-mpicxx
-  CHARMBUILDOPTS = mpicxx
-  CHARMFILEEXTENSION = mpicxx
+  CHARMFILEXTENSION = mpicxx
   ifeq ("$(COMPILERNAME)", "intel")
     CHARMFLAGS = -O2  -xHOST
   else ifeq ("$(COMPILERNAME)", "pgi")
@@ -114,7 +105,6 @@ else
     CHARMFLAGS = -O2
   endif
 endif
-
 
 ifneq ("$(ROLLOPTS)", "$(subst avx2,,$(ROLLOPTS))")
   ifeq ("$(COMPILERNAME)", "gnu")
@@ -159,20 +149,24 @@ build: $(SRC_DIRS)
 	cd $(SOURCE_DIR) && tar xvf charm-*.tar
 	cp Linux-x86_64* $(SOURCE_DIR)/arch
 	perl -pi -e "s!COMPILE_FLAGS!$(COMPILE_FLAGS)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
+	patch $(SOURCE_DIR)/Make.charm patch-files/Make.charm.patch
 	if test "$(COMPILERNAME)" != "intel"; then \
 	  perl -pi -e "s! -auto ! !" $(SOURCE_DIR)/charm*/src/arch/mpi-linux-x86_64/cc-mpicxx.sh; \
 	fi
 	( \
+          CHARMFILEEXTENSION=`echo $(CHARMBUILDOPTS)| sed 's/ /-/g'`; \
 	  $(MODULE_LOAD_CC); \
           if test "$(IBVERBS)" = "no"; then \
 	     $(MODULE_LOAD_MPI); \
           fi; \
+          CHARMDIR=`find $(CURDIR)/$(SOURCE_DIR) -maxdepth 1 \( -name charm\*  -a -type d \)`; \
+          perl -pi -e "s!CHARMDIR!$${CHARMDIR}!g" $(SOURCE_DIR)/Make.charm; \
 	  cd $(SOURCE_DIR); \
 	  cd charm-*[0-9]; \
-	  ./build charm++ $(CHARMARCH) $(CHARMBUILDOPTS) $(CHARMFLAGS); \
+          ./build charm++ $(CHARMARCH) $(CHARMBUILDOPTS) --with-production; \
 	  cd ..; \
 	  ./config Linux-x86_64-$(CC) \
-	           --charm-arch $(CHARMARCH)-$(CHARMFILEEXTENSION) \
+	           --charm-arch $(CHARMARCH)-$${CHARMFILEEXTENSION} \
 	           --fftw-prefix $(CURDIR)/$(FFTW_DIR) \
 	           --tcl-prefix $(CURDIR)/$(TCL_DIR) --without-cuda; \
 	 cd Linux-x86_64-$(CC); \
@@ -183,20 +177,15 @@ build: $(SRC_DIRS)
 	   $(MODULE_LOAD_NAMD_CUDA); \
            cd ..; \
            rm -rf Linux-x86_64-$(CC); \
-           rm -rf charm-*[0-9]; \
-           tar xvf charm-*.tar; \
-           cd charm-*[0-9]; \
-	   ./build charm++ $(CHARMARCH) $(CHARMCUDABUILDOPTS) $(CHARMFLAGS); \
-           cd ..; \
-	   ./config Linux-x86_64-cuda-$(CC) \
-	           --charm-arch $(CHARMARCH)-$(CHARMCUDAFILEEXTENSION) \
-	           --fftw-prefix $(CURDIR)/$(FFTW_DIR) \
-	           --tcl-prefix $(CURDIR)/$(TCL_DIR) \
-	           $(CUDAOPT); \
+	   perl -pi -e "s!CUDAHOME!$${CUDAHOME}!g" arch/Linux-x86_64*; \
+           ./config Linux-x86_64-cuda-$(CC) \
+                   --charm-arch $(CHARMARCH)-$${CHARMFILEEXTENSION} \
+                   --fftw-prefix $(CURDIR)/$(FFTW_DIR) \
+                   --tcl-prefix $(CURDIR)/$(TCL_DIR) \
+                   $(CUDAOPT); \
 	   cd Linux-x86_64-cuda-$(CC); \
 	   $(MAKE) -j 16; \
            cp namd2 $(PWD)/bin/namd2.cuda; \
-           cp charmrun $(PWD)/bin/charmrun.cuda; \
           fi \
 	)
 	@echo "::: Package $(NAME) build complete :::"
