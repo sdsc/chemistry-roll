@@ -83,27 +83,16 @@ DESCRIBE_NAMD_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSI
 ifeq ($(IBVERBS),yes)
   CHARMARCH = verbs-linux-x86_64
   ifeq ("$(COMPILERNAME)", "intel")
-    CHARMFLAGS = -O2  -xHOST
     CHARMBUILDOPTS = smp icc
   else ifeq ("$(COMPILERNAME)", "pgi")
-    CHARMFLAGS = -O2  -fast
     CHARMBUILDOPTS = smp pgcc
   else ifeq ("$(COMPILERNAME)", "gnu")
-    CHARMFLAGS = -O2
     CHARMBUILDOPTS = smp gcc
   endif
 else
   CHARMARCH = mpi-linux-x86_64
   CHARMFILEXTENSION = mpicxx
-  ifeq ("$(COMPILERNAME)", "intel")
-    CHARMFLAGS = -O2  -xHOST
-  else ifeq ("$(COMPILERNAME)", "pgi")
-    CHARMBUILDOPTS = mpicxx
-    CHARMFLAGS = -O2  -fast
-  else ifeq ("$(COMPILERNAME)", "gnu")
-    CHARMBUILDOPTS = mpicxx
-    CHARMFLAGS = -O2
-  endif
+  CHARMBUILDOPTS = mpicxx
 endif
 
 ifneq ("$(ROLLOPTS)", "$(subst avx2,,$(ROLLOPTS))")
