@@ -80,6 +80,7 @@ endif
 MODULE_LOAD_NAMD_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
 DESCRIBE_NAMD_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSION))
 
+CHARMFLAGS=--with-production
 ifeq ($(IBVERBS),yes)
   CHARMARCH = verbs-linux-x86_64
   ifeq ("$(COMPILERNAME)", "intel")
@@ -152,7 +153,7 @@ build: $(SRC_DIRS)
           perl -pi -e "s!CHARMDIR!$${CHARMDIR}!g" $(SOURCE_DIR)/Make.charm; \
 	  cd $(SOURCE_DIR); \
 	  cd charm-*[0-9]; \
-          ./build charm++ $(CHARMARCH) $(CHARMBUILDOPTS) --with-production; \
+          ./build charm++ $(CHARMARCH) $(CHARMBUILDOPTS) $(CHARMFLAGS); \
 	  cd ..; \
 	  ./config Linux-x86_64-$(CC) \
 	           --charm-arch $(CHARMARCH)-$${CHARMFILEEXTENSION} \

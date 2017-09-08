@@ -89,8 +89,11 @@ To install, execute these instructions on a Rocks frontend:
 % rocks create distro
 ```
 
-Subsequent installs of compute and login nodes will then include the contents of the chemistry-roll.
-To avoid cluttering the cluster frontend with unused software, the chemistry-roll is configured to install only on compute and login nodes. To force installation on your frontend, run this command after adding the chemistry-roll to your distro
+Subsequent installs of compute and login nodes will then include the contents
+of the chemistry-roll.  To avoid cluttering the cluster frontend with unused
+software, the chemistry-roll is configured to install only on compute and
+login nodes. To force installation on your frontend, run this command after
+adding the chemistry-roll to your distro
 
 ```shell
 % rocks run roll chemistry host=NAME | bash
