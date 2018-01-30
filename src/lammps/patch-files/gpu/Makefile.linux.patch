@@ -1,33 +1,20 @@
---- lammps-31Mar17/lib/gpu/Makefile.linux	2016-07-01 16:27:26.000000000 -0700
-+++ patch-files/gpu/Makefile.linux	2017-07-19 14:17:28.928937013 -0700
-@@ -7,19 +7,12 @@
- 
- EXTRAMAKE = Makefile.lammps.standard
- 
--ifeq ($(CUDA_HOME),)
--CUDA_HOME = /usr/local/cuda
--endif
-+CUDA_HOME = ${CUDAHOME}
- 
+--- lammps-17Jan18/lib/gpu/Makefile.linux	2017-09-20 07:52:27.000000000 -0700
++++ patch-files/gpu/Makefile.linux	2018-01-29 15:13:16.000000000 -0800
+@@ -14,7 +14,7 @@
  NVCC = nvcc
  
  # Tesla CUDA
 -CUDA_ARCH = -arch=sm_21
--# newer CUDA
--#CUDA_ARCH = -arch=sm_13
--# older CUDA
--#CUDA_ARCH = -arch=sm_10 -DCUDA_PRE_THREE
--CUDA_ARCH = -arch=sm_35
 +CUDA_ARCH = -gencode arch=compute_CUDA_CAPABILITY,code=sm_CUDA_CAPABILITY
+ # newer CUDA
+ #CUDA_ARCH = -arch=sm_13
+ # older CUDA
+@@ -34,7 +34,7 @@
+ CUDA_PRECISION = -D_SINGLE_DOUBLE
  
- # this setting should match LAMMPS Makefile
- # one of LAMMPS_SMALLBIG (default), LAMMPS_BIGBIG and LAMMPS_SMALLSMALL
-@@ -37,7 +30,7 @@
- CUDA_LIB = -L$(CUDA_HOME)/lib64
- CUDA_OPTS = -DUNIX -O3 -Xptxas -v --use_fast_math $(LMP_INC)
+ CUDA_INCLUDE = -I$(CUDA_HOME)/include
+-CUDA_LIB = -L$(CUDA_HOME)/lib64
++CUDA_LIB = -L$(CUDA_HOME)/lib64 EXTRACUDAPATH EXTRACUDALIBS
+ CUDA_OPTS = -DUNIX -O3 -Xptxas -v --use_fast_math $(LMP_INC) -Xcompiler -fPIC
  
--CUDR_CPP = mpic++ -DMPI_GERYON -DUCL_NO_EXIT -DMPICH_IGNORE_CXX_SEEK -DOMPI_SKIP_MPICXX=1 -fPIC
-+CUDR_CPP = mpicxx -DMPI_GERYON -DUCL_NO_EXIT -DMPICH_IGNORE_CXX_SEEK -DOMPI_SKIP_MPICXX=1 -fPIC
- CUDR_OPTS = -O2 $(LMP_INC) # -xHost -no-prec-div -ansi-alias
- 
- BIN_DIR = ./
+ CUDR_CPP = mpicxx -DMPI_GERYON -DUCL_NO_EXIT -DMPICH_IGNORE_CXX_SEEK -DOMPI_SKIP_MPICXX=1 -fPIC

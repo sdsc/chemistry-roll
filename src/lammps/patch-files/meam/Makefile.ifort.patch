@@ -1,5 +1,5 @@
---- lammps-31Mar17/lib/meam/Makefile.ifort	2016-05-03 09:11:34.000000000 -0700
-+++ patch-files/meam/Makefile.ifort	2017-04-05 08:24:07.000000000 -0700
+--- lammps-17Jan18/lib/meam/Makefile.ifort	2016-05-03 09:11:34.000000000 -0700
++++ patch-files/meam/Makefile.ifort	2018-01-29 15:19:03.000000000 -0800
 @@ -26,8 +26,8 @@
  
  # ------ SETTINGS ------

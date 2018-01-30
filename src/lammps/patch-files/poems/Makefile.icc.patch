@@ -1,5 +1,5 @@
---- lammps-31Mar17/lib/poems/Makefile.icc	2016-03-22 06:44:55.000000000 -0700
-+++ patch-files/poems/Makefile.icc	2017-07-18 11:16:01.326429328 -0700
+--- lammps-17Jan18/lib/poems/Makefile.icc	2016-03-22 06:44:55.000000000 -0700
++++ patch-files/poems/Makefile.icc	2018-01-29 15:29:16.000000000 -0800
 @@ -67,12 +67,12 @@
  
  # ------ SETTINGS ------
@@ -7,7 +7,7 @@
 -CC =		icc
 -CCFLAGS =       -O -fPIC -Wall -Wcheck -wd869,981,1572
 +CC =		mpicc
-+CCFLAGS =       -O -fPIC  ROLLWARNINGS ROLLAVX
++CCFLAGS =       -O -fPIC ROLLWARNINGS ROLLAVX
  ARCHIVE =	ar
  ARCHFLAG =	-rc
  DEPFLAGS =      -M
