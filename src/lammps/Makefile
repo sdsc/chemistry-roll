@@ -262,7 +262,7 @@ $(GPUS):
              cp -r save/* $(SOURCE_DIR); \
              $(MODULE_LOAD_GNU); \
 	     $(MODULE_LOAD_CC); \
-	     $(MODULE_LOAD_MKL); \
+	     $(MODULE_LOAD_LAMMPS_MKL); \
 	     $(MODULE_LOAD_MPI); \
              $(MODULE_LOAD_LAMMPS_CUDA); \
              cd $(SOURCE_DIR)/src; \
