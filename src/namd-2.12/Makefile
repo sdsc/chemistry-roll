@@ -81,6 +81,7 @@ MODULE_LOAD_NAMD_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
 DESCRIBE_NAMD_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSION))
 
 CHARMFLAGS=--with-production
+LIBIBVERBS=
 ifeq ($(IBVERBS),yes)
   CHARMARCH = verbs-linux-x86_64
   ifeq ("$(COMPILERNAME)", "intel")
@@ -88,6 +89,7 @@ ifeq ($(IBVERBS),yes)
   else ifeq ("$(COMPILERNAME)", "pgi")
     CHARMBUILDOPTS = smp pgcc
   else ifeq ("$(COMPILERNAME)", "gnu")
+    LIBIBVERBS = -libverbs
     CHARMBUILDOPTS = smp gcc
   endif
 else
@@ -139,6 +141,7 @@ build: $(SRC_DIRS)
 	cd $(SOURCE_DIR) && tar xvf charm-*.tar
 	cp Linux-x86_64* $(SOURCE_DIR)/arch
 	perl -pi -e "s!COMPILE_FLAGS!$(COMPILE_FLAGS)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
+	perl -pi -e "s!LIBIBVERBS!$(LIBIBVERBS)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
 	patch $(SOURCE_DIR)/Make.charm patch-files/Make.charm.patch
 	if test "$(COMPILERNAME)" != "intel"; then \
 	  perl -pi -e "s! -auto ! !" $(SOURCE_DIR)/charm*/src/arch/mpi-linux-x86_64/cc-mpicxx.sh; \

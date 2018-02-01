@@ -4,3 +4,4 @@ CXX = g++ -m64 -std=c++0x
 CXXOPTS = COMPILE_FLAGS
 CC = gcc -m64 -O3
 COPTS = -fexpensive-optimizations -ffast-math
+EXTRALINKLIBS = LIBIBVERBS
