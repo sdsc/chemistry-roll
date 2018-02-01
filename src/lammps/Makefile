@@ -70,6 +70,7 @@ COMPILERTYPE=gnu
 INTELLIBS=
 INTELLIBS2=
 GNULIBS=-lgfortran
+PHIOFFLOAD=
 ifeq ("$(COMPILERNAME)","intel")
   GNULIBS=
   ROLLWARNINGS=-Wall -Wcheck -wd869,981,1572
@@ -77,6 +78,7 @@ ifeq ("$(COMPILERNAME)","intel")
   COMPILERTYPE=intel
   INTELLIBS=-lifcore -lsvml -limf -lintlc
   INTELLIBS2=-liomp5
+  PHIOFFLOAD = -qno-offload
 endif
 
 CUDABUILD = no
@@ -94,6 +96,7 @@ MODULE_LOAD_GNU = $(call MODULE_LOAD_COMPILER,gnu,gcc)
 
 
 GPUS=$(shell cat gpus.txt)
+
 
 AVX_FLAG=
 ifneq ("$(ROLLOPTS)", "$(subst avx2,,$(ROLLOPTS))")
@@ -149,6 +152,7 @@ cpu: $(SRC_DIRS)
           perl -pi -e "s!FORTRANTYPE!$(FORTRANTYPE)!g" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
 	  perl -pi -e "s!COMPILERTYPE!$(COMPILERTYPE)!g" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
 	  perl -pi -e "s!GNULIBS!$(GNULIBS)!g" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
+	  perl -pi -e "s!PHIOFFLOAD!$(PHIOFFLOAD)!g" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
           if test "$(COMPILERNAME)" != "intel"; then \
              perl -pi -e "s! -restrict!!" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
           fi; \
