@@ -70,13 +70,15 @@ COMPILERTYPE=gnu
 INTELLIBS=
 INTELLIBS2=
 GNULIBS=-lgfortran
+PHIOFFLOAD=
 ifeq ("$(COMPILERNAME)","intel")
   GNULIBS=
   ROLLWARNINGS=-Wall -Wcheck -wd869,981,1572
   FORTRANTYPE=intel
   COMPILERTYPE=intel
-  INTELLIBS=-lifcore -lsvml -limf -lintlc
+  INTELLIBS=-lifcore -lsvml -limf -lintlc -ltbbmalloc
   INTELLIBS2=-liomp5
+  PHIOFFLOAD = -qno-offload
 endif
 
 CUDABUILD = no
@@ -95,18 +97,19 @@ MODULE_LOAD_GNU = $(call MODULE_LOAD_COMPILER,gnu,gcc)
 
 GPUS=$(shell cat gpus.txt)
 
+
 AVX_FLAG=
 ifneq ("$(ROLLOPTS)", "$(subst avx2,,$(ROLLOPTS))")
   ifeq ("$(COMPILERNAME)", "gnu")
     AVX_FLAG = -mavx2
   else ifeq ("$(COMPILERNAME)", "intel")
-    AVX_FLAG = -xcore-avx2
+    AVX_FLAG = -xHost
   endif
 else ifneq ("$(ROLLOPTS)", "$(subst avx,,$(ROLLOPTS))")
   ifeq ("$(COMPILERNAME)", "gnu")
     AVX_FLAG = -mavx
   else ifeq ("$(COMPILERNAME)", "intel")
-    AVX_FLAG = -xavx
+    AVX_FLAG = -xHost
   endif
 endif
 
@@ -138,16 +141,18 @@ cpu: $(SRC_DIRS)
           $(MODULE_LOAD_GNU); \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_LAMMPS_MKL); \
-	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
+ 	  export MKLLIB=$${MKLHOME}/lib/intel64; \
 	  $(MODULE_LOAD_MPI); \
           export CC=$(CC); \
           export CXX=$(CXX); \
           export FC=$(FC); \
 # \
           patch $(SOURCE_DIR)/src/MAKE/Makefile.mpi patch-files/Makefile.mpi.patch; \
+          patch $(SOURCE_DIR)/src/USER-INTEL/pair_tersoff_intel.cpp patch-files/user-intel/pair_tersoff_intel.cpp.patch; \
           perl -pi -e "s!FORTRANTYPE!$(FORTRANTYPE)!g" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
 	  perl -pi -e "s!COMPILERTYPE!$(COMPILERTYPE)!g" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
 	  perl -pi -e "s!GNULIBS!$(GNULIBS)!g" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
+	  perl -pi -e "s!PHIOFFLOAD!$(PHIOFFLOAD)!g" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
           if test "$(COMPILERNAME)" != "intel"; then \
              perl -pi -e "s! -restrict!!" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
           fi; \
@@ -161,12 +166,9 @@ cpu: $(SRC_DIRS)
 # atc \
           patch -o  $(SOURCE_DIR)/lib/atc/Makefile.atc $(SOURCE_DIR)/lib/atc/Makefile.mpic++ patch-files/atc/Makefile.mpic++.patch; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/atc/Makefile.atc; \
-          patch $(SOURCE_DIR)/lib/atc/Makefile.lammps.installed patch-files/atc/Makefile.lammps.installed.patch; \
-          patch $(SOURCE_DIR)/lib/atc/Matrix.h patch-files/atc/Matrix.h.patch; \
 #awpmd \
           patch -o  $(SOURCE_DIR)/lib/awpmd/Makefile.awpmd $(SOURCE_DIR)/lib/awpmd/Makefile.mpicc patch-files/awpmd/Makefile.mpicc.patch; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/awpmd/Makefile.awpmd; \
-          patch $(SOURCE_DIR)/lib/awpmd/Makefile.lammps.installed patch-files/awpmd/Makefile.lammps.installed.patch; \
 # poems \
           patch -o $(SOURCE_DIR)/lib/poems/Makefile.poems $(SOURCE_DIR)/lib/poems/Makefile.icc patch-files/poems/Makefile.icc.patch; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/poems/Makefile.poems; \
@@ -260,7 +262,7 @@ $(GPUS):
              cp -r save/* $(SOURCE_DIR); \
              $(MODULE_LOAD_GNU); \
 	     $(MODULE_LOAD_CC); \
-	     $(MODULE_LOAD_MKL); \
+	     $(MODULE_LOAD_LAMMPS_MKL); \
 	     $(MODULE_LOAD_MPI); \
              $(MODULE_LOAD_LAMMPS_CUDA); \
              cd $(SOURCE_DIR)/src; \
@@ -268,10 +270,14 @@ $(GPUS):
              cd ../lib/gpu; \
              if test -e /usr/lib64/nvidia; then \
                   perl -pi -e "s!EXTRACUDALIBS!-lnvidia-fatbinaryloader!g" Makefile.lammps.standard; \
+                  perl -pi -e "s!EXTRACUDALIBS!-lnvidia-fatbinaryloader!g" Makefile.linux; \
                   perl -pi -e "s!EXTRACUDAPATH!-L/usr/lib64/nvidia!g" Makefile.lammps.standard; \
+                  perl -pi -e "s!EXTRACUDAPATH!-L/usr/lib64/nvidia!g" Makefile.linux; \
              else \
                   perl -pi -e "s!EXTRACUDALIBS!!g" Makefile.lammps.standard; \
+                  perl -pi -e "s!EXTRACUDALIBS!!g" Makefile.linux; \
                   perl -pi -e "s!EXTRACUDAPATH!!g" Makefile.lammps.standard; \
+                  perl -pi -e "s!EXTRACUDAPATH!!g" Makefile.linux; \
              fi; \
              perl -pi -e "s!CUDA_CAPABILITY!$@!g" Makefile.linux; \
 	     $(MAKE) -f Makefile.linux; \

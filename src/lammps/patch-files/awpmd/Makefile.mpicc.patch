@@ -1,13 +1,8 @@
---- lammps-31Mar17/lib/awpmd/Makefile.mpicc	2016-09-08 13:20:32.000000000 -0700
-+++ patch-files/awpmd/Makefile.mpicc	2017-04-04 19:35:57.000000000 -0700
-@@ -36,8 +36,8 @@
- # include any MPI settings needed for the ATC library to build with
- # the same MPI library that LAMMPS is built with
- 
--CC =	    mpic++ 
--CCFLAGS = -O -fPIC -Isystems/interact/TCP/ -Isystems/interact -Iivutils/include
-+CC =	    mpicxx
-+CCFLAGS = -O -fPIC -Isystems/interact/TCP/ -Isystems/interact -Iivutils/include ROLLAVX
- ARCHIVE =	ar
- ARCHFLAG =	-rc
- DEPFLAGS =  -M
+5c5
+< EXTRAMAKE = Makefile.lammps.installed
+---
+> EXTRAMAKE = Makefile.lammps.empty
+41c41
+< 	  -DMPICH_IGNORE_CXX_SEEK -DOMPI_SKIP_MPICXX=1
+---
+> 	  -DMPICH_IGNORE_CXX_SEEK -DOMPI_SKIP_MPICXX=1 ROLLAVX
