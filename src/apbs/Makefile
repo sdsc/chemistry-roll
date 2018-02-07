@@ -98,7 +98,7 @@ build: $(SRC_DIRS)
           export CC=mpicc; \
           export CXX=mpicxx; \
           export FC=mpif90; \
-	  export MKLLIB=`find $${MKLHOME}/lib/* -maxdepth 0 | head -1`; \
+	  export MKLLIB=$${MKLHOME}/lib/intel64; \
           export LDFLAGS=-L$(PWD)/$(SOURCE_DIR)/build/fetk/lib; \
 	  $(MODULE_LOAD_MPI); \
           cd $(MALOC_SOURCE_DIR); \
