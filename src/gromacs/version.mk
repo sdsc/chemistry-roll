@@ -23,7 +23,7 @@ endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 NAME           = sdsc-gromacs
-VERSION        = 2016.3
+VERSION        = 2018
 RELEASE        = 0
 PKGROOT        = /opt/gromacs
 
