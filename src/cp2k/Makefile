@@ -73,14 +73,13 @@ endif
 MODULE_LOAD_CP2K_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
 DESCRIBE_CP2K_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSION))
 
-ifneq (,$(findstring mvapich,$(MPINAME)))
+ifneq ("","$(filter mvapich intelmpi, $(findstring mvapich,$(MPINAME)) $(findstring intelmpi,$(MPINAME)))")
   INTELMPITYPE=intelmpi
 else
   INTELMPITYPE=openmpi
 endif
 
 ROLLMAKEFILE = Linux-x86-64-$(COMPILERNAME)
-
 
 COMPILE_FLAGS += -I$(REDHAT.ROOT)/src/cp2k/$(SOURCE_DIR)/obj/$(ROLLMAKEFILE)/popt
 
