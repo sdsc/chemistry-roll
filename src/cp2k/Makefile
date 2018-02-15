@@ -140,7 +140,9 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_MPI); \
 	  $(MODULE_LOAD_FFTW); \
           if test "$(COMPILERNAME)" = "intel"; then \
-              export ALLDEPADD=all.dep.add; \
+              cp all.dep.add all.dep; \
+	      perl -pi -e "s!ROOTDIR!$(CURDIR)!" all.dep; \
+	      perl -pi -e "s!SOURCEDIR!$(SOURCE_DIR)!" all.dep; \
 	      patch $(SOURCE_DIR)/makefiles/Makefile patch-files/Makefile.patch; \
           fi; \
 	  perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
@@ -181,12 +183,14 @@ build: $(SRC_DIRS)
           make -j 16; \
           make install; \
           cd ../makefiles; \
-          $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt; \
+          $(MAKE) CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt; \
           mv ../exe/Linux-x86-64-$(COMPILERNAME)/*.popt ..; \
           if test "$(CUDABUILD)" = "yes"; then \
               export CUDAEXTRALIBS="-lcp2kpwcuda -lcusmm -lcp2kacccuda"; \
               if test "$(COMPILERNAME)" = "intel"; then \
-                    export ALLDEPADD=all.dep.cuda.add; \
+                    cp all.dep.cuda.add all.dep; \
+	            perl -pi -e "s!ROOTDIR!$(CURDIR)!" all.dep; \
+	            perl -pi -e "s!SOURCEDIR!$(SOURCE_DIR)!" all.dep; \
 	            patch $(SOURCE_DIR)/makefiles/Makefile patch-files/Makefile.patch; \
               fi; \
               $(MODULE_LOAD_CP2K_CUDA); \
