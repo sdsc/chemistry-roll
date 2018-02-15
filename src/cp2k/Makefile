@@ -183,7 +183,7 @@ build: $(SRC_DIRS)
           make -j 16; \
           make install; \
           cd ../makefiles; \
-          $(MAKE) CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt; \
+          $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt; \
           mv ../exe/Linux-x86-64-$(COMPILERNAME)/*.popt ..; \
           if test "$(CUDABUILD)" = "yes"; then \
               export CUDAEXTRALIBS="-lcp2kpwcuda -lcusmm -lcp2kacccuda"; \
