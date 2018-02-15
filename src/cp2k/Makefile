@@ -73,14 +73,13 @@ endif
 MODULE_LOAD_CP2K_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
 DESCRIBE_CP2K_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSION))
 
-ifneq (,$(findstring mvapich,$(MPINAME)))
+ifneq ("","$(filter mvapich intelmpi, $(findstring mvapich,$(MPINAME)) $(findstring intelmpi,$(MPINAME)))")
   INTELMPITYPE=intelmpi
 else
   INTELMPITYPE=openmpi
 endif
 
 ROLLMAKEFILE = Linux-x86-64-$(COMPILERNAME)
-
 
 COMPILE_FLAGS += -I$(REDHAT.ROOT)/src/cp2k/$(SOURCE_DIR)/obj/$(ROLLMAKEFILE)/popt
 
@@ -136,13 +135,14 @@ build: $(SRC_DIRS)
 	cp Linux-x86-64-gnu.popt $(SOURCE_DIR)/arch
 	cp Linux-x86-64-intel.popt $(SOURCE_DIR)/arch
 	-( \
-          if test "$(COMPILERNAME)" = "intel"; then \
-	     patch $(SOURCE_DIR)/makefiles/Makefile patch-files/Makefile.patch; \
-          fi; \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \
 	  $(MODULE_LOAD_MPI); \
 	  $(MODULE_LOAD_FFTW); \
+          if test "$(COMPILERNAME)" = "intel"; then \
+              export ALLDEPADD=all.dep.add; \
+	      patch $(SOURCE_DIR)/makefiles/Makefile patch-files/Makefile.patch; \
+          fi; \
 	  perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!INTELMPITYPE!$(INTELMPITYPE)!g" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLFFTW!$${FFTWHOME}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
@@ -178,13 +178,17 @@ build: $(SRC_DIRS)
           mv ../$(LIBXC_DIR) .; \
           cd $(LIBXC_DIR); \
           ./configure --prefix=`pwd`/../libxc --enable-fortran --enable-shared; \
-          make; \
+          make -j 16; \
           make install; \
           cd ../makefiles; \
           $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt; \
           mv ../exe/Linux-x86-64-$(COMPILERNAME)/*.popt ..; \
           if test "$(CUDABUILD)" = "yes"; then \
               export CUDAEXTRALIBS="-lcp2kpwcuda -lcusmm -lcp2kacccuda"; \
+              if test "$(COMPILERNAME)" = "intel"; then \
+                    export ALLDEPADD=all.dep.cuda.add; \
+	            patch $(SOURCE_DIR)/makefiles/Makefile patch-files/Makefile.patch; \
+              fi; \
               $(MODULE_LOAD_CP2K_CUDA); \
               $(CUDAVARS); \
               cp ../../Linux-x86-64-gnu.popt ../arch; \
@@ -199,7 +203,7 @@ build: $(SRC_DIRS)
   	      perl -pi -e "s!CUDADEFS!$${CUDADEFS}!" ../arch/$(ROLLMAKEFILE).popt; \
               perl -pi -e "s!CUDALIBS!$${CUDALIBS}!" ../arch/$(ROLLMAKEFILE).popt; \
               make realclean ARCH=$(ROLLMAKEFILE) VERSION=popt; \
-              $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt ; \
+              $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt; \
               exes=`find ../exe/Linux-x86-64-$(COMPILERNAME) -name \*.popt -print`; \
               for exe in $${exes}; do \
                    name=`basename $${exe}`; \
