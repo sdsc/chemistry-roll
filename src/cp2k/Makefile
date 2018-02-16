@@ -188,9 +188,9 @@ build: $(SRC_DIRS)
           if test "$(CUDABUILD)" = "yes"; then \
               export CUDAEXTRALIBS="-lcp2kpwcuda -lcusmm -lcp2kacccuda"; \
               if test "$(COMPILERNAME)" = "intel"; then \
-                    cp all.dep.cuda.add all.dep; \
-	            perl -pi -e "s!ROOTDIR!$(CURDIR)!g" all.dep; \
-	            perl -pi -e "s!SOURCEDIR!$(SOURCE_DIR)!g" all.dep; \
+                    cp $(CURDIR)/all.dep.cuda.add $(CURDIR)/all.dep; \
+	            perl -pi -e "s!ROOTDIR!$(CURDIR)!g" $(CURDIR)/all.dep; \
+	            perl -pi -e "s!SOURCEDIR!$(SOURCE_DIR)!g" $(CURDIR)/all.dep; \
 	            patch $(SOURCE_DIR)/makefiles/Makefile patch-files/Makefile.patch; \
               fi; \
               $(MODULE_LOAD_CP2K_CUDA); \

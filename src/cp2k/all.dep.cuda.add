@@ -175,7 +175,7 @@ $(EXEDIR)/libcp2k_unittest.$(ONEVERSION) : libcp2k_unittest.o $(LIBDIR)/libcp2ks
 
 # Program ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/libcusmm_unittest.cu
 $(EXEDIR)/libcusmm_unittest.$(ONEVERSION) : libcusmm_unittest.o $(LIBDIR)/libcusmm.a
-	mpicxx $(LDFLAGS) -L$(LIBDIR) -o $@ libcusmm_unittest.o $(EXTERNAL_OBJECTS) -lcusmm $(LIBS)
+	mpif90 -nofor_main  $(LDFLAGS) -L$(LIBDIR) -o $@ libcusmm_unittest.o $(EXTERNAL_OBJECTS) -lcusmm $(LIBS)
 
 # Object motion_utils.F
 motion_utils.mod : motion_utils.F ROOTDIR/SOURCEDIR/src/base/base_uses.f90 force_env_types.mod particle_list_types.mod virial_types.mod input_section_types.mod cp_subsys_types.mod cell_types.mod particle_types.mod kinds.mod cp_log_handling.mod base_hooks.mod mathlib.mod machine.mod particle_methods.mod input_constants.mod cp2k_info.mod cp_units.mod physcon.mod cp_output_handling.mod
