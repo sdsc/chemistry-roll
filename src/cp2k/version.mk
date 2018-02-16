@@ -1,6 +1,9 @@
-ifndef ROLLCOMPILER
+ifneq ("$(ROLLOPTS)", "$(subst cp2k_othercompiler=,,$(ROLLOPTS))")
+  override ROLLCOMPILER = $(subst cp2k_othercompiler=,,$(filter cp2k_othercompiler=%,$(ROLLOPTS)))
+else ifndef ROLLCOMPILER
   ROLLCOMPILER = gnu
 endif
+
 COMPILERNAME := $(firstword $(subst /, ,$(ROLLCOMPILER)))
 
 CUDAVERSION=cuda
