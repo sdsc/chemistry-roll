@@ -1,7 +1,7 @@
-#makedep: Parsed 1144 files
+#makedep: Parsed 1183 files
 #makedep: Created mod2fn table, found 1051 modules.
 #makedep: Read 47 package manifests
-#makedep: Checked 14944 dependencies
+#makedep: Checked 15061 dependencies
 
 # Package ROOTDIR/SOURCEDIR/src/hfxbase
 $(LIBDIR)/libcp2khfxbase.a : hfx_contraction_methods.o hfx_contract_block.o hfx_compression_core_methods.o
@@ -10,10 +10,13 @@ $(LIBDIR)/libcp2khfxbase.a : hfx_contraction_methods.o hfx_contract_block.o hfx_
 $(LIBDIR)/libcp2kinput.a : cp_output_handling.o cp_parser_ilist_methods.o cp_parser_inpp_types.o cp_linked_list_input.o cp_parser_status_types.o input_val_types.o cp_parser_inpp_methods.o cp_parser_types.o cp_parser_buffer_types.o input_keyword_types.o cp_parser_ilist_types.o input_parsing.o input_enumeration_types.o cp_parser_methods.o input_section_types.o
 
 # Package ROOTDIR/SOURCEDIR/src/common
-$(LIBDIR)/libcp2kcommon.a : mathconstants.o list_routinestat.o cp_result_methods.o memory_utilities.o linear_systems.o splines.o cp_log_handling.o distribution_1d_types.o cp_min_heap.o util.o dict.o cp_files.o gamma.o powell.o cp_para_types.o string_table.o string_utilities.o cp_iter_types.o reference_manager.o cp_para_env.o glob_matching.o fparser.o structure_factors.o termination.o cp_units.o periodic_table.o timings_base_type.o bibliography.o cp_array_utils.o list_callstackentry.o xml_parser.o structure_factor_types.o parallel_rng_types.o timings.o cuda_profiling.o cp_error_handling.o list_routinereport.o lebedev.o bessel_lib.o cp_result_types.o kahan_sum.o eigenvalueproblems.o list_timerenv.o whittaker.o cg_test.o list.o erf_fn.o lapack.o physcon.o timings_report.o mathlib.o timings_types.o cp_array_sort.o spherical_harmonics.o
+$(LIBDIR)/libcp2kcommon.a : mathconstants.o list_routinestat.o cp_result_methods.o memory_utilities.o linear_systems.o splines.o cp_log_handling.o distribution_1d_types.o cp_min_heap.o util.o dict.o cp_files.o gamma.o powell.o cp_para_types.o string_table.o string_utilities.o cp_iter_types.o reference_manager.o cp_para_env.o glob_matching.o fparser.o structure_factors.o termination.o cp_units.o periodic_table.o timings_base_type.o bibliography.o cp_array_utils.o list_callstackentry.o xml_parser.o structure_factor_types.o parallel_rng_types.o timings.o cuda_profiling.o cp_error_handling.o list_routinereport.o lebedev.o bessel_lib.o cp_result_types.o kahan_sum.o eigenvalueproblems.o list_timerenv.o whittaker.o cg_test.o list.o erf_fn.o lapack.o physcon.o timings_report.o mathlib.o timings_types.o cp_array_sort.o spherical_harmonics.o cuda_nvtx_cu.o
 
 # Package ROOTDIR/SOURCEDIR/src/pw/fft
 $(LIBDIR)/libcp2kfft.a : fftw3_lib.o fft_kinds.o fft_plan.o fftsg_lib.o fft_lib.o mltfftsg_tools.o
+
+# Package ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm
+$(LIBDIR)/libcusmm.a : libcusmm_benchmark.o libcusmm_part06.o libcusmm_part00.o libcusmm_part12.o libcusmm_part08.o libcusmm_part11.o libcusmm_part01.o libcusmm_part07.o libcusmm_part05.o libcusmm_part02.o libcusmm_part04.o libcusmm_part09.o libcusmm_part10.o libcusmm_part03.o libcusmm.o
 
 # Package ROOTDIR/SOURCEDIR/src/base
 $(LIBDIR)/libcp2kbase.a : base_hooks.o machine_internal.o machine.o kinds.o
@@ -90,6 +93,9 @@ $(LIBDIR)/libcp2kemd.a : rt_hfx_utils.o rt_propagator_init.o rt_propagation_meth
 # Package ROOTDIR/SOURCEDIR/src/acc/mic
 $(LIBDIR)/libcp2kaccmic.a : libmicacc.o
 
+# Package ROOTDIR/SOURCEDIR/src/acc/cuda
+$(LIBDIR)/libcp2kacccuda.a : acc_cuda_mem.o acc_cuda_error.o acc_cuda_dev.o acc_cuda_stream.o acc_cuda_event.o
+
 # Package ROOTDIR/SOURCEDIR/src/motion/mc
 $(LIBDIR)/libcp2kmc.a : mc_ge_moves.o mc_ensembles.o mc_misc.o tamc_run.o mc_moves.o mc_types.o mc_control.o mc_run.o mc_coordinates.o mc_environment_types.o mc_move_control.o
 
@@ -108,6 +114,9 @@ $(LIBDIR)/libdbcsrops.a : dbcsr_blas_operations.o dbcsr_operations.o dbcsr_trans
 # Package ROOTDIR/SOURCEDIR/src/tmc
 $(LIBDIR)/libcp2ktmc.a : tmc_types.o tmc_setup.o tmc_tree_build.o tmc_master.o tmc_dot_tree.o tmc_cancelation.o tmc_move_types.o tmc_utils.o tmc_file_io.o tmc_analysis_types.o tmc_analysis.o tmc_stati.o tmc_moves.o tmc_tree_types.o tmc_messages.o tmc_tree_search.o tmc_worker.o tmc_tree_acceptance.o tmc_move_handle.o tmc_calculations.o tmc_tree_references.o input_cp2k_tmc.o
 
+# Package ROOTDIR/SOURCEDIR/src/pw/cuda
+$(LIBDIR)/libcp2kpwcuda.a : pw_cuda_z.o fft_cuda_utils.o pw_cuda_utils.o fft_cuda_z.o
+
 # Package ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libmicsmm
 $(LIBDIR)/libmicsmm.a : libmicsmm_process.o libmicsmm_transpose.o libmicsmm.o
 
@@ -121,48 +130,52 @@ $(LIBDIR)/libcp2kaccopencl.a : acc_opencl_dev.o acc_opencl_mem.o acc_opencl_even
 $(LIBDIR)/libdbcsrx.a : dbcsr_vector.o
 
 # Program ROOTDIR/SOURCEDIR/src/dbcsr_tensor/dbcsr_tensor_unittest.F
-$(EXEDIR)/dbcsr_tensor_unittest.$(ONEVERSION) : dbcsr_tensor_unittest.o $(LIBDIR)/libcp2kdbcsr_tensor.a $(LIBDIR)/libcp2kcommon.a $(LIBDIR)/libcp2kgrid.a $(LIBDIR)/libdbcsr.a $(LIBDIR)/libdbcsrmm.a $(LIBDIR)/libdbcsrops.a $(LIBDIR)/libdbcsrbblock.a $(LIBDIR)/libdbcsrbdist.a $(LIBDIR)/libdbcsrbase.a $(LIBDIR)/libdbcsrdata.a $(LIBDIR)/libmicsmm.a $(LIBDIR)/libclsmm.a $(LIBDIR)/libcp2kacc.a $(LIBDIR)/libcp2kaccmic.a $(LIBDIR)/libcp2kaccopencl.a $(LIBDIR)/libcp2kmpiwrap.a $(LIBDIR)/libcp2kbase.a
-	$(LD) $(LDFLAGS) -L$(LIBDIR) -o $@ dbcsr_tensor_unittest.o $(EXTERNAL_OBJECTS) -lcp2kdbcsr_tensor -lcp2kcommon -lcp2kgrid -ldbcsr -ldbcsrmm -ldbcsrops -ldbcsrbblock -ldbcsrbdist -ldbcsrbase -ldbcsrdata -lmicsmm -lclsmm -lcp2kacc -lcp2kaccmic -lcp2kaccopencl -lcp2kmpiwrap -lcp2kbase $(LIBS)
+$(EXEDIR)/dbcsr_tensor_unittest.$(ONEVERSION) : dbcsr_tensor_unittest.o $(LIBDIR)/libcp2kdbcsr_tensor.a $(LIBDIR)/libcp2kcommon.a $(LIBDIR)/libcp2kgrid.a $(LIBDIR)/libdbcsr.a $(LIBDIR)/libdbcsrmm.a $(LIBDIR)/libdbcsrops.a $(LIBDIR)/libdbcsrbblock.a $(LIBDIR)/libdbcsrbdist.a $(LIBDIR)/libdbcsrbase.a $(LIBDIR)/libdbcsrdata.a $(LIBDIR)/libmicsmm.a $(LIBDIR)/libclsmm.a $(LIBDIR)/libcusmm.a $(LIBDIR)/libcp2kacc.a $(LIBDIR)/libcp2kaccmic.a $(LIBDIR)/libcp2kaccopencl.a $(LIBDIR)/libcp2kacccuda.a $(LIBDIR)/libcp2kmpiwrap.a $(LIBDIR)/libcp2kbase.a
+	$(LD) $(LDFLAGS) -L$(LIBDIR) -o $@ dbcsr_tensor_unittest.o $(EXTERNAL_OBJECTS) -lcp2kdbcsr_tensor -lcp2kcommon -lcp2kgrid -ldbcsr -ldbcsrmm -ldbcsrops -ldbcsrbblock -ldbcsrbdist -ldbcsrbase -ldbcsrdata -lmicsmm -lclsmm -lcusmm -lcp2kacc -lcp2kaccmic -lcp2kaccopencl -lcp2kacccuda -lcp2kmpiwrap -lcp2kbase $(LIBS)
 
 # Program ROOTDIR/SOURCEDIR/src/metadyn_tools/graph.F
 $(EXEDIR)/graph.$(ONEVERSION) : graph.o $(LIBDIR)/libcp2kmetadyn_tools.a $(LIBDIR)/libcp2kcommon.a $(LIBDIR)/libcp2kmpiwrap.a $(LIBDIR)/libcp2kgrid.a $(LIBDIR)/libcp2kbase.a
 	$(LD) $(LDFLAGS) -L$(LIBDIR) -o $@ graph.o $(EXTERNAL_OBJECTS) -lcp2kmetadyn_tools -lcp2kcommon -lcp2kmpiwrap -lcp2kgrid -lcp2kbase $(LIBS)
 
 # Program ROOTDIR/SOURCEDIR/src/start/cp2k.F
-$(EXEDIR)/cp2k.$(ONEVERSION) : cp2k.o $(LIBDIR)/libcp2kstart.a $(LIBDIR)/libcp2kmc.a $(LIBDIR)/libcp2kswarm.a $(LIBDIR)/libcp2kmotion.a $(LIBDIR)/libcp2kthermostat.a $(LIBDIR)/libcp2kemd.a $(LIBDIR)/libcp2ktmc.a $(LIBDIR)/libcp2kmain.a $(LIBDIR)/libdbcsrarnoldi.a $(LIBDIR)/libdbcsrx.a $(LIBDIR)/libcp2kshg_int.a $(LIBDIR)/libcp2keri_mme.a $(LIBDIR)/libcp2kminimax.a $(LIBDIR)/libcp2khfxbase.a $(LIBDIR)/libcp2ksubsys.a $(LIBDIR)/libcp2kxc.a $(LIBDIR)/libcp2kao.a $(LIBDIR)/libcp2kinput.a $(LIBDIR)/libcp2kpw.a $(LIBDIR)/libcp2kfft.a $(LIBDIR)/libcp2kdbcsr_tensor.a $(LIBDIR)/libdbcsr.a $(LIBDIR)/libdbcsrmm.a $(LIBDIR)/libdbcsrops.a $(LIBDIR)/libdbcsrbblock.a $(LIBDIR)/libdbcsrbdist.a $(LIBDIR)/libdbcsrbase.a $(LIBDIR)/libdbcsrdata.a $(LIBDIR)/libmicsmm.a $(LIBDIR)/libclsmm.a $(LIBDIR)/libcp2kacc.a $(LIBDIR)/libcp2kaccmic.a $(LIBDIR)/libcp2kaccopencl.a $(LIBDIR)/libcp2kfm.a $(LIBDIR)/libcp2kcommon.a $(LIBDIR)/libcp2kmpiwrap.a $(LIBDIR)/libcp2kgrid.a $(LIBDIR)/libcp2kbase.a
-	$(LD) $(LDFLAGS) -L$(LIBDIR) -o $@ cp2k.o $(EXTERNAL_OBJECTS) -lcp2kstart -lcp2kmc -lcp2kswarm -lcp2kmotion -lcp2kthermostat -lcp2kemd -lcp2ktmc -lcp2kmain -ldbcsrarnoldi -ldbcsrx -lcp2kshg_int -lcp2keri_mme -lcp2kminimax -lcp2khfxbase -lcp2ksubsys -lcp2kxc -lcp2kao -lcp2kinput -lcp2kpw -lcp2kfft -lcp2kdbcsr_tensor -ldbcsr -ldbcsrmm -ldbcsrops -ldbcsrbblock -ldbcsrbdist -ldbcsrbase -ldbcsrdata -lmicsmm -lclsmm -lcp2kacc -lcp2kaccmic -lcp2kaccopencl -lcp2kfm -lcp2kcommon -lcp2kmpiwrap -lcp2kgrid -lcp2kbase $(LIBS)
+$(EXEDIR)/cp2k.$(ONEVERSION) : cp2k.o $(LIBDIR)/libcp2kstart.a $(LIBDIR)/libcp2kmc.a $(LIBDIR)/libcp2kswarm.a $(LIBDIR)/libcp2kmotion.a $(LIBDIR)/libcp2kthermostat.a $(LIBDIR)/libcp2kemd.a $(LIBDIR)/libcp2ktmc.a $(LIBDIR)/libcp2kmain.a $(LIBDIR)/libdbcsrarnoldi.a $(LIBDIR)/libdbcsrx.a $(LIBDIR)/libcp2kshg_int.a $(LIBDIR)/libcp2keri_mme.a $(LIBDIR)/libcp2kminimax.a $(LIBDIR)/libcp2khfxbase.a $(LIBDIR)/libcp2ksubsys.a $(LIBDIR)/libcp2kxc.a $(LIBDIR)/libcp2kao.a $(LIBDIR)/libcp2kinput.a $(LIBDIR)/libcp2kpw.a $(LIBDIR)/libcp2kpwcuda.a $(LIBDIR)/libcp2kfft.a $(LIBDIR)/libcp2kdbcsr_tensor.a $(LIBDIR)/libdbcsr.a $(LIBDIR)/libdbcsrmm.a $(LIBDIR)/libdbcsrops.a $(LIBDIR)/libdbcsrbblock.a $(LIBDIR)/libdbcsrbdist.a $(LIBDIR)/libdbcsrbase.a $(LIBDIR)/libdbcsrdata.a $(LIBDIR)/libmicsmm.a $(LIBDIR)/libclsmm.a $(LIBDIR)/libcusmm.a $(LIBDIR)/libcp2kacc.a $(LIBDIR)/libcp2kaccmic.a $(LIBDIR)/libcp2kaccopencl.a $(LIBDIR)/libcp2kacccuda.a $(LIBDIR)/libcp2kfm.a $(LIBDIR)/libcp2kcommon.a $(LIBDIR)/libcp2kmpiwrap.a $(LIBDIR)/libcp2kgrid.a $(LIBDIR)/libcp2kbase.a
+	$(LD) $(LDFLAGS) -L$(LIBDIR) -o $@ cp2k.o $(EXTERNAL_OBJECTS) -lcp2kstart -lcp2kmc -lcp2kswarm -lcp2kmotion -lcp2kthermostat -lcp2kemd -lcp2ktmc -lcp2kmain -ldbcsrarnoldi -ldbcsrx -lcp2kshg_int -lcp2keri_mme -lcp2kminimax -lcp2khfxbase -lcp2ksubsys -lcp2kxc -lcp2kao -lcp2kinput -lcp2kpw -lcp2kpwcuda -lcp2kfft -lcp2kdbcsr_tensor -ldbcsr -ldbcsrmm -ldbcsrops -ldbcsrbblock -ldbcsrbdist -ldbcsrbase -ldbcsrdata -lmicsmm -lclsmm -lcusmm -lcp2kacc -lcp2kaccmic -lcp2kaccopencl -lcp2kacccuda -lcp2kfm -lcp2kcommon -lcp2kmpiwrap -lcp2kgrid -lcp2kbase $(LIBS)
 
 # Program ROOTDIR/SOURCEDIR/src/start/cp2k_shell.F
-$(EXEDIR)/cp2k_shell.$(ONEVERSION) : cp2k_shell.o $(LIBDIR)/libcp2kstart.a $(LIBDIR)/libcp2kmc.a $(LIBDIR)/libcp2kswarm.a $(LIBDIR)/libcp2kmotion.a $(LIBDIR)/libcp2kthermostat.a $(LIBDIR)/libcp2kemd.a $(LIBDIR)/libcp2ktmc.a $(LIBDIR)/libcp2kmain.a $(LIBDIR)/libdbcsrarnoldi.a $(LIBDIR)/libdbcsrx.a $(LIBDIR)/libcp2kshg_int.a $(LIBDIR)/libcp2keri_mme.a $(LIBDIR)/libcp2kminimax.a $(LIBDIR)/libcp2khfxbase.a $(LIBDIR)/libcp2ksubsys.a $(LIBDIR)/libcp2kxc.a $(LIBDIR)/libcp2kao.a $(LIBDIR)/libcp2kinput.a $(LIBDIR)/libcp2kpw.a $(LIBDIR)/libcp2kfft.a $(LIBDIR)/libcp2kdbcsr_tensor.a $(LIBDIR)/libdbcsr.a $(LIBDIR)/libdbcsrmm.a $(LIBDIR)/libdbcsrops.a $(LIBDIR)/libdbcsrbblock.a $(LIBDIR)/libdbcsrbdist.a $(LIBDIR)/libdbcsrbase.a $(LIBDIR)/libdbcsrdata.a $(LIBDIR)/libmicsmm.a $(LIBDIR)/libclsmm.a $(LIBDIR)/libcp2kacc.a $(LIBDIR)/libcp2kaccmic.a $(LIBDIR)/libcp2kaccopencl.a $(LIBDIR)/libcp2kfm.a $(LIBDIR)/libcp2kcommon.a $(LIBDIR)/libcp2kmpiwrap.a $(LIBDIR)/libcp2kgrid.a $(LIBDIR)/libcp2kbase.a
-	$(LD) $(LDFLAGS) -L$(LIBDIR) -o $@ cp2k_shell.o $(EXTERNAL_OBJECTS) -lcp2kstart -lcp2kmc -lcp2kswarm -lcp2kmotion -lcp2kthermostat -lcp2kemd -lcp2ktmc -lcp2kmain -ldbcsrarnoldi -ldbcsrx -lcp2kshg_int -lcp2keri_mme -lcp2kminimax -lcp2khfxbase -lcp2ksubsys -lcp2kxc -lcp2kao -lcp2kinput -lcp2kpw -lcp2kfft -lcp2kdbcsr_tensor -ldbcsr -ldbcsrmm -ldbcsrops -ldbcsrbblock -ldbcsrbdist -ldbcsrbase -ldbcsrdata -lmicsmm -lclsmm -lcp2kacc -lcp2kaccmic -lcp2kaccopencl -lcp2kfm -lcp2kcommon -lcp2kmpiwrap -lcp2kgrid -lcp2kbase $(LIBS)
+$(EXEDIR)/cp2k_shell.$(ONEVERSION) : cp2k_shell.o $(LIBDIR)/libcp2kstart.a $(LIBDIR)/libcp2kmc.a $(LIBDIR)/libcp2kswarm.a $(LIBDIR)/libcp2kmotion.a $(LIBDIR)/libcp2kthermostat.a $(LIBDIR)/libcp2kemd.a $(LIBDIR)/libcp2ktmc.a $(LIBDIR)/libcp2kmain.a $(LIBDIR)/libdbcsrarnoldi.a $(LIBDIR)/libdbcsrx.a $(LIBDIR)/libcp2kshg_int.a $(LIBDIR)/libcp2keri_mme.a $(LIBDIR)/libcp2kminimax.a $(LIBDIR)/libcp2khfxbase.a $(LIBDIR)/libcp2ksubsys.a $(LIBDIR)/libcp2kxc.a $(LIBDIR)/libcp2kao.a $(LIBDIR)/libcp2kinput.a $(LIBDIR)/libcp2kpw.a $(LIBDIR)/libcp2kpwcuda.a $(LIBDIR)/libcp2kfft.a $(LIBDIR)/libcp2kdbcsr_tensor.a $(LIBDIR)/libdbcsr.a $(LIBDIR)/libdbcsrmm.a $(LIBDIR)/libdbcsrops.a $(LIBDIR)/libdbcsrbblock.a $(LIBDIR)/libdbcsrbdist.a $(LIBDIR)/libdbcsrbase.a $(LIBDIR)/libdbcsrdata.a $(LIBDIR)/libmicsmm.a $(LIBDIR)/libclsmm.a $(LIBDIR)/libcusmm.a $(LIBDIR)/libcp2kacc.a $(LIBDIR)/libcp2kaccmic.a $(LIBDIR)/libcp2kaccopencl.a $(LIBDIR)/libcp2kacccuda.a $(LIBDIR)/libcp2kfm.a $(LIBDIR)/libcp2kcommon.a $(LIBDIR)/libcp2kmpiwrap.a $(LIBDIR)/libcp2kgrid.a $(LIBDIR)/libcp2kbase.a
+	$(LD) $(LDFLAGS) -L$(LIBDIR) -o $@ cp2k_shell.o $(EXTERNAL_OBJECTS) -lcp2kstart -lcp2kmc -lcp2kswarm -lcp2kmotion -lcp2kthermostat -lcp2kemd -lcp2ktmc -lcp2kmain -ldbcsrarnoldi -ldbcsrx -lcp2kshg_int -lcp2keri_mme -lcp2kminimax -lcp2khfxbase -lcp2ksubsys -lcp2kxc -lcp2kao -lcp2kinput -lcp2kpw -lcp2kpwcuda -lcp2kfft -lcp2kdbcsr_tensor -ldbcsr -ldbcsrmm -ldbcsrops -ldbcsrbblock -ldbcsrbdist -ldbcsrbase -ldbcsrdata -lmicsmm -lclsmm -lcusmm -lcp2kacc -lcp2kaccmic -lcp2kaccopencl -lcp2kacccuda -lcp2kfm -lcp2kcommon -lcp2kmpiwrap -lcp2kgrid -lcp2kbase $(LIBS)
 
 # Program ROOTDIR/SOURCEDIR/src/dbcsr/dbcsr_example_2.F
-$(EXEDIR)/dbcsr_example_2.$(ONEVERSION) : dbcsr_example_2.o $(LIBDIR)/libdbcsr.a $(LIBDIR)/libdbcsrmm.a $(LIBDIR)/libdbcsrops.a $(LIBDIR)/libdbcsrbblock.a $(LIBDIR)/libdbcsrbdist.a $(LIBDIR)/libdbcsrbase.a $(LIBDIR)/libdbcsrdata.a $(LIBDIR)/libcp2kmpiwrap.a $(LIBDIR)/libmicsmm.a $(LIBDIR)/libclsmm.a $(LIBDIR)/libcp2kacc.a $(LIBDIR)/libcp2kaccmic.a $(LIBDIR)/libcp2kaccopencl.a $(LIBDIR)/libcp2kbase.a
-	$(LD) $(LDFLAGS) -L$(LIBDIR) -o $@ dbcsr_example_2.o $(EXTERNAL_OBJECTS) -ldbcsr -ldbcsrmm -ldbcsrops -ldbcsrbblock -ldbcsrbdist -ldbcsrbase -ldbcsrdata -lcp2kmpiwrap -lmicsmm -lclsmm -lcp2kacc -lcp2kaccmic -lcp2kaccopencl -lcp2kbase $(LIBS)
+$(EXEDIR)/dbcsr_example_2.$(ONEVERSION) : dbcsr_example_2.o $(LIBDIR)/libdbcsr.a $(LIBDIR)/libdbcsrmm.a $(LIBDIR)/libdbcsrops.a $(LIBDIR)/libdbcsrbblock.a $(LIBDIR)/libdbcsrbdist.a $(LIBDIR)/libdbcsrbase.a $(LIBDIR)/libdbcsrdata.a $(LIBDIR)/libcp2kmpiwrap.a $(LIBDIR)/libmicsmm.a $(LIBDIR)/libclsmm.a $(LIBDIR)/libcusmm.a $(LIBDIR)/libcp2kacc.a $(LIBDIR)/libcp2kaccmic.a $(LIBDIR)/libcp2kaccopencl.a $(LIBDIR)/libcp2kacccuda.a $(LIBDIR)/libcp2kbase.a
+	$(LD) $(LDFLAGS) -L$(LIBDIR) -o $@ dbcsr_example_2.o $(EXTERNAL_OBJECTS) -ldbcsr -ldbcsrmm -ldbcsrops -ldbcsrbblock -ldbcsrbdist -ldbcsrbase -ldbcsrdata -lcp2kmpiwrap -lmicsmm -lclsmm -lcusmm -lcp2kacc -lcp2kaccmic -lcp2kaccopencl -lcp2kacccuda -lcp2kbase $(LIBS)
 
 # Program ROOTDIR/SOURCEDIR/src/dbcsr/dbcsr_test_csr_conversions.F
-$(EXEDIR)/dbcsr_test_csr_conversions.$(ONEVERSION) : dbcsr_test_csr_conversions.o $(LIBDIR)/libdbcsr.a $(LIBDIR)/libdbcsrmm.a $(LIBDIR)/libdbcsrops.a $(LIBDIR)/libdbcsrbblock.a $(LIBDIR)/libdbcsrbdist.a $(LIBDIR)/libdbcsrbase.a $(LIBDIR)/libdbcsrdata.a $(LIBDIR)/libcp2kmpiwrap.a $(LIBDIR)/libmicsmm.a $(LIBDIR)/libclsmm.a $(LIBDIR)/libcp2kacc.a $(LIBDIR)/libcp2kaccmic.a $(LIBDIR)/libcp2kaccopencl.a $(LIBDIR)/libcp2kbase.a
-	$(LD) $(LDFLAGS) -L$(LIBDIR) -o $@ dbcsr_test_csr_conversions.o $(EXTERNAL_OBJECTS) -ldbcsr -ldbcsrmm -ldbcsrops -ldbcsrbblock -ldbcsrbdist -ldbcsrbase -ldbcsrdata -lcp2kmpiwrap -lmicsmm -lclsmm -lcp2kacc -lcp2kaccmic -lcp2kaccopencl -lcp2kbase $(LIBS)
+$(EXEDIR)/dbcsr_test_csr_conversions.$(ONEVERSION) : dbcsr_test_csr_conversions.o $(LIBDIR)/libdbcsr.a $(LIBDIR)/libdbcsrmm.a $(LIBDIR)/libdbcsrops.a $(LIBDIR)/libdbcsrbblock.a $(LIBDIR)/libdbcsrbdist.a $(LIBDIR)/libdbcsrbase.a $(LIBDIR)/libdbcsrdata.a $(LIBDIR)/libcp2kmpiwrap.a $(LIBDIR)/libmicsmm.a $(LIBDIR)/libclsmm.a $(LIBDIR)/libcusmm.a $(LIBDIR)/libcp2kacc.a $(LIBDIR)/libcp2kaccmic.a $(LIBDIR)/libcp2kaccopencl.a $(LIBDIR)/libcp2kacccuda.a $(LIBDIR)/libcp2kbase.a
+	$(LD) $(LDFLAGS) -L$(LIBDIR) -o $@ dbcsr_test_csr_conversions.o $(EXTERNAL_OBJECTS) -ldbcsr -ldbcsrmm -ldbcsrops -ldbcsrbblock -ldbcsrbdist -ldbcsrbase -ldbcsrdata -lcp2kmpiwrap -lmicsmm -lclsmm -lcusmm -lcp2kacc -lcp2kaccmic -lcp2kaccopencl -lcp2kacccuda -lcp2kbase $(LIBS)
 
 # Program ROOTDIR/SOURCEDIR/src/dbcsr/dbcsr_example_3.F
-$(EXEDIR)/dbcsr_example_3.$(ONEVERSION) : dbcsr_example_3.o $(LIBDIR)/libdbcsr.a $(LIBDIR)/libdbcsrmm.a $(LIBDIR)/libdbcsrops.a $(LIBDIR)/libdbcsrbblock.a $(LIBDIR)/libdbcsrbdist.a $(LIBDIR)/libdbcsrbase.a $(LIBDIR)/libdbcsrdata.a $(LIBDIR)/libcp2kmpiwrap.a $(LIBDIR)/libmicsmm.a $(LIBDIR)/libclsmm.a $(LIBDIR)/libcp2kacc.a $(LIBDIR)/libcp2kaccmic.a $(LIBDIR)/libcp2kaccopencl.a $(LIBDIR)/libcp2kbase.a
-	$(LD) $(LDFLAGS) -L$(LIBDIR) -o $@ dbcsr_example_3.o $(EXTERNAL_OBJECTS) -ldbcsr -ldbcsrmm -ldbcsrops -ldbcsrbblock -ldbcsrbdist -ldbcsrbase -ldbcsrdata -lcp2kmpiwrap -lmicsmm -lclsmm -lcp2kacc -lcp2kaccmic -lcp2kaccopencl -lcp2kbase $(LIBS)
+$(EXEDIR)/dbcsr_example_3.$(ONEVERSION) : dbcsr_example_3.o $(LIBDIR)/libdbcsr.a $(LIBDIR)/libdbcsrmm.a $(LIBDIR)/libdbcsrops.a $(LIBDIR)/libdbcsrbblock.a $(LIBDIR)/libdbcsrbdist.a $(LIBDIR)/libdbcsrbase.a $(LIBDIR)/libdbcsrdata.a $(LIBDIR)/libcp2kmpiwrap.a $(LIBDIR)/libmicsmm.a $(LIBDIR)/libclsmm.a $(LIBDIR)/libcusmm.a $(LIBDIR)/libcp2kacc.a $(LIBDIR)/libcp2kaccmic.a $(LIBDIR)/libcp2kaccopencl.a $(LIBDIR)/libcp2kacccuda.a $(LIBDIR)/libcp2kbase.a
+	$(LD) $(LDFLAGS) -L$(LIBDIR) -o $@ dbcsr_example_3.o $(EXTERNAL_OBJECTS) -ldbcsr -ldbcsrmm -ldbcsrops -ldbcsrbblock -ldbcsrbdist -ldbcsrbase -ldbcsrdata -lcp2kmpiwrap -lmicsmm -lclsmm -lcusmm -lcp2kacc -lcp2kaccmic -lcp2kaccopencl -lcp2kacccuda -lcp2kbase $(LIBS)
 
 # Program ROOTDIR/SOURCEDIR/src/dbcsr/dbcsr_unittest.F
-$(EXEDIR)/dbcsr_unittest.$(ONEVERSION) : dbcsr_unittest.o $(LIBDIR)/libdbcsr.a $(LIBDIR)/libdbcsrmm.a $(LIBDIR)/libdbcsrops.a $(LIBDIR)/libdbcsrbblock.a $(LIBDIR)/libdbcsrbdist.a $(LIBDIR)/libdbcsrbase.a $(LIBDIR)/libdbcsrdata.a $(LIBDIR)/libcp2kmpiwrap.a $(LIBDIR)/libmicsmm.a $(LIBDIR)/libclsmm.a $(LIBDIR)/libcp2kacc.a $(LIBDIR)/libcp2kaccmic.a $(LIBDIR)/libcp2kaccopencl.a $(LIBDIR)/libcp2kbase.a
-	$(LD) $(LDFLAGS) -L$(LIBDIR) -o $@ dbcsr_unittest.o $(EXTERNAL_OBJECTS) -ldbcsr -ldbcsrmm -ldbcsrops -ldbcsrbblock -ldbcsrbdist -ldbcsrbase -ldbcsrdata -lcp2kmpiwrap -lmicsmm -lclsmm -lcp2kacc -lcp2kaccmic -lcp2kaccopencl -lcp2kbase $(LIBS)
+$(EXEDIR)/dbcsr_unittest.$(ONEVERSION) : dbcsr_unittest.o $(LIBDIR)/libdbcsr.a $(LIBDIR)/libdbcsrmm.a $(LIBDIR)/libdbcsrops.a $(LIBDIR)/libdbcsrbblock.a $(LIBDIR)/libdbcsrbdist.a $(LIBDIR)/libdbcsrbase.a $(LIBDIR)/libdbcsrdata.a $(LIBDIR)/libcp2kmpiwrap.a $(LIBDIR)/libmicsmm.a $(LIBDIR)/libclsmm.a $(LIBDIR)/libcusmm.a $(LIBDIR)/libcp2kacc.a $(LIBDIR)/libcp2kaccmic.a $(LIBDIR)/libcp2kaccopencl.a $(LIBDIR)/libcp2kacccuda.a $(LIBDIR)/libcp2kbase.a
+	$(LD) $(LDFLAGS) -L$(LIBDIR) -o $@ dbcsr_unittest.o $(EXTERNAL_OBJECTS) -ldbcsr -ldbcsrmm -ldbcsrops -ldbcsrbblock -ldbcsrbdist -ldbcsrbase -ldbcsrdata -lcp2kmpiwrap -lmicsmm -lclsmm -lcusmm -lcp2kacc -lcp2kaccmic -lcp2kaccopencl -lcp2kacccuda -lcp2kbase $(LIBS)
 
 # Program ROOTDIR/SOURCEDIR/src/dbcsr/dbcsr_example_1.F
-$(EXEDIR)/dbcsr_example_1.$(ONEVERSION) : dbcsr_example_1.o $(LIBDIR)/libdbcsr.a $(LIBDIR)/libdbcsrmm.a $(LIBDIR)/libdbcsrops.a $(LIBDIR)/libdbcsrbblock.a $(LIBDIR)/libdbcsrbdist.a $(LIBDIR)/libdbcsrbase.a $(LIBDIR)/libdbcsrdata.a $(LIBDIR)/libcp2kmpiwrap.a $(LIBDIR)/libmicsmm.a $(LIBDIR)/libclsmm.a $(LIBDIR)/libcp2kacc.a $(LIBDIR)/libcp2kaccmic.a $(LIBDIR)/libcp2kaccopencl.a $(LIBDIR)/libcp2kbase.a
-	$(LD) $(LDFLAGS) -L$(LIBDIR) -o $@ dbcsr_example_1.o $(EXTERNAL_OBJECTS) -ldbcsr -ldbcsrmm -ldbcsrops -ldbcsrbblock -ldbcsrbdist -ldbcsrbase -ldbcsrdata -lcp2kmpiwrap -lmicsmm -lclsmm -lcp2kacc -lcp2kaccmic -lcp2kaccopencl -lcp2kbase $(LIBS)
+$(EXEDIR)/dbcsr_example_1.$(ONEVERSION) : dbcsr_example_1.o $(LIBDIR)/libdbcsr.a $(LIBDIR)/libdbcsrmm.a $(LIBDIR)/libdbcsrops.a $(LIBDIR)/libdbcsrbblock.a $(LIBDIR)/libdbcsrbdist.a $(LIBDIR)/libdbcsrbase.a $(LIBDIR)/libdbcsrdata.a $(LIBDIR)/libcp2kmpiwrap.a $(LIBDIR)/libmicsmm.a $(LIBDIR)/libclsmm.a $(LIBDIR)/libcusmm.a $(LIBDIR)/libcp2kacc.a $(LIBDIR)/libcp2kaccmic.a $(LIBDIR)/libcp2kaccopencl.a $(LIBDIR)/libcp2kacccuda.a $(LIBDIR)/libcp2kbase.a
+	$(LD) $(LDFLAGS) -L$(LIBDIR) -o $@ dbcsr_example_1.o $(EXTERNAL_OBJECTS) -ldbcsr -ldbcsrmm -ldbcsrops -ldbcsrbblock -ldbcsrbdist -ldbcsrbase -ldbcsrdata -lcp2kmpiwrap -lmicsmm -lclsmm -lcusmm -lcp2kacc -lcp2kaccmic -lcp2kaccopencl -lcp2kacccuda -lcp2kbase $(LIBS)
 
 # Program ROOTDIR/SOURCEDIR/src/dbcsr/dbcsr_performance_driver.F
-$(EXEDIR)/dbcsr_performance_driver.$(ONEVERSION) : dbcsr_performance_driver.o $(LIBDIR)/libdbcsr.a $(LIBDIR)/libdbcsrmm.a $(LIBDIR)/libdbcsrops.a $(LIBDIR)/libdbcsrbblock.a $(LIBDIR)/libdbcsrbdist.a $(LIBDIR)/libdbcsrbase.a $(LIBDIR)/libdbcsrdata.a $(LIBDIR)/libcp2kmpiwrap.a $(LIBDIR)/libmicsmm.a $(LIBDIR)/libclsmm.a $(LIBDIR)/libcp2kacc.a $(LIBDIR)/libcp2kaccmic.a $(LIBDIR)/libcp2kaccopencl.a $(LIBDIR)/libcp2kbase.a
-	$(LD) $(LDFLAGS) -L$(LIBDIR) -o $@ dbcsr_performance_driver.o $(EXTERNAL_OBJECTS) -ldbcsr -ldbcsrmm -ldbcsrops -ldbcsrbblock -ldbcsrbdist -ldbcsrbase -ldbcsrdata -lcp2kmpiwrap -lmicsmm -lclsmm -lcp2kacc -lcp2kaccmic -lcp2kaccopencl -lcp2kbase $(LIBS)
+$(EXEDIR)/dbcsr_performance_driver.$(ONEVERSION) : dbcsr_performance_driver.o $(LIBDIR)/libdbcsr.a $(LIBDIR)/libdbcsrmm.a $(LIBDIR)/libdbcsrops.a $(LIBDIR)/libdbcsrbblock.a $(LIBDIR)/libdbcsrbdist.a $(LIBDIR)/libdbcsrbase.a $(LIBDIR)/libdbcsrdata.a $(LIBDIR)/libcp2kmpiwrap.a $(LIBDIR)/libmicsmm.a $(LIBDIR)/libclsmm.a $(LIBDIR)/libcusmm.a $(LIBDIR)/libcp2kacc.a $(LIBDIR)/libcp2kaccmic.a $(LIBDIR)/libcp2kaccopencl.a $(LIBDIR)/libcp2kacccuda.a $(LIBDIR)/libcp2kbase.a
+	$(LD) $(LDFLAGS) -L$(LIBDIR) -o $@ dbcsr_performance_driver.o $(EXTERNAL_OBJECTS) -ldbcsr -ldbcsrmm -ldbcsrops -ldbcsrbblock -ldbcsrbdist -ldbcsrbase -ldbcsrdata -lcp2kmpiwrap -lmicsmm -lclsmm -lcusmm -lcp2kacc -lcp2kaccmic -lcp2kaccopencl -lcp2kacccuda -lcp2kbase $(LIBS)
 
 # Program ROOTDIR/SOURCEDIR/src/start/libcp2k_unittest.c
-$(EXEDIR)/libcp2k_unittest.$(ONEVERSION) : libcp2k_unittest.o $(LIBDIR)/libcp2kstart.a $(LIBDIR)/libcp2kmc.a $(LIBDIR)/libcp2kswarm.a $(LIBDIR)/libcp2kmotion.a $(LIBDIR)/libcp2kthermostat.a $(LIBDIR)/libcp2kemd.a $(LIBDIR)/libcp2ktmc.a $(LIBDIR)/libcp2kmain.a $(LIBDIR)/libdbcsrarnoldi.a $(LIBDIR)/libdbcsrx.a $(LIBDIR)/libcp2kshg_int.a $(LIBDIR)/libcp2keri_mme.a $(LIBDIR)/libcp2kminimax.a $(LIBDIR)/libcp2khfxbase.a $(LIBDIR)/libcp2ksubsys.a $(LIBDIR)/libcp2kxc.a $(LIBDIR)/libcp2kao.a $(LIBDIR)/libcp2kinput.a $(LIBDIR)/libcp2kpw.a $(LIBDIR)/libcp2kfft.a $(LIBDIR)/libcp2kdbcsr_tensor.a $(LIBDIR)/libdbcsr.a $(LIBDIR)/libdbcsrmm.a $(LIBDIR)/libdbcsrops.a $(LIBDIR)/libdbcsrbblock.a $(LIBDIR)/libdbcsrbdist.a $(LIBDIR)/libdbcsrbase.a $(LIBDIR)/libdbcsrdata.a $(LIBDIR)/libmicsmm.a $(LIBDIR)/libclsmm.a $(LIBDIR)/libcp2kacc.a $(LIBDIR)/libcp2kaccmic.a $(LIBDIR)/libcp2kaccopencl.a $(LIBDIR)/libcp2kfm.a $(LIBDIR)/libcp2kcommon.a $(LIBDIR)/libcp2kmpiwrap.a $(LIBDIR)/libcp2kgrid.a $(LIBDIR)/libcp2kbase.a
-	mpif90 -nofor_main  $(LDFLAGS) $(LDFLAGS_C) -L$(LIBDIR) -o $@ libcp2k_unittest.o $(EXTERNAL_OBJECTS) -lcp2kstart -lcp2kmc -lcp2kswarm -lcp2kmotion -lcp2kthermostat -lcp2kemd -lcp2ktmc -lcp2kmain -ldbcsrarnoldi -ldbcsrx -lcp2kshg_int -lcp2keri_mme -lcp2kminimax -lcp2khfxbase -lcp2ksubsys -lcp2kxc -lcp2kao -lcp2kinput -lcp2kpw -lcp2kfft -lcp2kdbcsr_tensor -ldbcsr -ldbcsrmm -ldbcsrops -ldbcsrbblock -ldbcsrbdist -ldbcsrbase -ldbcsrdata -lmicsmm -lclsmm -lcp2kacc -lcp2kaccmic -lcp2kaccopencl -lcp2kfm -lcp2kcommon -lcp2kmpiwrap -lcp2kgrid -lcp2kbase $(LIBS)
+$(EXEDIR)/libcp2k_unittest.$(ONEVERSION) : libcp2k_unittest.o $(LIBDIR)/libcp2kstart.a $(LIBDIR)/libcp2kmc.a $(LIBDIR)/libcp2kswarm.a $(LIBDIR)/libcp2kmotion.a $(LIBDIR)/libcp2kthermostat.a $(LIBDIR)/libcp2kemd.a $(LIBDIR)/libcp2ktmc.a $(LIBDIR)/libcp2kmain.a $(LIBDIR)/libdbcsrarnoldi.a $(LIBDIR)/libdbcsrx.a $(LIBDIR)/libcp2kshg_int.a $(LIBDIR)/libcp2keri_mme.a $(LIBDIR)/libcp2kminimax.a $(LIBDIR)/libcp2khfxbase.a $(LIBDIR)/libcp2ksubsys.a $(LIBDIR)/libcp2kxc.a $(LIBDIR)/libcp2kao.a $(LIBDIR)/libcp2kinput.a $(LIBDIR)/libcp2kpw.a $(LIBDIR)/libcp2kpwcuda.a $(LIBDIR)/libcp2kfft.a $(LIBDIR)/libcp2kdbcsr_tensor.a $(LIBDIR)/libdbcsr.a $(LIBDIR)/libdbcsrmm.a $(LIBDIR)/libdbcsrops.a $(LIBDIR)/libdbcsrbblock.a $(LIBDIR)/libdbcsrbdist.a $(LIBDIR)/libdbcsrbase.a $(LIBDIR)/libdbcsrdata.a $(LIBDIR)/libmicsmm.a $(LIBDIR)/libclsmm.a $(LIBDIR)/libcusmm.a $(LIBDIR)/libcp2kacc.a $(LIBDIR)/libcp2kaccmic.a $(LIBDIR)/libcp2kaccopencl.a $(LIBDIR)/libcp2kacccuda.a $(LIBDIR)/libcp2kfm.a $(LIBDIR)/libcp2kcommon.a $(LIBDIR)/libcp2kmpiwrap.a $(LIBDIR)/libcp2kgrid.a $(LIBDIR)/libcp2kbase.a
+	mpif90 -nofor_main $(LDFLAGS) $(LDFLAGS_C) -L$(LIBDIR) -o $@ libcp2k_unittest.o $(EXTERNAL_OBJECTS) -lcp2kstart -lcp2kmc -lcp2kswarm -lcp2kmotion -lcp2kthermostat -lcp2kemd -lcp2ktmc -lcp2kmain -ldbcsrarnoldi -ldbcsrx -lcp2kshg_int -lcp2keri_mme -lcp2kminimax -lcp2khfxbase -lcp2ksubsys -lcp2kxc -lcp2kao -lcp2kinput -lcp2kpw -lcp2kpwcuda -lcp2kfft -lcp2kdbcsr_tensor -ldbcsr -ldbcsrmm -ldbcsrops -ldbcsrbblock -ldbcsrbdist -ldbcsrbase -ldbcsrdata -lmicsmm -lclsmm -lcusmm -lcp2kacc -lcp2kaccmic -lcp2kaccopencl -lcp2kacccuda -lcp2kfm -lcp2kcommon -lcp2kmpiwrap -lcp2kgrid -lcp2kbase $(LIBS)
+
+# Program ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/libcusmm_unittest.cu
+$(EXEDIR)/libcusmm_unittest.$(ONEVERSION) : libcusmm_unittest.o $(LIBDIR)/libcusmm.a
+	mpif90 -nofor_main  $(LDFLAGS) -L$(LIBDIR) -o $@ libcusmm_unittest.o $(EXTERNAL_OBJECTS) -lcusmm $(LIBS)
 
 # Object motion_utils.F
 motion_utils.mod : motion_utils.F ROOTDIR/SOURCEDIR/src/base/base_uses.f90 force_env_types.mod particle_list_types.mod virial_types.mod input_section_types.mod cp_subsys_types.mod cell_types.mod particle_types.mod kinds.mod cp_log_handling.mod base_hooks.mod mathlib.mod machine.mod particle_methods.mod input_constants.mod cp2k_info.mod cp_units.mod physcon.mod cp_output_handling.mod
@@ -4448,4 +4461,82 @@ libmicsmm_transpose.o : libmicsmm_transpose.cpp ROOTDIR/SOURCEDIR/src/dbcsr/libs
 
 # Object libmicsmm.cpp
 libmicsmm.o : libmicsmm.cpp ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libmicsmm/libmicsmm.h ROOTDIR/SOURCEDIR/src/acc/include/acc.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/include/libsmm_acc.h ROOTDIR/SOURCEDIR/src/acc/mic/libmicacc.h
+
+# Object cuda_nvtx_cu.cu
+cuda_nvtx_cu.o : cuda_nvtx_cu.cu 
+
+# Object acc_cuda_mem.cu
+acc_cuda_mem.o : acc_cuda_mem.cu ROOTDIR/SOURCEDIR/src/acc/include/acc.h ROOTDIR/SOURCEDIR/src/acc/cuda/acc_cuda_error.h
+
+# Object acc_cuda_error.cu
+acc_cuda_error.o : acc_cuda_error.cu ROOTDIR/SOURCEDIR/src/acc/cuda/acc_cuda_error.h
+
+# Object acc_cuda_dev.cu
+acc_cuda_dev.o : acc_cuda_dev.cu ROOTDIR/SOURCEDIR/src/acc/include/acc.h ROOTDIR/SOURCEDIR/src/acc/cuda/acc_cuda_error.h
+
+# Object acc_cuda_stream.cu
+acc_cuda_stream.o : acc_cuda_stream.cu ROOTDIR/SOURCEDIR/src/acc/include/acc.h ROOTDIR/SOURCEDIR/src/acc/cuda/acc_cuda_error.h
+
+# Object acc_cuda_event.cu
+acc_cuda_event.o : acc_cuda_event.cu ROOTDIR/SOURCEDIR/src/acc/include/acc.h ROOTDIR/SOURCEDIR/src/acc/cuda/acc_cuda_error.h
+
+# Object pw_cuda_z.cu
+pw_cuda_z.o : pw_cuda_z.cu ROOTDIR/SOURCEDIR/src/pw/cuda/pw_cuda_utils.h ROOTDIR/SOURCEDIR/src/pw/cuda/fft_cuda.h
+
+# Object fft_cuda_utils.cu
+fft_cuda_utils.o : fft_cuda_utils.cu 
+
+# Object pw_cuda_utils.cu
+pw_cuda_utils.o : pw_cuda_utils.cu ROOTDIR/SOURCEDIR/src/pw/cuda/fft_cuda.h ROOTDIR/SOURCEDIR/src/pw/cuda/fft_cuda_utils.h
+
+# Object fft_cuda_z.cu
+fft_cuda_z.o : fft_cuda_z.cu ROOTDIR/SOURCEDIR/src/pw/cuda/pw_cuda_utils.h ROOTDIR/SOURCEDIR/src/pw/cuda/fft_cuda_internal.h ROOTDIR/SOURCEDIR/src/pw/cuda/fft_cuda_utils.h
+
+# Object libcusmm_benchmark.cu
+libcusmm_benchmark.o : libcusmm_benchmark.cu ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/libcusmm_benchmark.h
+
+# Object libcusmm_part06.cu
+libcusmm_part06.o : libcusmm_part06.cu ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/include/libsmm_acc.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB1.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_medium.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_transpose.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_small.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB2.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_common.h
+
+# Object libcusmm_part00.cu
+libcusmm_part00.o : libcusmm_part00.cu ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/include/libsmm_acc.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB1.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_medium.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_transpose.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_small.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB2.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_common.h
+
+# Object libcusmm_part12.cu
+libcusmm_part12.o : libcusmm_part12.cu ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/include/libsmm_acc.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB1.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_medium.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_transpose.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_small.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB2.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_common.h
+
+# Object libcusmm_unittest.cu
+libcusmm_unittest.o : libcusmm_unittest.cu ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/libcusmm.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/libcusmm_benchmark.h
+
+# Object libcusmm_part08.cu
+libcusmm_part08.o : libcusmm_part08.cu ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/include/libsmm_acc.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB1.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_medium.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_transpose.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_small.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB2.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_common.h
+
+# Object libcusmm_part11.cu
+libcusmm_part11.o : libcusmm_part11.cu ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/include/libsmm_acc.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB1.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_medium.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_transpose.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_small.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB2.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_common.h
+
+# Object libcusmm_part01.cu
+libcusmm_part01.o : libcusmm_part01.cu ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/include/libsmm_acc.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB1.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_medium.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_transpose.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_small.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB2.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_common.h
+
+# Object libcusmm_part07.cu
+libcusmm_part07.o : libcusmm_part07.cu ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/include/libsmm_acc.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB1.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_medium.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_transpose.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_small.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB2.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_common.h
+
+# Object libcusmm_part05.cu
+libcusmm_part05.o : libcusmm_part05.cu ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/include/libsmm_acc.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB1.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_medium.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_transpose.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_small.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB2.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_common.h
+
+# Object libcusmm_part02.cu
+libcusmm_part02.o : libcusmm_part02.cu ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/include/libsmm_acc.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB1.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_medium.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_transpose.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_small.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB2.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_common.h
+
+# Object libcusmm_part04.cu
+libcusmm_part04.o : libcusmm_part04.cu ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/include/libsmm_acc.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB1.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_medium.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_transpose.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_small.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB2.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_common.h
+
+# Object libcusmm_part09.cu
+libcusmm_part09.o : libcusmm_part09.cu ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/include/libsmm_acc.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB1.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_medium.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_transpose.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_small.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB2.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_common.h
+
+# Object libcusmm_part10.cu
+libcusmm_part10.o : libcusmm_part10.cu ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/include/libsmm_acc.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB1.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_medium.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_transpose.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_small.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB2.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_common.h
+
+# Object libcusmm_part03.cu
+libcusmm_part03.o : libcusmm_part03.cu ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/include/libsmm_acc.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB1.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_medium.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_transpose.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_small.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB2.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_common.h
+
+# Object libcusmm.cu
+libcusmm.o : libcusmm.cu ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/include/libsmm_acc.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB1.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_medium.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_transpose.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_small.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_dnt_largeDB2.h ROOTDIR/SOURCEDIR/src/dbcsr/libsmm_acc/libcusmm/kernels/cusmm_common.h
 

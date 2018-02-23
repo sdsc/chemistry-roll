@@ -57,9 +57,9 @@ SKIP: {
   print OUT <<END;
 module load cp2k \$2
 cd $TESTFILE.dir
-output=`mpirun -np 8 \$1 MC_QS.inp 2>&1`
+output=`mpirun -np 8 $packageHome/bin/\$1 MC_QS.inp 2>&1`
 if [[ "\$output" =~ "run-as-root" ]]; then
-  output=`mpirun --allow-run-as-root -np 8 \$1 MC_QS.inp 2>&1`
+  output=`mpirun --allow-run-as-root -np 8 $packageHome/bin/\$1 MC_QS.inp 2>&1`
 fi
 echo \$output
 END

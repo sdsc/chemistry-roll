@@ -1,6 +1,9 @@
-ifndef ROLLCOMPILER
+ifneq ("$(ROLLOPTS)", "$(subst cp2k_othercompiler=,,$(ROLLOPTS))")
+  override ROLLCOMPILER = $(subst cp2k_othercompiler=,,$(filter cp2k_othercompiler=%,$(ROLLOPTS)))
+else ifndef ROLLCOMPILER
   ROLLCOMPILER = gnu
 endif
+
 COMPILERNAME := $(firstword $(subst /, ,$(ROLLCOMPILER)))
 
 CUDAVERSION=cuda
@@ -20,8 +23,8 @@ MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 
 NAME           = sdsc-cp2k
-VERSION        = 4.1
-RELEASE        = 1
+VERSION        = 5.1
+RELEASE        = 0
 PKGROOT        = /opt/cp2k
 
 SRC_SUBDIR     = cp2k
