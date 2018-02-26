@@ -19,7 +19,7 @@ endif
 
 NAME           = sdsc-namd
 VERSION        = 2.10c
-RELEASE        = 5
+RELEASE        = 6
 
 SRC_SUBDIR     = namd
 
