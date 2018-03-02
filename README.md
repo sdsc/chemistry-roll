@@ -68,8 +68,28 @@ The build process recognizes "gnu", "intel" or "pgi" as the value for the
 `ROLLCOMPILER` variable; any MPI modulefile name may be used as the value of
 the `ROLLMPI` variable.  The default values are "gnu" and "rocks-openmpi".
 
-For gnu compilers, the roll also supports a `ROLLOPTS` make variable value of
-'avx', indicating that the target architecture supports AVX instructions.
+The ROLLOPTS variable has options for "avx" and "avx2" architectures and a "cuda" option for gpu support.
+gpu support is available for cp2k, gromacs, lammps and namd.
+
+For example, if a build for the "avx2" architecture is chosen along with the default cuda version:
+
+```shell
+make ROLLCOMPILER=intel ROLLMPI=mvapich2_ib ROLLOPTS='avx2 cuda' 2>&1 | tee build.log
+```
+
+If another version of cuda is needed, the cuda version is specified as follows:
+
+```shell
+make ROLLCOMPILER=intel ROLLMPI=mvapich2_ib ROLLOPTS='avx2 cuda=cuda/8.0' 2>&1 | tee build.log
+```
+
+The lammps cuda build requires specification of the cuda capability  (CC) of the gpu hardware that the roll will be deployed on.
+
+If for example, the roll is being built for a cluster with 2 different gpu types with CC's of 37 and 60, then place a file called "gpus.txt" in the src/lammps directory.
+
+In this case 2 gpu enabled lammps executables, along with a lammps cpu executable, will be compiled. A "lammps.cuda" script is available that at run time selects the correct gpu executable.
+
+
 
 NOTE: Because of limitations of the system gfortran, the cp2k package in the
 chemistry-roll cannot be built successfully with ROLLMPI=rocks-openmpi under
