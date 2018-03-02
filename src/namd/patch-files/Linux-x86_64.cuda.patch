@@ -1,9 +1,9 @@
 --- NAMD_2.10_Source/arch/Linux-x86_64.cuda	2014-05-12 13:19:08.000000000 -0700
-+++ patch-files/Linux-x86_64.cuda	2015-12-04 16:26:02.657945301 -0800
++++ patch-files/Linux-x86_64.cuda	2018-02-25 17:14:25.836011511 -0800
 @@ -8,5 +8,5 @@
  CUDAOBJS=$(CUDAOBJSRAW)
  CUDA=$(CUDAFLAGS) -I. $(CUDAINCL)
  CUDACC=$(CUDADIR)/bin/nvcc -O3 --maxrregcount 32 $(CUDAGENCODE) -Xcompiler "-m64" $(CUDA)
 -CUDAGENCODE=-gencode arch=compute_11,code=sm_11 -gencode arch=compute_20,code=sm_20 -gencode arch=compute_20,code=compute_20 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_35,code=compute_35 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_50,code=compute_50
-+CUDAGENCODE= -gencode arch=compute_20,code=sm_20 -gencode arch=compute_20,code=compute_20 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_35,code=compute_35 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_50,code=compute_50
++CUDAGENCODE=-gencode arch=compute_35,code=sm_35 -gencode arch=compute_35,code=compute_35 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_50,code=compute_50
  
