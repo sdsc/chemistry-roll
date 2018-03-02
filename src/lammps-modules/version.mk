@@ -1,8 +1,3 @@
-ROLLCUDA =
-ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
-  ROLLCUDA = cuda
-endif
-
 ifneq ("$(ROLLOPTS)", "$(subst lammps_othermpi=,,$(ROLLOPTS))")
   override ROLLMPI = $(subst lammps_othermpi=,,$(filter lammps_othermpi=%,$(ROLLOPTS)))
 else ifndef ROLLMPI
@@ -14,7 +9,7 @@ PACKAGE     = lammps
 CATEGORY    = applications
 
 NAME        = sdsc-$(PACKAGE)-modules
-RELEASE     = 7
+RELEASE     = 8
 PKGROOT     = /opt/modulefiles/$(CATEGORY)/$(PACKAGE)
 
 VERSION_SRC = $(REDHAT.ROOT)/src/$(PACKAGE)/version.mk
