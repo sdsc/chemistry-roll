@@ -87,7 +87,9 @@ The lammps cuda build requires specification of the cuda capability  (CC) of the
 
 If for example, the roll is being built for a cluster with 2 different gpu types with CC's of 37 and 60, then place a file called "gpus.txt" in the src/lammps directory that contains the following line:
 
+```shell
 37 60
+```
 
 
 In this case 2 gpu enabled lammps executables, along with a lammps cpu executable, will be compiled. A "lammps.cuda" script is available that at run time selects the correct gpu executable.
@@ -95,11 +97,9 @@ In this case 2 gpu enabled lammps executables, along with a lammps cpu executabl
 In order to find the cuda capability of a node, run the "deviceQuery" executable provided in the src/lammps directory on a gpu node. In order to extract the cuda capability,
 run:
 
+```shell
 deviceQuery 2>&1 | grep 'CUDA Capability' |uniq |awk  '{print $6}'|sed 's/\.//
-
-
-
-
+```
 
 NOTE: Because of limitations of the system gfortran, the cp2k package in the
 chemistry-roll cannot be built successfully with ROLLMPI=rocks-openmpi under
