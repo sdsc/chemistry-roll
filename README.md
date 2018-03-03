@@ -85,9 +85,19 @@ make ROLLCOMPILER=intel ROLLMPI=mvapich2_ib ROLLOPTS='avx2 cuda=cuda/8.0' 2>&1 |
 
 The lammps cuda build requires specification of the cuda capability  (CC) of the gpu hardware that the roll will be deployed on.
 
-If for example, the roll is being built for a cluster with 2 different gpu types with CC's of 37 and 60, then place a file called "gpus.txt" in the src/lammps directory.
+If for example, the roll is being built for a cluster with 2 different gpu types with CC's of 37 and 60, then place a file called "gpus.txt" in the src/lammps directory that contains the following line:
+
+37 60
+
 
 In this case 2 gpu enabled lammps executables, along with a lammps cpu executable, will be compiled. A "lammps.cuda" script is available that at run time selects the correct gpu executable.
+
+In order to find the cuda capability of a node, run the "deviceQuery" executable provided in the src/lammps directory on a gpu node. In order to extract the cuda capability,
+run:
+
+deviceQuery 2>&1 | grep 'CUDA Capability' |uniq |awk  '{print $6}'|sed 's/\.//
+
+
 
 
 
