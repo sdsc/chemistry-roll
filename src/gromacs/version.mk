@@ -24,7 +24,7 @@ MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 NAME           = sdsc-gromacs
 VERSION        = 2018
-RELEASE        = 0
+RELEASE        = 1
 PKGROOT        = /opt/gromacs
 
 SRC_SUBDIR     = gromacs
@@ -49,4 +49,5 @@ GMXTEST_DIR    = $(GMXTEST_PKG:%.$(GMXTEST_SUFFIX)=%)
 
 TAR_GZ_PKGS    = $(SOURCE_PKG) $(FFTW_PKG) $(GMXTEST_PKG)
 
-RPM.EXTRAS     = AutoReq:No
+RPM.PREFIX     = $(PKGROOT)
+RPM.EXTRAS     = AutoReq:No\nAutoProv:No

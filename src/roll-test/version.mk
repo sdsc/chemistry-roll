@@ -1,6 +1,6 @@
 NAME       = sdsc-chemistry-roll-test
 VERSION    = 1.2
-RELEASE    = 6
+RELEASE    = 7
 PKGROOT    = /root/rolltests
 
 CP2K_CUDAVER=
@@ -30,4 +30,5 @@ ifneq ("$(ROLLOPTS)", "$(subst namd_othercuda=,,$(ROLLOPTS))")
   NAMD_CUDAVER = $(subst namd_othercuda=,,$(filter namd_othercuda=%,$(ROLLOPTS)))
 endif
 
-RPM.EXTRAS = AutoReq:No
+RPM.FILES  = $(PKGROOT)/chemistry.t
+RPM.EXTRAS = AutoReq:No\nAutoProv:No

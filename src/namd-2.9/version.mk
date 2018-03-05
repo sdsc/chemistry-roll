@@ -18,7 +18,7 @@ endif
 
 VERSION        = 2.9
 NAME           = sdsc-namd-$(VERSION)
-RELEASE        = 16
+RELEASE        = 17
 PKGROOT        = /opt/namd/$(VERSION)
 
 SRC_SUBDIR     = namd
@@ -49,4 +49,5 @@ FFTW_DIR       = linux-$(ARCH)
 TGZ_PKGS       = $(SOURCE_PKG)
 TAR_GZ_PKGS    = $(TINY_PKG) $(TCL_PKG) $(FFTW_PKG)
 
-RPM.EXTRAS     = AutoReq:No
+RPM.PREFIX     = $(PKGROOT)
+RPM.EXTRAS     = AutoReq:No\nAutoProv:No
