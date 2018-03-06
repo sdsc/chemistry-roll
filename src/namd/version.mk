@@ -19,7 +19,7 @@ endif
 
 NAME           = sdsc-namd
 VERSION        = 2.10c
-RELEASE        = 6
+RELEASE        = 7
 
 SRC_SUBDIR     = namd
 
@@ -50,4 +50,5 @@ FFTW_DIR       = linux-$(ARCH)
 
 TAR_GZ_PKGS    = $(SOURCE_PKG) $(TINY_PKG) $(TCL_PKG) $(FFTW_PKG)
 
-RPM.EXTRAS     = AutoReq:No
+RPM.PREFIX     = $(PKGROOT)
+RPM.EXTRAS     = AutoReq:No\nAutoProv:No

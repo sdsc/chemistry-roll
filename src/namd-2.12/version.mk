@@ -21,7 +21,7 @@ CUDAGENCODE = --cuda-gencode arch=compute_30,code=sm_30 --cuda-gencode arch=comp
 
 NAME           = sdsc-namd-$(VERSION)
 VERSION        = 2.12
-RELEASE        = 0
+RELEASE        = 1
 
 SRC_SUBDIR     = namd
 
@@ -52,4 +52,5 @@ FFTW_DIR       = linux-$(ARCH)
 
 TAR_GZ_PKGS    = $(SOURCE_PKG) $(TINY_PKG) $(TCL_PKG) $(FFTW_PKG)
 
-RPM.EXTRAS     = AutoReq:No
+RPM.PREFIX     = $(PKGROOT)
+RPM.EXTRAS     = AutoReq:No\nAutoProv:No
