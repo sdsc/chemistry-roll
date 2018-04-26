@@ -146,6 +146,10 @@ cpu: $(SRC_DIRS)
           export CC=$(CC); \
           export CXX=$(CXX); \
           export FC=$(FC); \
+	  export I_MPI_CC=$(CC); \
+	  export I_MPI_CXX=$(CXX); \
+	  export I_MPI_F77=$(F77); \
+	  export I_MPI_F90=$(F90); \
 # \
           patch $(SOURCE_DIR)/src/MAKE/Makefile.mpi patch-files/Makefile.mpi.patch; \
           patch $(SOURCE_DIR)/src/USER-INTEL/pair_tersoff_intel.cpp patch-files/user-intel/pair_tersoff_intel.cpp.patch; \
@@ -248,7 +252,7 @@ cpu: $(SRC_DIRS)
 	  $(MAKE) -f Makefile.colvars; \
 	  cp *.a ../../src; \
 	  cd ../../src; \
-	  $(MAKE) -j 16 ROOT=lmp mpi; \
+	  $(MAKE) -j 16 ROOT=lmp LINK=mpif90 mpi; \
 	  mv lmp_mpi $(CACHE_DIR)/lammps/bin/lammps; \
           cd ../..; \
           mkdir save; \
@@ -265,6 +269,10 @@ $(GPUS):
 	     $(MODULE_LOAD_LAMMPS_MKL); \
 	     $(MODULE_LOAD_MPI); \
              $(MODULE_LOAD_LAMMPS_CUDA); \
+	     export I_MPI_CC=$(CC); \
+	     export I_MPI_CXX=$(CXX); \
+	     export I_MPI_F77=$(F77); \
+	     export I_MPI_F90=$(F90); \
              cd $(SOURCE_DIR)/src; \
              make yes-gpu; \
              cd ../lib/gpu; \
@@ -285,7 +293,7 @@ $(GPUS):
              cp Makefile.linux.tmp Makefile.linux; \
              cd ../../src;  \
              cp *.a ../../src; \
-	     $(MAKE) -j 16 ROOT=lmp mpi; \
+	     $(MAKE) -j 16 ROOT=lmp LINK=mpif90 mpi; \
     	     mv lmp_mpi  $(CACHE_DIR)/lammps/bin/lammps.$@.cuda; \
 	  fi
 
