@@ -12,9 +12,13 @@ CUDAVERSION=cuda
 ifneq ("$(ROLLOPTS)", "$(subst cuda=,,$(ROLLOPTS))")
   CUDAVERSION = $(subst cuda=,,$(filter cuda=%,$(ROLLOPTS)))
 endif
-
 ifneq ("$(ROLLOPTS)", "$(subst lammps_othercuda=,,$(ROLLOPTS))")
   CUDAVERSION = $(subst lammps_othercuda=,,$(filter lammps_othercuda=%,$(ROLLOPTS)))
+endif
+
+CUDA_CAPABILITIES=37
+ifneq ("$(ROLLOPTS)", "$(subst cudacapabilities=,,$(ROLLOPTS))")
+  CUDA_CAPABILITIES = $(subst cudacapabilities=,,$(filter cudacapabilities=%,$(ROLLOPTS)))
 endif
 
 L_MKL_VERSION=mkl
@@ -32,7 +36,7 @@ endif
 
 NAME           = sdsc-lammps
 VERSION        = $(shell date -d "$(SOURCE_VERSION)" +%Y%m%d)
-RELEASE        = 1
+RELEASE        = 2
 PKGROOT        = /opt/lammps
 
 SRC_SUBDIR     = lammps
