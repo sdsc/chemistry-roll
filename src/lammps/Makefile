@@ -95,9 +95,6 @@ DESCRIBE_LAMMPS_MKL = echo built with mkl $(call GET_MODULE_VERSION, $(L_MKL_VER
 MODULE_LOAD_GNU = $(call MODULE_LOAD_COMPILER,gnu,gcc)
 
 
-GPUS=$(shell cat gpus.txt)
-
-
 AVX_FLAG=
 ifneq ("$(ROLLOPTS)", "$(subst avx2,,$(ROLLOPTS))")
   ifeq ("$(COMPILERNAME)", "gnu")
@@ -131,11 +128,7 @@ LICENSE: $(SRC_DIRS)
 	$(CHECK_LICENSE_FILES)
 	echo GPL > $@
 
-build: cpu $(GPUS)
-	@echo "::: Package $(NAME) build complete :::"
-
-
-cpu: $(SRC_DIRS)
+build: $(SRC_DIRS)
 	mkdir -p $(CACHE_DIR)/lammps/bin
 	( \
           $(MODULE_LOAD_GNU); \
@@ -146,6 +139,10 @@ cpu: $(SRC_DIRS)
           export CC=$(CC); \
           export CXX=$(CXX); \
           export FC=$(FC); \
+	  export I_MPI_CC=$(CC); \
+	  export I_MPI_CXX=$(CXX); \
+	  export I_MPI_F77=$(F77); \
+	  export I_MPI_F90=$(F90); \
 # \
           patch $(SOURCE_DIR)/src/MAKE/Makefile.mpi patch-files/Makefile.mpi.patch; \
           patch $(SOURCE_DIR)/src/USER-INTEL/pair_tersoff_intel.cpp patch-files/user-intel/pair_tersoff_intel.cpp.patch; \
@@ -184,9 +181,21 @@ cpu: $(SRC_DIRS)
 # colvars \
           patch -o $(SOURCE_DIR)/lib/colvars/Makefile.colvars $(SOURCE_DIR)/lib/colvars/Makefile.g++ patch-files/colvars/Makefile.g++.patch; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/colvars/Makefile.colvars; \
-          patch $(SOURCE_DIR)/lib/gpu/Makefile.linux patch-files/gpu/Makefile.linux.patch; \
-          cp $(SOURCE_DIR)/lib/gpu/Makefile.linux $(SOURCE_DIR)/lib/gpu/Makefile.linux.tmp; \
-          patch $(SOURCE_DIR)/lib/gpu/Makefile.lammps.standard  patch-files/gpu/Makefile.lammps.standard.patch; \
+# gpu \
+	  patch $(SOURCE_DIR)/lib/gpu/Makefile.linux patch-files/gpu/Makefile.linux.patch; \
+	  patch $(SOURCE_DIR)/lib/gpu/Makefile.lammps.standard  patch-files/gpu/Makefile.lammps.standard.patch; \
+	  if test -e /usr/lib64/nvidia; then \
+	    perl -pi -e "s!EXTRACUDALIBS!-lnvidia-fatbinaryloader!g" $(SOURCE_DIR)/lib/gpu/Makefile.lammps.standard; \
+	    perl -pi -e "s!EXTRACUDALIBS!-lnvidia-fatbinaryloader!g" $(SOURCE_DIR)/lib/gpu/Makefile.linux; \
+	    perl -pi -e "s!EXTRACUDAPATH!-L/usr/lib64/nvidia!g" $(SOURCE_DIR)/lib/gpu/Makefile.lammps.standard; \
+	    perl -pi -e "s!EXTRACUDAPATH!-L/usr/lib64/nvidia!g" $(SOURCE_DIR)/lib/gpu/Makefile.linux; \
+	  else \
+	    perl -pi -e "s!EXTRACUDALIBS!!g" $(SOURCE_DIR)/lib/gpu/Makefile.lammps.standard; \
+	    perl -pi -e "s!EXTRACUDALIBS!!g" $(SOURCE_DIR)/lib/gpu/Makefile.linux; \
+	    perl -pi -e "s!EXTRACUDAPATH!!g" $(SOURCE_DIR)/lib/gpu/Makefile.lammps.standard; \
+	    perl -pi -e "s!EXTRACUDAPATH!!g" $(SOURCE_DIR)/lib/gpu/Makefile.linux; \
+	  fi; \
+	  cp $(SOURCE_DIR)/lib/gpu/Makefile.linux $(SOURCE_DIR)/lib/gpu/Makefile.linux.save; \
 # \
 	  cd $(SOURCE_DIR)/src; \
 	  perl -pi -e "s!MKLLIB!$${MKLLIB}!" MAKE/Makefile.mpi; \
@@ -229,65 +238,36 @@ cpu: $(SRC_DIRS)
           $(MAKE) yes-user-fep; \
           $(MAKE) yes-qeq; \
           $(MAKE) yes-user-intel; \
-          cd ../lib/atc; \
-	  $(MAKE) -f Makefile.atc; \
-	  cp *.a ../../src; \
-	  cd ../awpmd; \
-	  $(MAKE) -f Makefile.awpmd; \
-	  cp *.a ../../src; \
-	  cd ../meam; \
-	  $(MAKE) -f Makefile.meam; \
-	  cp *.a ../../src; \
-	  cd ../poems; \
-	  $(MAKE) -f Makefile.poems; \
-	  cp *.a ../../src; \
-	  cd ../reax; \
-	  $(MAKE) -f Makefile.reax; \
-	  cp *.a ../../src; \
-	  cd ../colvars; \
-	  $(MAKE) -f Makefile.colvars; \
-	  cp *.a ../../src; \
-	  cd ../../src; \
-	  $(MAKE) -j 16 ROOT=lmp mpi; \
+	  for lib in atc awpmd meam poems reax colvars; do \
+	    cd $(CURDIR)/$(SOURCE_DIR)/lib/$$lib; \
+	    $(MAKE) -f Makefile.$$lib; \
+	    cp *.a $(CURDIR)/$(SOURCE_DIR)/src; \
+	  done; \
+	  cd $(CURDIR)/$(SOURCE_DIR)/src; \
+	  $(MAKE) -j 16 ROOT=lmp LINK=mpif90 mpi; \
 	  mv lmp_mpi $(CACHE_DIR)/lammps/bin/lammps; \
-          cd ../..; \
-          mkdir save; \
-          cp -r $(SOURCE_DIR)/* save \
-        )
-
-$(GPUS):
-	 if test "$(CUDABUILD)" = "yes"; then \
-             rm -rf $(SOURCE_DIR); \
-             mkdir $(SOURCE_DIR); \
-             cp -r save/* $(SOURCE_DIR); \
-             $(MODULE_LOAD_GNU); \
-	     $(MODULE_LOAD_CC); \
-	     $(MODULE_LOAD_LAMMPS_MKL); \
-	     $(MODULE_LOAD_MPI); \
-             $(MODULE_LOAD_LAMMPS_CUDA); \
-             cd $(SOURCE_DIR)/src; \
-             make yes-gpu; \
-             cd ../lib/gpu; \
-             if test -e /usr/lib64/nvidia; then \
-                  perl -pi -e "s!EXTRACUDALIBS!-lnvidia-fatbinaryloader!g" Makefile.lammps.standard; \
-                  perl -pi -e "s!EXTRACUDALIBS!-lnvidia-fatbinaryloader!g" Makefile.linux; \
-                  perl -pi -e "s!EXTRACUDAPATH!-L/usr/lib64/nvidia!g" Makefile.lammps.standard; \
-                  perl -pi -e "s!EXTRACUDAPATH!-L/usr/lib64/nvidia!g" Makefile.linux; \
-             else \
-                  perl -pi -e "s!EXTRACUDALIBS!!g" Makefile.lammps.standard; \
-                  perl -pi -e "s!EXTRACUDALIBS!!g" Makefile.linux; \
-                  perl -pi -e "s!EXTRACUDAPATH!!g" Makefile.lammps.standard; \
-                  perl -pi -e "s!EXTRACUDAPATH!!g" Makefile.linux; \
-             fi; \
-             perl -pi -e "s!CUDA_CAPABILITY!$@!g" Makefile.linux; \
-	     $(MAKE) -f Makefile.linux; \
-	     cp *.a ../../src; \
-             cp Makefile.linux.tmp Makefile.linux; \
-             cd ../../src;  \
-             cp *.a ../../src; \
-	     $(MAKE) -j 16 ROOT=lmp mpi; \
-    	     mv lmp_mpi  $(CACHE_DIR)/lammps/bin/lammps.$@.cuda; \
-	  fi
+	  if test "$(CUDABUILD)" = "yes"; then \
+	    cd $(CURDIR); \
+	    rm -rf save; \
+	    cp -r $(SOURCE_DIR) save; \
+	    $(MODULE_LOAD_LAMMPS_CUDA); \
+	    for capability in `echo $(CUDA_CAPABILITIES) | sed 's/,/ /g'`; do \
+	      rm -rf $(SOURCE_DIR); \
+	      cp -r save $(SOURCE_DIR); \
+	      cd $(SOURCE_DIR)/src; \
+	      $(MAKE) yes-gpu; \
+	      cd $(CURDIR)/$(SOURCE_DIR)/lib/gpu; \
+	      cp Makefile.linux.save Makefile.linux; \
+	      perl -pi -e "s!CUDA_CAPABILITY!$$capability!g" Makefile.linux; \
+	      $(MAKE) -f Makefile.linux; \
+	      cp *.a $(CURDIR)/$(SOURCE_DIR)/src; \
+	      cd $(CURDIR)/$(SOURCE_DIR)/src;  \
+	      $(MAKE) -j 16 ROOT=lmp LINK=mpif90 mpi; \
+	      mv lmp_mpi $(CACHE_DIR)/lammps/bin/lammps.$$capability.cuda; \
+	    done; \
+	  fi \
+	)
+	@echo "::: Package $(NAME) build complete :::"
 
 install::
 	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
