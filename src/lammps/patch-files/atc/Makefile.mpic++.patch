@@ -1,5 +1,5 @@
---- lammps-17Jan18/lib/atc/Makefile.mpic++	2017-08-09 16:38:53.000000000 -0700
-+++ patch-files/atc/Makefile.mpic++	2018-01-29 14:31:50.000000000 -0800
+--- lammps-22Aug18/lib/atc/Makefile.mpic++	2018-05-10 15:50:12.000000000 -0700
++++ patch-files/atc/Makefile.mpic++	2018-08-28 13:43:16.883937976 -0700
 @@ -2,7 +2,7 @@
  SHELL = /bin/sh
  
@@ -14,7 +14,7 @@
  
  CC =	        mpicxx
 -CCFLAGS =       -O3 -Wall -g -fPIC
-+CCFLAGS =       -O2 -Wall -g -fPIC ROLLAVX
++CCFLAGS =       -O2 -Wall -fPIC ROLLAVX
  CPPFLAGS = -I../../src -DMPICH_IGNORE_CXX_SEEK -DOMPI_SKIP_MPICXX=1
  ARCHIVE =	ar
  ARCHFLAG =	-rc

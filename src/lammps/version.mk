@@ -36,14 +36,14 @@ endif
 
 NAME           = sdsc-lammps
 VERSION        = $(shell date -d "$(SOURCE_VERSION)" +%Y%m%d)
-RELEASE        = 2
+RELEASE        = 0
 PKGROOT        = /opt/lammps
 
 SRC_SUBDIR     = lammps
 
 SOURCE_NAME    = lammps
 SOURCE_SUFFIX  = tar.gz
-SOURCE_VERSION := 17Jan18
+SOURCE_VERSION := 22Aug18
 SOURCE_PKG     = $(SOURCE_NAME)-$(SOURCE_VERSION).$(SOURCE_SUFFIX)
 SOURCE_DIR     = $(SOURCE_PKG:%.$(SOURCE_SUFFIX)=%)
 

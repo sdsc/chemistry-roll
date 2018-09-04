@@ -1,11 +1,11 @@
---- lammps-17Jan18/src/MAKE/Makefile.mpi	2016-05-12 06:54:17.000000000 -0700
-+++ patch-files/Makefile.mpi	2018-02-01 09:49:25.663766067 -0800
+--- lammps-22Aug18/src/MAKE/Makefile.mpi	2016-05-12 06:54:17.000000000 -0700
++++ patch-files/Makefile.mpi	2018-08-28 13:41:02.469958543 -0700
 @@ -7,13 +7,13 @@
  # specify flags and libraries needed for your compiler
  
  CC =		mpicxx
 -CCFLAGS =	-g -O3 
-+CCFLAGS =       -O2 -restrict PHIOFFLOAD  ROLLAVX
++CCFLAGS =	-O2 -restrict PHIOFFLOAD  ROLLAVX
  SHFLAGS =	-fPIC
  DEPFLAGS =	-M
  
@@ -22,7 +22,7 @@
  # see possible settings in Section 2.2 (step 4) of manual
  
 -LMP_INC =	-DLAMMPS_GZIP -DLAMMPS_MEMALIGN=64
-++LMP_INC =	-DLAMMPS_GZIP -DLAMMPS_MEMALIGN=64 -DLAMMPS_FFMPEG
++LMP_INC =	-DLAMMPS_GZIP -DLAMMPS_MEMALIGN=64 -DLAMMPS_FFMPEG
  
  # MPI library
  # see discussion in Section 2.2 (step 5) of manual

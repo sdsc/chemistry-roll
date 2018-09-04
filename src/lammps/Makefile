@@ -139,10 +139,7 @@ build: $(SRC_DIRS)
           export CC=$(CC); \
           export CXX=$(CXX); \
           export FC=$(FC); \
-	  export I_MPI_CC=$(CC); \
-	  export I_MPI_CXX=$(CXX); \
-	  export I_MPI_F77=$(F77); \
-	  export I_MPI_F90=$(F90); \
+          $(MODULE_LOAD_MPI); \
 # \
           patch $(SOURCE_DIR)/src/MAKE/Makefile.mpi patch-files/Makefile.mpi.patch; \
           patch $(SOURCE_DIR)/src/USER-INTEL/pair_tersoff_intel.cpp patch-files/user-intel/pair_tersoff_intel.cpp.patch; \
@@ -244,7 +241,7 @@ build: $(SRC_DIRS)
 	    cp *.a $(CURDIR)/$(SOURCE_DIR)/src; \
 	  done; \
 	  cd $(CURDIR)/$(SOURCE_DIR)/src; \
-	  $(MAKE) -j 16 ROOT=lmp LINK=mpif90 mpi; \
+	  $(MAKE) -j 16 ROOT=lmp LINK=mpicxx mpi; \
 	  mv lmp_mpi $(CACHE_DIR)/lammps/bin/lammps; \
 	  if test "$(CUDABUILD)" = "yes"; then \
 	    cd $(CURDIR); \
@@ -262,7 +259,7 @@ build: $(SRC_DIRS)
 	      $(MAKE) -f Makefile.linux; \
 	      cp *.a $(CURDIR)/$(SOURCE_DIR)/src; \
 	      cd $(CURDIR)/$(SOURCE_DIR)/src;  \
-	      $(MAKE) -j 16 ROOT=lmp LINK=mpif90 mpi; \
+	      $(MAKE) -j 16 ROOT=lmp LINK=mpicxx mpi; \
 	      mv lmp_mpi $(CACHE_DIR)/lammps/bin/lammps.$$capability.cuda; \
 	    done; \
 	  fi \

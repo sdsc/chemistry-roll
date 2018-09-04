@@ -1,12 +1,6 @@
---- lammps-17Jan18/src/USER-REAXC/reaxc_defs.h	2017-05-03 08:10:15.000000000 -0700
-+++ patch-files/reax/reaxc_defs.h	2018-01-29 16:31:02.000000000 -0800
-@@ -90,13 +90,13 @@
- #define MIN_NBRS       100
- #define MIN_HENTRIES   100
- #define MAX_BONDS      30
--#define MIN_BONDS      25
-+#define MIN_BONDS      100
- #define MIN_HBONDS     25
+--- lammps-22Aug18/src/USER-REAXC/reaxc_defs.h	2017-05-03 08:10:15.000000000 -0700
++++ patch-files/reax/reaxc_defs.h	2018-08-28 17:37:53.829653599 -0700
+@@ -95,8 +95,8 @@
  #define MIN_3BODIES    1000
  #define MIN_GCELL_POPL 50
  #define MIN_SEND       100

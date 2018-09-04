@@ -1,8 +1,20 @@
-5c5
-< EXTRAMAKE = Makefile.lammps.installed
----
-> EXTRAMAKE = Makefile.lammps.empty
-41c41
-< 	  -DMPICH_IGNORE_CXX_SEEK -DOMPI_SKIP_MPICXX=1
----
-> 	  -DMPICH_IGNORE_CXX_SEEK -DOMPI_SKIP_MPICXX=1 ROLLAVX
+--- lammps-22Aug18/lib/awpmd/Makefile.mpicc	2017-08-08 16:27:34.000000000 -0700
++++ patch-files/awpmd/Makefile.mpicc	2018-08-28 17:13:45.242984553 -0700
+@@ -2,7 +2,7 @@
+ 
+ # which file will be copied to Makefile.lammps
+ 
+-EXTRAMAKE = Makefile.lammps.installed
++EXTRAMAKE = Makefile.lammps.empty
+ 
+ # ------ FILES ------
+ 
+@@ -38,7 +38,7 @@
+ 
+ CC =	    mpicxx
+ CCFLAGS = -O3 -fPIC -Isystems/interact/TCP/ -Isystems/interact -Iivutils/include \
+-	  -DMPICH_IGNORE_CXX_SEEK -DOMPI_SKIP_MPICXX=1
++	  -DMPICH_IGNORE_CXX_SEEK -DOMPI_SKIP_MPICXX=1 ROLLAVX
+ 
+ ARCHIVE =	ar
+ ARCHFLAG =	-rc
