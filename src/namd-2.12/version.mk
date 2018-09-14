@@ -21,7 +21,7 @@ CUDAGENCODE = --cuda-gencode arch=compute_30,code=sm_30 --cuda-gencode arch=comp
 
 NAME           = sdsc-namd-$(VERSION)
 VERSION        = 2.12
-RELEASE        = 1
+RELEASE        = 2
 
 SRC_SUBDIR     = namd
 
