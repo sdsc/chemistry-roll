@@ -69,11 +69,6 @@ else ifeq ("$(COMPILERNAME)", "pgi")
   COMPILE_FLAGS = -fPIC -fast --c++11
 endif
 
-# The Intel compilers use the C++ libraries that are packaged with the first
-# gnu compiler found in PATH. Since the default system gnu doesn't support
-# C++11, for Intel we have to load /opt/gnu to get the updated library.
-MODULE_LOAD_CXX11_LIB = $(call MODULE_LOAD_COMPILER, gnu, gcc)
-
 CUDA=-DGMX_GPU=OFF
 CUDABUILD=NO
 ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
@@ -103,9 +98,6 @@ LICENSE: $(SRC_DIRS)
 
 build: $(SRC_DIRS)
 	( \
-          if test "$(COMPILERNAME)" = "intel"; then \
-             $(MODULE_LOAD_CXX11_LIB); \
-          fi; \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MPI); \
@@ -115,6 +107,7 @@ build: $(SRC_DIRS)
 	  export CC=mpicc; \
 	  export CXX=mpicxx; \
 	  if test "$(CUDABUILD)" = "YES"; then \
+            patch ../cmake/gmxManageGPU.cmake ../../patch-files/gmxManageGPU.cmake.patch; \
 	    $(MODULE_LOAD_GROMACS_CUDA); \
 	    export CUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME}; \
 	    export CUDA_NVCC_EXECUTABLE=$${CUDAHOME}/bin/nvcc; \

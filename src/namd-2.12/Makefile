@@ -169,6 +169,7 @@ build: $(SRC_DIRS)
 	   $(MODULE_LOAD_NAMD_CUDA); \
            cd ..; \
            rm -rf Linux-x86_64-$(CC); \
+           patch src/CudaPmeSolverUtil.C ../patch-files/CudaPmeSolverUtil.C.patch; \
 	   perl -pi -e "s!CUDAHOME!$${CUDAHOME}!g" arch/Linux-x86_64*; \
            ./config Linux-x86_64-cuda-$(CC) \
                    --charm-arch $(CHARMARCH)-$${CHARMFILEEXTENSION} \
