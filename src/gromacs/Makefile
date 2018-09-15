@@ -128,7 +128,6 @@ install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
 	$(PKGROOT_BIND_MOUNT)
 	( \
-	  $(MODULE_LOAD_CXX11_LIB); \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MPI); \
