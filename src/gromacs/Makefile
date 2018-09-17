@@ -115,8 +115,12 @@ build: $(SRC_DIRS)
 	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
 	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) \
 	  $(MAKE) \
-	  $(MAKE) prefix=$(PKGROOT) install \
+	  $(MAKE) prefix=$(PKGROOT) install; \
 	  if test "$(CUDABUILD)" = "YES"; then \
+            cd ..; \
+            rm -rf build; \
+            mkdir build; \
+            cd build; \
             patch ../cmake/gmxManageGPU.cmake ../../patch-files/gmxManageGPU.cmake.patch; \
 	    $(MODULE_LOAD_GROMACS_CUDA); \
 	    export CUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME}; \
@@ -128,8 +132,9 @@ build: $(SRC_DIRS)
 	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
 	           -DGMX_MPI=ON \
 	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
-	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) $(CUDA) \
+	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) $(CUDA); \
 	    $(MAKE) \
+	    $(MAKE) prefix=$(PKGROOT) install; \
           fi \
 	)
 	$(PKGROOT_BIND_UMOUNT)
