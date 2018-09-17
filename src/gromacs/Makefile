@@ -73,7 +73,7 @@ CUDA=-DGMX_GPU=OFF
 CUDABUILD=NO
 ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
   CUDABUILD=YES
-  CUDA = -DGMX_GPU=ON -DCUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME} -DCUDA_HOST_COMPILER=$${MPIHOME}/bin/mpicc
+  CUDA = -DGMX_GPU=ON -DCUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME} -DCUDA_HOST_COMPILER=$${MPIHOME}/bin/mpicc -DGMX_BUILD_MDRUN_ONLY=on
 endif
 
 MODULE_LOAD_GROMACS_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
@@ -97,6 +97,8 @@ LICENSE: $(SRC_DIRS)
 	echo LGPLv2 > $@
 
 build: $(SRC_DIRS)
+	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
+	$(PKGROOT_BIND_MOUNT)
 	( \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
@@ -106,6 +108,14 @@ build: $(SRC_DIRS)
 	  cd build; \
 	  export CC=mpicc; \
 	  export CXX=mpicxx; \
+	  cmake .. -DGMX_BUILD_OWN_FFTW=ON \
+	           -DGMX_BUILD_OWN_FFTW_URL="../../$(FFTW_PKG)" \
+	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
+	           -DGMX_MPI=ON \
+	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
+	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) \
+	  $(MAKE) \
+	  $(MAKE) prefix=$(PKGROOT) install \
 	  if test "$(CUDABUILD)" = "YES"; then \
             patch ../cmake/gmxManageGPU.cmake ../../patch-files/gmxManageGPU.cmake.patch; \
 	    $(MODULE_LOAD_GROMACS_CUDA); \
@@ -113,31 +123,19 @@ build: $(SRC_DIRS)
 	    export CUDA_NVCC_EXECUTABLE=$${CUDAHOME}/bin/nvcc; \
 	    export CUDA_INCLUDE_DIRS=$${CUDAHOME}/include; \
 	    export CUDA_CUDART_LIBRARY=$${CUDAHOME}/lib64/libcudart.so; \
-	  fi; \
-	  cmake .. -DGMX_BUILD_OWN_FFTW=ON \
+	    cmake .. -DGMX_BUILD_OWN_FFTW=ON \
 	           -DGMX_BUILD_OWN_FFTW_URL="../../$(FFTW_PKG)" \
 	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
 	           -DGMX_MPI=ON \
 	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
-	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) $(CUDA); \
-	  $(MAKE) \
+	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) $(CUDA) \
+	    $(MAKE) \
+          fi \
 	)
+	$(PKGROOT_BIND_UMOUNT)
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
-	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
-	$(PKGROOT_BIND_MOUNT)
-	( \
-	  $(MODULE_LOAD_CC); \
-	  $(MODULE_LOAD_CMAKE); \
-	  $(MODULE_LOAD_MPI); \
-	  if test "$(CUDABUILD)" = "YES"; then \
-	    $(MODULE_LOAD_GROMACS_CUDA); \
-	  fi; \
-	  cd $(SOURCE_DIR)/build; \
-	  $(MAKE) prefix=$(PKGROOT) install \
-	)
-	$(PKGROOT_BIND_UMOUNT)
 	$(INSTALL_LICENSE_FILES)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)
 	@echo "::: Package $(NAME) install complete :::"
