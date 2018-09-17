@@ -113,8 +113,8 @@ build: $(SRC_DIRS)
 	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
 	           -DGMX_MPI=ON \
 	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
-	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) \
-	  $(MAKE) \
+	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT); \
+	  $(MAKE); \
 	  $(MAKE) prefix=$(PKGROOT) install; \
 	  if test "$(CUDABUILD)" = "YES"; then \
             cd ..; \
@@ -133,7 +133,7 @@ build: $(SRC_DIRS)
 	           -DGMX_MPI=ON \
 	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
 	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) $(CUDA); \
-	    $(MAKE) \
+	    $(MAKE); \
 	    $(MAKE) prefix=$(PKGROOT) install; \
           fi \
 	)
