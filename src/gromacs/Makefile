@@ -69,7 +69,6 @@ else ifeq ("$(COMPILERNAME)", "pgi")
   COMPILE_FLAGS = -fPIC -fast --c++11
 endif
 
-CUDA=-DGMX_GPU=OFF
 CUDABUILD=NO
 ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
   CUDABUILD=YES
@@ -113,15 +112,16 @@ build: $(SRC_DIRS)
 	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
 	           -DGMX_MPI=ON \
 	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
-	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT); \
-	  $(MAKE); \
-	  $(MAKE) prefix=$(PKGROOT) install; \
-	  if test "$(CUDABUILD)" = "YES"; then \
+	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) \
+                   -DGMX_GPU=OFF; \
+	 $(MAKE); \
+	 $(MAKE) prefix=$(PKGROOT) install; \
+	 if test "$(CUDABUILD)" = "YES"; then \
             cd ..; \
             rm -rf build; \
             mkdir build; \
+            patch cmake/gmxManageNvccConfig.cmake ../patch-files/gmxManageNvccConfig.cmake.patch; \
             cd build; \
-            patch ../cmake/gmxManageGPU.cmake ../../patch-files/gmxManageGPU.cmake.patch; \
 	    $(MODULE_LOAD_GROMACS_CUDA); \
 	    export CUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME}; \
 	    export CUDA_NVCC_EXECUTABLE=$${CUDAHOME}/bin/nvcc; \
