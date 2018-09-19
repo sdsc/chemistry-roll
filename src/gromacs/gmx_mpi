@@ -1,0 +1,10 @@
+#!/bin/bash
+if test `nvidia-smi|grep -c failed` -eq 0 ; then
+    if test $# -gt 0; then
+       if test $1 = 'mdrun'; then
+          /opt/gromacs/bin/mdrun_mpi ${@:2}
+       fi
+    fi
+else
+    /opt/gromacs/bin/gmx_mpi.real $@
+fi

@@ -120,8 +120,8 @@ build: $(SRC_DIRS)
             cd ..; \
             rm -rf build; \
             mkdir build; \
-            patch cmake/gmxManageNvccConfig.cmake ../patch-files/gmxManageNvccConfig.cmake.patch; \
             cd build; \
+            patch ../cmake/gmxManageNvccConfig.cmake ../../patch-files/gmxManageNvccConfig.cmake.patch; \
 	    $(MODULE_LOAD_GROMACS_CUDA); \
 	    export CUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME}; \
 	    export CUDA_NVCC_EXECUTABLE=$${CUDAHOME}/bin/nvcc; \
@@ -135,6 +135,8 @@ build: $(SRC_DIRS)
 	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) $(CUDA); \
 	    $(MAKE); \
 	    $(MAKE) prefix=$(PKGROOT) install; \
+            mv $(PKGROOT)/bin/gmx_mpi $(PKGROOT)/bin/gmx_mpi.real; \
+            cp $(REDHAT.ROOT)/src/gromacs/gmx_mpi  = $(PKGROOT)/bin \
           fi \
 	)
 	$(PKGROOT_BIND_UMOUNT)
