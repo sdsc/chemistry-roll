@@ -77,6 +77,7 @@ endif
 
 MODULE_LOAD_GROMACS_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
 DESCRIBE_GROMACS_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSION))
+CACHE_DIR=$(REDHAT.ROOT)/cache
 
 $(NAME).spec: DESCRIPTION LICENSE
 
@@ -96,8 +97,9 @@ LICENSE: $(SRC_DIRS)
 	echo LGPLv2 > $@
 
 build: $(SRC_DIRS)
-	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
-	$(PKGROOT_BIND_MOUNT)
+	mkdir  -p $(CACHE_DIR)
+	mkdir  -p $(PKGROOT)
+	$(call BIND_MOUNT, $(PKGROOT), $(CACHE_DIR)/gromacs)
 	( \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
@@ -139,10 +141,12 @@ build: $(SRC_DIRS)
             cp $(REDHAT.ROOT)/src/gromacs/gmx_mpi $(PKGROOT)/bin; \
           fi \
 	)
-	$(PKGROOT_BIND_UMOUNT)
+	$(call BIND_UMOUNT, $(CACHE_DIR)/gromacs)
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
+	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
+	cp -r $(CACHE_DIR)/gromacs/* $(ROOT)/$(PKGROOT)
 	$(INSTALL_LICENSE_FILES)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)
 	@echo "::: Package $(NAME) install complete :::"
