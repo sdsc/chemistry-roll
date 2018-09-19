@@ -139,6 +139,7 @@ build: $(SRC_DIRS)
 	    $(MAKE) prefix=$(PKGROOT) install; \
             mv $(PKGROOT)/bin/gmx_mpi $(PKGROOT)/bin/gmx_mpi.real; \
             cp $(REDHAT.ROOT)/src/gromacs/gmx_mpi $(PKGROOT)/bin; \
+            chmod 0755 $(PKGROOT)/bin/gmx_mpi; \
           fi \
 	)
 	$(call BIND_UMOUNT, $(CACHE_DIR)/gromacs)
