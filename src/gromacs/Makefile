@@ -136,7 +136,7 @@ build: $(SRC_DIRS)
 	    $(MAKE); \
 	    $(MAKE) prefix=$(PKGROOT) install; \
             mv $(PKGROOT)/bin/gmx_mpi $(PKGROOT)/bin/gmx_mpi.real; \
-            cp $(REDHAT.ROOT)/src/gromacs/gmx_mpi  = $(PKGROOT)/bin; \
+            cp $(REDHAT.ROOT)/src/gromacs/gmx_mpi $(PKGROOT)/bin; \
           fi \
 	)
 	$(PKGROOT_BIND_UMOUNT)
