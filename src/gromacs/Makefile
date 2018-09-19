@@ -97,7 +97,7 @@ LICENSE: $(SRC_DIRS)
 	echo LGPLv2 > $@
 
 build: $(SRC_DIRS)
-	mkdir  -p $(CACHE_DIR)
+	mkdir  -p $(CACHE_DIR)/gromacs
 	mkdir  -p $(PKGROOT)
 	$(call BIND_MOUNT, $(PKGROOT), $(CACHE_DIR)/gromacs)
 	( \
