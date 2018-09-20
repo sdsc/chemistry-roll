@@ -140,6 +140,7 @@ build: $(SRC_DIRS)
             mv $(PKGROOT)/bin/gmx_mpi $(PKGROOT)/bin/gmx_mpi.real; \
             cp $(REDHAT.ROOT)/src/gromacs/gmx_mpi $(PKGROOT)/bin; \
             chmod 0755 $(PKGROOT)/bin/gmx_mpi; \
+            cp $(REDHAT.ROOT)/src/gromacs/deviceQuery $(PKGROOT)/bin; \
           fi \
 	)
 	$(call BIND_UMOUNT, $(PKGROOT))
