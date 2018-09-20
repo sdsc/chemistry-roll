@@ -142,7 +142,7 @@ build: $(SRC_DIRS)
             chmod 0755 $(PKGROOT)/bin/gmx_mpi; \
           fi \
 	)
-	$(call BIND_UMOUNT, $(CACHE_DIR)/gromacs)
+	$(call BIND_UMOUNT, $(PKGROOT))
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
