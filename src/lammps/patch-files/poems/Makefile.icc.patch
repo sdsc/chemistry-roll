@@ -1,5 +1,5 @@
---- lammps-17Jan18/lib/poems/Makefile.icc	2016-03-22 06:44:55.000000000 -0700
-+++ patch-files/poems/Makefile.icc	2018-01-29 15:29:16.000000000 -0800
+--- lammps-22Aug18/lib/poems/Makefile.icc	2016-03-22 06:44:55.000000000 -0700
++++ patch-files/poems/Makefile.icc	2018-08-28 17:26:47.673838208 -0700
 @@ -67,12 +67,12 @@
  
  # ------ SETTINGS ------

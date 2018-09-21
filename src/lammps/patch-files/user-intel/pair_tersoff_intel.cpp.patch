@@ -1,5 +1,5 @@
---- lammps-23Oct17/src/USER-INTEL/pair_tersoff_intel.cpp	2017-06-20 06:46:34.000000000 -0700
-+++ patch-files/user-intel/pair_tersoff_intel.cpp	2018-01-15 16:31:50.464199992 -0800
+--- lammps-22Aug18/src/USER-INTEL/pair_tersoff_intel.cpp	2018-06-27 15:59:18.000000000 -0700
++++ patch-files/user-intel/pair_tersoff_intel.cpp	2018-08-28 17:41:24.635560089 -0700
 @@ -28,6 +28,9 @@
  #include "comm.h"
  #include "memory.h"

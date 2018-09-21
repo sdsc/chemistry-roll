@@ -1,10 +1,11 @@
---- lammps-17Jan18/lib/gpu/Makefile.linux	2017-09-20 07:52:27.000000000 -0700
-+++ patch-files/gpu/Makefile.linux	2018-01-31 11:21:41.811726293 -0800
-@@ -14,12 +14,7 @@
+--- lammps-22Aug18/lib/gpu/Makefile.linux	2018-08-15 14:26:05.000000000 -0700
++++ patch-files/gpu/Makefile.linux	2018-08-28 17:20:50.494007586 -0700
+@@ -13,13 +13,7 @@
+ 
  NVCC = nvcc
  
- # Tesla CUDA
--CUDA_ARCH = -arch=sm_21
+-# older CUDA
+-#CUDA_ARCH = -arch=sm_21
 -# newer CUDA
 -#CUDA_ARCH = -arch=sm_13
 -# older CUDA
@@ -14,7 +15,7 @@
  
  # this setting should match LAMMPS Makefile
  # one of LAMMPS_SMALLBIG (default), LAMMPS_BIGBIG and LAMMPS_SMALLSMALL
-@@ -34,7 +29,7 @@
+@@ -34,7 +28,7 @@
  CUDA_PRECISION = -D_SINGLE_DOUBLE
  
  CUDA_INCLUDE = -I$(CUDA_HOME)/include
