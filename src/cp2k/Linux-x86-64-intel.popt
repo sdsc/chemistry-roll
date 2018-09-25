@@ -33,5 +33,5 @@ LDFLAGS_C = $(FCFLAGS) -static-intel -nofor_main
 
 # Required due to memory leak that occurs if high optimisations are used
 mp2_optimize_ri_basis.o: mp2_optimize_ri_basis.F
-                         $(FC) -c $(subst O2,O0,$(FCFLAGS)) $<
+	$(FC) -c $(subst O2,O0,$(FCFLAGS)) $<
 
