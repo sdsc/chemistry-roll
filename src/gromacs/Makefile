@@ -69,15 +69,15 @@ else ifeq ("$(COMPILERNAME)", "pgi")
   COMPILE_FLAGS = -fPIC -fast --c++11
 endif
 
-CUDA=-DGMX_GPU=OFF
 CUDABUILD=NO
 ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
   CUDABUILD=YES
-  CUDA = -DGMX_GPU=ON -DCUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME} -DCUDA_HOST_COMPILER=$${MPIHOME}/bin/mpicc
+  CUDA = -DGMX_GPU=ON -DCUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME} -DCUDA_HOST_COMPILER=$${MPIHOME}/bin/mpicc -DGMX_BUILD_MDRUN_ONLY=on
 endif
 
 MODULE_LOAD_GROMACS_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
 DESCRIBE_GROMACS_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSION))
+CACHE_DIR=$(REDHAT.ROOT)/cache
 
 $(NAME).spec: DESCRIPTION LICENSE
 
@@ -97,6 +97,9 @@ LICENSE: $(SRC_DIRS)
 	echo LGPLv2 > $@
 
 build: $(SRC_DIRS)
+	mkdir  -p $(CACHE_DIR)/gromacs
+	mkdir  -p $(PKGROOT)
+	$(call BIND_MOUNT, $(PKGROOT), $(CACHE_DIR)/gromacs)
 	( \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
@@ -106,38 +109,46 @@ build: $(SRC_DIRS)
 	  cd build; \
 	  export CC=mpicc; \
 	  export CXX=mpicxx; \
-	  if test "$(CUDABUILD)" = "YES"; then \
-            patch ../cmake/gmxManageGPU.cmake ../../patch-files/gmxManageGPU.cmake.patch; \
-	    $(MODULE_LOAD_GROMACS_CUDA); \
-	    export CUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME}; \
-	    export CUDA_NVCC_EXECUTABLE=$${CUDAHOME}/bin/nvcc; \
-	    export CUDA_INCLUDE_DIRS=$${CUDAHOME}/include; \
-	    export CUDA_CUDART_LIBRARY=$${CUDAHOME}/lib64/libcudart.so; \
-	  fi; \
 	  cmake .. -DGMX_BUILD_OWN_FFTW=ON \
 	           -DGMX_BUILD_OWN_FFTW_URL="../../$(FFTW_PKG)" \
 	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
 	           -DGMX_MPI=ON \
 	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
+	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) \
+                   -DGMX_GPU=OFF; \
+	 $(MAKE); \
+	 $(MAKE) prefix=$(PKGROOT) install; \
+	 if test "$(CUDABUILD)" = "YES"; then \
+            cd ..; \
+            rm -rf build; \
+            mkdir build; \
+            cd build; \
+            patch ../cmake/gmxManageNvccConfig.cmake ../../patch-files/gmxManageNvccConfig.cmake.patch; \
+	    $(MODULE_LOAD_GROMACS_CUDA); \
+	    export CUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME}; \
+	    export CUDA_NVCC_EXECUTABLE=$${CUDAHOME}/bin/nvcc; \
+	    export CUDA_INCLUDE_DIRS=$${CUDAHOME}/include; \
+	    export CUDA_CUDART_LIBRARY=$${CUDAHOME}/lib64/libcudart.so; \
+	    cmake .. -DGMX_BUILD_OWN_FFTW=ON \
+	           -DGMX_BUILD_OWN_FFTW_URL="../../$(FFTW_PKG)" \
+	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
+	           -DGMX_MPI=ON \
+	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
 	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) $(CUDA); \
-	  $(MAKE) \
+	    $(MAKE); \
+	    $(MAKE) prefix=$(PKGROOT) install; \
+            mv $(PKGROOT)/bin/gmx_mpi $(PKGROOT)/bin/gmx_mpi.real; \
+            cp $(REDHAT.ROOT)/src/gromacs/gmx_mpi $(PKGROOT)/bin; \
+            chmod 0755 $(PKGROOT)/bin/gmx_mpi; \
+            cp $(REDHAT.ROOT)/src/gromacs/deviceQuery $(PKGROOT)/bin; \
+          fi \
 	)
+	$(call BIND_UMOUNT, $(PKGROOT))
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
-	$(PKGROOT_BIND_MOUNT)
-	( \
-	  $(MODULE_LOAD_CC); \
-	  $(MODULE_LOAD_CMAKE); \
-	  $(MODULE_LOAD_MPI); \
-	  if test "$(CUDABUILD)" = "YES"; then \
-	    $(MODULE_LOAD_GROMACS_CUDA); \
-	  fi; \
-	  cd $(SOURCE_DIR)/build; \
-	  $(MAKE) prefix=$(PKGROOT) install \
-	)
-	$(PKGROOT_BIND_UMOUNT)
+	cp -r $(CACHE_DIR)/gromacs/* $(ROOT)/$(PKGROOT)
 	$(INSTALL_LICENSE_FILES)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)
 	@echo "::: Package $(NAME) install complete :::"

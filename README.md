@@ -35,7 +35,7 @@ The roll sources assume that modulefiles provided by SDSC compiler, python, and
 cmake rolls are available, but it will build without them as long as the
 environment variables they provide are otherwise defined.
 
-The build process requires the MKL, fftw, netcdf, and cuda libraries and
+The build process requires the MKL, fftw, and cuda libraries and
 assumes that the modulefiles provided by the corresponding SDSC rolls are
 available.  It will build without the modulefiles as long as the environment
 variables they provide are otherwise defined.
