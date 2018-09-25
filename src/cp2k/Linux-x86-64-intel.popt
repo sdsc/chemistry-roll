@@ -7,8 +7,8 @@
 #### Version OpenMPI (without OMP !)
 CC       = mpicc
 CPP      = /lib/cpp
-FC       = ifort -FR
-FC_fixed = ifort -FI
+FC       = mpif90 -FR
+FC_fixed = mpif90 -FI
 LD       = mpif90
 AR       = /usr/bin/ar -r
 #Better with mkl (intel lapack/blas) only
@@ -27,7 +27,11 @@ LDFLAGS  = $(FCFLAGS) -LMKLROOT/lib/intel64
 
 LIBS     = $(INTEL_LIB)/libmkl_scalapack_lp64.a  -Wl,--start-group $(INTEL_LIB)/libmkl_intel_lp64.a $(INTEL_LIB)/libmkl_sequential.a $(INTEL_LIB)/libmkl_core.a $(INTEL_LIB)/libmkl_blacs_INTELMPITYPE_lp64.a -Wl,--end-group -lpthread  -LROLLFFTW/lib -lfftw3 -LLIBINTPATH -L$(LIBXC_LIB) -lxc -lxcf90 -lderiv -lint -lr12 -lstdc++ -ldl CUDALIBS -lm
 
-OBJECTS_ARCHITECTURE = machine_intel.o
 NVCC = NVCCPATH
 NVFLAGS = $(DFLAGS) -ccbin /usr/bin/g++ -O2 -gencode arch=compute_30,code=sm_30 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_60,code=sm_60
+LDFLAGS_C = $(FCFLAGS) -static-intel -nofor_main
+
+# Required due to memory leak that occurs if high optimisations are used
+mp2_optimize_ri_basis.o: mp2_optimize_ri_basis.F
+                         $(FC) -c $(subst O2,O0,$(FCFLAGS)) $<
 
