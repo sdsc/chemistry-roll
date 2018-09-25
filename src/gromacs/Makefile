@@ -137,8 +137,8 @@ build: $(SRC_DIRS)
 	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) $(CUDA); \
 	    $(MAKE); \
 	    $(MAKE) prefix=$(PKGROOT) install; \
-            install -m 0755 gmx_mpi $(PKGROOT)/bin/gmx_mpi.real; \
-            install -m 0755 -t $(PKGROOT)/bin $(REDHAT.ROOT)/src/gromacs/deviceQuery $(PKGROOT)/bin; \
+            install -m 0755 $(REDHAT.ROOT)/src/gromacs/gmx_mpi $(PKGROOT)/bin/gmx_mpi.real; \
+            install -m 0755 -t $(PKGROOT)/bin $(REDHAT.ROOT)/src/gromacs/deviceQuery; \
           fi \
 	)
 	$(call BIND_UMOUNT, $(PKGROOT))
