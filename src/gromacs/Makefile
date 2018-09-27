@@ -138,8 +138,12 @@ build: $(SRC_DIRS)
 	    $(MAKE); \
 	    $(MAKE) prefix=$(PKGROOT) install; \
             mv $(PKGROOT)/bin/gmx_mpi $(PKGROOT)/bin/gmx_mpi.real; \
-            install -m 0755 -t $(PKGROOT)/bin $(REDHAT.ROOT)/src/gromacs/gmx_mpi; \
-            install -m 0755 -t $(PKGROOT)/bin $(REDHAT.ROOT)/src/gromacs/deviceQuery; \
+            cd $(REDHAT.ROOT)/src/gromacs; \
+            cp -r $${CUDAHOME}/samples/1_Utilities/deviceQuery deviceQuery.dir; \
+            patch deviceQuery.dir/Makefile patch-files/Makefile.deviceQuery.patch; \
+            cd deviceQuery.dir; \
+            make clean; \
+            make; \
           fi \
 	)
 	$(call BIND_UMOUNT, $(PKGROOT))
@@ -148,10 +152,12 @@ build: $(SRC_DIRS)
 install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
 	cp -r $(CACHE_DIR)/gromacs/* $(ROOT)/$(PKGROOT)
+	install -m 0755 -t $(ROOT)/$(PKGROOT)/bin $(REDHAT.ROOT)/src/gromacs/gmx_mpi; \
+	install -m 0755 -t $(ROOT)/$(PKGROOT)/bin $(REDHAT.ROOT)/src/gromacs/deviceQuery; \
 	$(INSTALL_LICENSE_FILES)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SRC_DIRS) DESCRIPTION LICENSE
+	rm -rf $(SRC_DIRS) deviceQuery.dir DESCRIPTION LICENSE
 
