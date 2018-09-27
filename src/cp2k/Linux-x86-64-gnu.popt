@@ -1,6 +1,6 @@
 CC       = mpicc
 CPP      = /lib/cpp
-FC       = mpic90
+FC       = mpif90
 LD       = mpif90
 AR       = /usr/bin/ar -r
 LIBXC_INC  = LIBXCPATH/include
