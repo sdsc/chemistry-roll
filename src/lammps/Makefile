@@ -275,7 +275,7 @@ build: $(SRC_DIRS)
 install::
 	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
 	cp $(CACHE_DIR)/lammps/bin/* $(ROOT)/$(PKGROOT)/bin
-	install -m 0755 -t $(PKGROOT)/bin $(REDHAT.ROOT)/src/lammps/deviceQuery; \
+	install -m 0755 -t $(ROOT)/$(PKGROOT)/bin $(REDHAT.ROOT)/src/lammps/deviceQuery; \
 	perl -pi -e "s!PKGROOT!$(PKGROOT)!g" $(ROOT)/$(PKGROOT)/bin/deviceQuery; \
 	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)
 	cp lammps.cuda $(ROOT)/$(PKGROOT)/bin
