@@ -138,12 +138,6 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_MKL); \
 	  $(MODULE_LOAD_MPI); \
 	  $(MODULE_LOAD_FFTW); \
-          if test "$(COMPILERNAME)" = "intel"; then \
-              cp all.dep.add all.dep; \
-	      perl -pi -e "s!ROOTDIR!$(CURDIR)!g" all.dep; \
-	      perl -pi -e "s!SOURCEDIR!$(SOURCE_DIR)!g" all.dep; \
-	      patch $(SOURCE_DIR)/makefiles/Makefile patch-files/Makefile.patch; \
-          fi; \
 	  perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!INTELMPITYPE!$(INTELMPITYPE)!g" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!ROLLFFTW!$${FFTWHOME}!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
@@ -186,12 +180,6 @@ build: $(SRC_DIRS)
           mv ../exe/Linux-x86-64-$(COMPILERNAME)/*.popt ..; \
           if test "$(CUDABUILD)" = "yes"; then \
               export CUDAEXTRALIBS="-lcp2kpwcuda -lcusmm -lcp2kacccuda"; \
-              if test "$(COMPILERNAME)" = "intel"; then \
-                    cp $(CURDIR)/all.dep.cuda.add $(CURDIR)/all.dep; \
-	            perl -pi -e "s!ROOTDIR!$(CURDIR)!g" $(CURDIR)/all.dep; \
-	            perl -pi -e "s!SOURCEDIR!$(SOURCE_DIR)!g" $(CURDIR)/all.dep; \
-	            patch $(SOURCE_DIR)/makefiles/Makefile patch-files/Makefile.patch; \
-              fi; \
               $(MODULE_LOAD_CP2K_CUDA); \
               $(CUDAVARS); \
               cp ../../Linux-x86-64-gnu.popt ../arch; \
@@ -206,7 +194,7 @@ build: $(SRC_DIRS)
   	      perl -pi -e "s!CUDADEFS!$${CUDADEFS}!" ../arch/$(ROLLMAKEFILE).popt; \
               perl -pi -e "s!CUDALIBS!$${CUDALIBS}!" ../arch/$(ROLLMAKEFILE).popt; \
               make realclean ARCH=$(ROLLMAKEFILE) VERSION=popt; \
-              $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt; \
+              $(MAKE) -j CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt; \
               exes=`find ../exe/Linux-x86-64-$(COMPILERNAME) -name \*.popt -print`; \
               for exe in $${exes}; do \
                    name=`basename $${exe}`; \

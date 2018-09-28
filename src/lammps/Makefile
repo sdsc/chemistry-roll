@@ -262,6 +262,12 @@ build: $(SRC_DIRS)
 	      $(MAKE) -j 16 ROOT=lmp LINK=mpicxx mpi; \
 	      mv lmp_mpi $(CACHE_DIR)/lammps/bin/lammps.$$capability.cuda; \
 	    done; \
+            cd $(REDHAT.ROOT)/src/lammps; \
+            cp -r $${CUDAHOME}/samples/1_Utilities/deviceQuery deviceQuery.dir; \
+            patch deviceQuery.dir/Makefile patch-files/Makefile.deviceQuery.patch; \
+            cd deviceQuery.dir; \
+            make clean; \
+            make; \
 	  fi \
 	)
 	@echo "::: Package $(NAME) build complete :::"
@@ -269,7 +275,7 @@ build: $(SRC_DIRS)
 install::
 	mkdir -p -m 775 $(ROOT)/$(PKGROOT)/bin
 	cp $(CACHE_DIR)/lammps/bin/* $(ROOT)/$(PKGROOT)/bin
-	cp deviceQuery $(ROOT)/$(PKGROOT)/bin
+	install -m 0755 -t $(ROOT)/$(PKGROOT)/bin $(REDHAT.ROOT)/src/lammps/deviceQuery; \
 	perl -pi -e "s!PKGROOT!$(PKGROOT)!g" $(ROOT)/$(PKGROOT)/bin/deviceQuery; \
 	cp -r $(SOURCE_DIR)/examples $(ROOT)/$(PKGROOT)
 	cp lammps.cuda $(ROOT)/$(PKGROOT)/bin
@@ -278,4 +284,4 @@ install::
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SOURCE_DIR) DESCRIPTION LICENSE save
+	rm -rf $(SOURCE_DIR) deviceQuery.dir DESCRIPTION LICENSE save

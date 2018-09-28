@@ -23,8 +23,8 @@ MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 
 NAME           = sdsc-cp2k
-VERSION        = 5.1
-RELEASE        = 1
+VERSION        = 6.1
+RELEASE        = 0
 PKGROOT        = /opt/cp2k
 
 SRC_SUBDIR     = cp2k
@@ -43,7 +43,7 @@ LIBINT_DIR     = $(LIBINT_PKG:%.$(LIBINT_SUFFIX)=%)
 
 LIBXC_NAME     = libxc
 LIBXC_SUFFIX   = tar.gz
-LIBXC_VERSION  = 2.2.2
+LIBXC_VERSION  = 4.2.3
 LIBXC_PKG      = $(LIBXC_NAME)-$(LIBXC_VERSION).$(LIBXC_SUFFIX)
 LIBXC_DIR      = $(LIBXC_PKG:%.$(LIBXC_SUFFIX)=%)
 
