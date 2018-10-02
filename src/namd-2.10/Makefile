@@ -64,37 +64,19 @@ include $(SDSCDEVEL)/Rules.mk
 
 COMPILE_FLAGS = -O2
 ifeq ("$(COMPILERNAME)", "intel")
-  COMPILE_FLAGS = -ip -xHOST
+  COMPILE_FLAGS = -ip -fno-rtti -xHOST
 else ifeq ("$(COMPILERNAME)", "pgi")
   COMPILE_FLAGS = -fast
 endif
 
-IBVERBS = no
-ifneq ("$(MPINAME)","$(subst _ib,,$(MPINAME))")
-   IBVERBS = yes
-else ifeq ("$(MPINAME)","intelmpi")
-   IBVERBS = yes
-endif
-
-MODULE_LOAD_NAMD_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
-DESCRIBE_NAMD_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSION))
-
-CHARMFLAGS=--with-production
-LIBIBVERBS=
-ifeq ($(IBVERBS),yes)
-  CHARMARCH = verbs-linux-x86_64
-  ifeq ("$(COMPILERNAME)", "intel")
-    CHARMBUILDOPTS = smp icc
-  else ifeq ("$(COMPILERNAME)", "pgi")
-    CHARMBUILDOPTS = smp pgcc
-  else ifeq ("$(COMPILERNAME)", "gnu")
-    LIBIBVERBS = -libverbs
-    CHARMBUILDOPTS = smp gcc
-  endif
-else
-  CHARMARCH = mpi-linux-x86_64
-  CHARMFILEXTENSION = mpicxx
-  CHARMBUILDOPTS = mpicxx
+CHARMARCH = mpi-linux-x86_64-mpicxx
+CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
+ifeq ("$(COMPILERNAME)", "intel")
+  CHARMBUILDOPTS = mpicxx  -O2  -xHOST
+else ifeq ("$(COMPILERNAME)", "pgi")
+  CHARMBUILDOPTS = mpicxx  -O2  -fast
+else ifeq ("$(COMPILERNAME)", "gnu")
+  CHARMBUILDOPTS = mpicxx  -O2
 endif
 
 ifneq ("$(ROLLOPTS)", "$(subst avx2,,$(ROLLOPTS))")
@@ -117,6 +99,9 @@ ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
   CUDABUILD = yes
 endif
 
+MODULE_LOAD_NAMD_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
+DESCRIBE_NAMD_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSION))
+
 $(NAME).spec: DESCRIPTION LICENSE
 
 DESCRIPTION:
@@ -124,12 +109,8 @@ DESCRIPTION:
 	( \
 	  $(DESCRIBE_PKG); \
 	  $(DESCRIBE_CC); \
-          if test "$(IBVERBS)" = "no"; then \
-	     $(DESCRIBE_MPI); \
-          fi; \
-          if test "$(CUDABUILD)" = "yes"; then \
-	     $(DESCRIBE_NAMD_CUDA); \
-          fi \
+	  $(DESCRIBE_MPI); \
+	  $(DESCRIBE_NAMD_CUDA) \
 	) > $@
 
 LICENSE: $(SRC_DIRS)
@@ -140,43 +121,36 @@ build: $(SRC_DIRS)
 	cd $(SOURCE_DIR) && tar xvf charm-*.tar
 	cp Linux-x86_64* $(SOURCE_DIR)/arch
 	perl -pi -e "s!COMPILE_FLAGS!$(COMPILE_FLAGS)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
-	perl -pi -e "s!LIBIBVERBS!$(LIBIBVERBS)!g" $(SOURCE_DIR)/arch/Linux-x86_64*
-	patch $(SOURCE_DIR)/Make.charm patch-files/Make.charm.patch
+	patch $(SOURCE_DIR)/arch/Linux-x86_64.cuda patch-files/Linux-x86_64.cuda.patch
 	if test "$(COMPILERNAME)" != "intel"; then \
 	  perl -pi -e "s! -auto ! !" $(SOURCE_DIR)/charm*/src/arch/mpi-linux-x86_64/cc-mpicxx.sh; \
 	fi
 	( \
-          CHARMFILEEXTENSION=`echo $(CHARMBUILDOPTS)| sed 's/ /-/g'`; \
 	  $(MODULE_LOAD_CC); \
-          if test "$(IBVERBS)" = "no"; then \
-	     $(MODULE_LOAD_MPI); \
-          fi; \
-          CHARMDIR=`find $(CURDIR)/$(SOURCE_DIR) -maxdepth 1 \( -name charm\*  -a -type d \)`; \
-          perl -pi -e "s!CHARMDIR!$${CHARMDIR}!g" $(SOURCE_DIR)/Make.charm; \
+	  $(MODULE_LOAD_MPI); \
+	  $(MODULE_LOAD_NAMD_CUDA); \
 	  cd $(SOURCE_DIR); \
 	  cd charm-*[0-9]; \
-          ./build charm++ $(CHARMARCH) $(CHARMBUILDOPTS) $(CHARMFLAGS); \
+	  ./build charm++ mpi-linux-x86_64 $(CHARMBUILDOPTS); \
 	  cd ..; \
-	  ./config Linux-x86_64-$(CC) \
-	           --charm-arch $(CHARMARCH)-$${CHARMFILEEXTENSION} \
+	  ./config Linux-x86_64-MPI-$(CC) \
+	           --charm-arch $(CHARMARCH) \
 	           --fftw-prefix $(CURDIR)/$(FFTW_DIR) \
 	           --tcl-prefix $(CURDIR)/$(TCL_DIR) --without-cuda; \
-	 cd Linux-x86_64-$(CC); \
+	 cd Linux-x86_64-MPI-$(CC); \
 	 $(MAKE) -j 16; \
          mkdir $(PWD)/bin; \
          cp {charmrun,flipbinpdb,flipdcd,namd2,psfgen} $(PWD)/bin; \
 	 if test "$(CUDABUILD)" = "yes"; then \
-	   $(MODULE_LOAD_NAMD_CUDA); \
-           cd ..; \
-           rm -rf Linux-x86_64-$(CC); \
-           patch src/CudaPmeSolverUtil.C ../patch-files/CudaPmeSolverUtil.C.patch; \
-	   perl -pi -e "s!CUDAHOME!$${CUDAHOME}!g" arch/Linux-x86_64*; \
-           ./config Linux-x86_64-cuda-$(CC) \
-                   --charm-arch $(CHARMARCH)-$${CHARMFILEEXTENSION} \
-                   --fftw-prefix $(CURDIR)/$(FFTW_DIR) \
-                   --tcl-prefix $(CURDIR)/$(TCL_DIR) \
-                   $(CUDAOPT); \
-	   cd Linux-x86_64-cuda-$(CC); \
+           cd .. ; \
+           make  clean; \
+	   rm -rf Linux-x86_64-MPI-$(CC); \
+	   ./config Linux-x86_64-MPI-$(CC) \
+	           --charm-arch $(CHARMARCH) \
+	           --fftw-prefix $(CURDIR)/$(FFTW_DIR) \
+	           --tcl-prefix $(CURDIR)/$(TCL_DIR) \
+	           $(CUDAOPT); \
+	   cd Linux-x86_64-MPI-$(CC); \
 	   $(MAKE) -j 16; \
            cp namd2 $(PWD)/bin/namd2.cuda; \
           fi \
@@ -187,8 +161,9 @@ install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/bin
 	cp -r tiny $(ROOT)/$(PKGROOT)
 	cp $(PWD)/bin/* $(ROOT)/$(PKGROOT)/bin
+	rm -rf $(PWD)/bin
 	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SRC_DIRS) $(FFTW_DIR) _arch DESCRIPTION LICENSE bin
+	rm -rf $(SRC_DIRS) $(FFTW_DIR) _arch DESCRIPTION LICENSE

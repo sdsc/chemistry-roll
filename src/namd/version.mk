@@ -16,17 +16,19 @@ ifneq ("$(ROLLOPTS)", "$(subst namd_othercuda=,,$(ROLLOPTS))")
   CUDAVERSION = $(subst namd_othercuda=,,$(filter namd_othercuda=%,$(ROLLOPTS)))
 endif
 
+CUDAGENCODE = --cuda-gencode arch=compute_30,code=sm_30 --cuda-gencode arch=compute_35,code=sm_35 --cuda-gencode arch=compute_37,code=sm_37 --cuda-gencode arch=compute_50,code=sm_50 --cuda-gencode arch=compute_52,code=sm_52 --cuda-gencode arch=compute_60,code=sm_60
+
 
 NAME           = sdsc-namd
-VERSION        = 2.10c
-RELEASE        = 7
+VERSION        = 2.13b1
+RELEASE        = 0
 
 SRC_SUBDIR     = namd
 
 SOURCE_NAME    = NAMD
 SOURCE_SUFFIX  = tar.gz
-SOURCE_VERSION = 2.10
-SOURCE_PKG     = $(SOURCE_NAME)_$(SOURCE_VERSION)_Source.$(SOURCE_SUFFIX)
+SOURCE_VERSION = 2.13
+SOURCE_PKG     = $(SOURCE_NAME)_$(VERSION)_Source.$(SOURCE_SUFFIX)
 SOURCE_DIR     = $(SOURCE_PKG:%.$(SOURCE_SUFFIX)=%)
 
 PKGROOT        = /opt/namd/$(SOURCE_VERSION)
