@@ -1,9 +1,9 @@
---- NAMD_2.12_Source/Make.charm	2017-08-28 23:37:05.000000000 -0700
-+++ patch-files/Make.charm	2017-08-29 16:27:33.241214955 -0700
+--- NAMD_2.13b1_Source/Make.charm	2018-09-07 14:05:04.000000000 -0700
++++ patch-files/Make.charm	2018-10-01 18:19:10.748988485 -0700
 @@ -2,5 +2,5 @@
  # The config script will override this setting if there is a directory
- # called charm-6.8.0-beta1 or charm in the NAMD base directory.
+ # called charm-6.8.2 or charm in the NAMD base directory.
  
--CHARMBASE = /Projects/namd2/charm-6.8.0
+-CHARMBASE = /Projects/namd2/charm-6.8.2
 +CHARMBASE = CHARMDIR
  
