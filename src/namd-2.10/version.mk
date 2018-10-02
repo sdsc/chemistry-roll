@@ -17,9 +17,9 @@ ifneq ("$(ROLLOPTS)", "$(subst namd_othercuda=,,$(ROLLOPTS))")
 endif
 
 
-NAME           = sdsc-namd
+NAME           = sdsc-namd-$(SOURCE_VERSION)
 VERSION        = 2.10c
-RELEASE        = 7
+RELEASE        = 8
 
 SRC_SUBDIR     = namd
 
