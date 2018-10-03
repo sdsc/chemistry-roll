@@ -70,7 +70,7 @@ else ifeq ("$(COMPILERNAME)", "pgi")
 endif
 
 CHARMARCH = mpi-linux-x86_64-mpicxx
-CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE
+CHARMBUILDOPTS = -no-build-shared -DCMK_OPTIMIZE --with-production
 CUDA = 
 ifeq ("$(COMPILERNAME)", "intel")
   CHARMBUILDOPTS = mpicxx  -O2  -xHOST

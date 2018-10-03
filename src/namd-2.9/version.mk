@@ -18,7 +18,7 @@ endif
 
 VERSION        = 2.9
 NAME           = sdsc-namd-$(VERSION)
-RELEASE        = 17
+RELEASE        = 18
 PKGROOT        = /opt/namd/$(VERSION)
 
 SRC_SUBDIR     = namd
