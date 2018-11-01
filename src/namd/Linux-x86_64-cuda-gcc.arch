@@ -2,7 +2,7 @@ NAMD_ARCH=Linux-x86_64
 FLOATOPTS = COMPILE_FLAGS
 CXX = g++ -m64 -std=c++0x
 CXXOPTS = COMPILE_FLAGS
-CC = gcc c -m64 -O3
+CC = gcc -m64 -O3
 COPTS = -fexpensive-optimizations -ffast-math
 EXTRALINKLIBS = LIBIBVERBS
 
