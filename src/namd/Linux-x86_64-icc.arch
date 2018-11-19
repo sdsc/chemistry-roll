@@ -1,9 +1,9 @@
 NAMD_ARCH=Linux-x86_64
 FLOATOPTS = COMPILE_FLAGS
 
-CXX = icpc -std=c++11
+CXX = mpicxx -std=c++11
 CXXOPTS = -static-intel -O2 $(FLOATOPTS)
 CXXNOALIASOPTS = -O2 -fno-alias $(FLOATOPTS)
 
-CC = icc
+CC = mpicc
 COPTS = -static-intel -O2 $(FLOATOPTS)
