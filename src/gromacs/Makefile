@@ -116,7 +116,7 @@ build: $(SRC_DIRS)
 	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
 	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) \
                    -DGMX_GPU=OFF; \
-	 $(MAKE); \
+	 $(MAKE) -j 16; \
 	 $(MAKE) prefix=$(PKGROOT) install; \
 	 if test "$(CUDABUILD)" = "YES"; then \
             cd ..; \
@@ -143,7 +143,7 @@ build: $(SRC_DIRS)
             patch deviceQuery.dir/Makefile patch-files/Makefile.deviceQuery.patch; \
             cd deviceQuery.dir; \
             make clean; \
-            make; \
+            make -j 16; \
           fi \
 	)
 	$(call BIND_UMOUNT, $(PKGROOT))
