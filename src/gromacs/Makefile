@@ -142,8 +142,8 @@ build: $(SRC_DIRS)
             cp -r $${CUDAHOME}/samples/1_Utilities/deviceQuery deviceQuery.dir; \
             patch deviceQuery.dir/Makefile patch-files/Makefile.deviceQuery.patch; \
             cd deviceQuery.dir; \
-            make clean; \
-            make -j 16; \
+            $(MAKE) clean; \
+            $(MAKE) -j 16; \
           fi \
 	)
 	$(call BIND_UMOUNT, $(PKGROOT))
