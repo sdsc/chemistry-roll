@@ -261,6 +261,7 @@ build: $(SRC_DIRS)
 	      cd $(CURDIR)/$(SOURCE_DIR)/src;  \
 	      $(MAKE) -j 16 ROOT=lmp LINK=mpicxx mpi; \
 	      mv lmp_mpi $(CACHE_DIR)/lammps/bin/lammps.$$capability.cuda; \
+              cd $(CURDIR); \
 	    done; \
             cd $(REDHAT.ROOT)/src/lammps; \
             cp -r $${CUDAHOME}/samples/1_Utilities/deviceQuery deviceQuery.dir; \

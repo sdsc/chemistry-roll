@@ -116,7 +116,7 @@ build: $(SRC_DIRS)
 	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
 	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) \
                    -DGMX_GPU=OFF; \
-	 $(MAKE); \
+	 $(MAKE) -j 16; \
 	 $(MAKE) prefix=$(PKGROOT) install; \
 	 if test "$(CUDABUILD)" = "YES"; then \
             cd ..; \
@@ -142,8 +142,8 @@ build: $(SRC_DIRS)
             cp -r $${CUDAHOME}/samples/1_Utilities/deviceQuery deviceQuery.dir; \
             patch deviceQuery.dir/Makefile patch-files/Makefile.deviceQuery.patch; \
             cd deviceQuery.dir; \
-            make clean; \
-            make; \
+            $(MAKE) clean; \
+            $(MAKE) -j 16; \
           fi \
 	)
 	$(call BIND_UMOUNT, $(PKGROOT))
