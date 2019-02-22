@@ -118,6 +118,7 @@ build: $(SRC_DIRS)
                    -DGMX_GPU=OFF; \
 	 $(MAKE) -j 16; \
 	 $(MAKE) prefix=$(PKGROOT) install; \
+         mv $(PKGROOT)/bin/gmx_mpi $(PKGROOT)/bin/gmx_mpi.real; \
 	 if test "$(CUDABUILD)" = "YES"; then \
             cd ..; \
             rm -rf build; \
@@ -137,7 +138,6 @@ build: $(SRC_DIRS)
 	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) $(CUDA); \
 	    $(MAKE); \
 	    $(MAKE) prefix=$(PKGROOT) install; \
-            mv $(PKGROOT)/bin/gmx_mpi $(PKGROOT)/bin/gmx_mpi.real; \
             cd $(REDHAT.ROOT)/src/gromacs; \
             cp -r $${CUDAHOME}/samples/1_Utilities/deviceQuery deviceQuery.dir; \
             patch deviceQuery.dir/Makefile patch-files/Makefile.deviceQuery.patch; \
