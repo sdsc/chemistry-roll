@@ -97,7 +97,13 @@ ifeq ($(IBVERBS),yes)
   endif
 else
   CHARMCUDAARCH = multicore-linux-x86_64
-  CHARMCUDABUILDOPTS = multicore
+  ifeq ("$(COMPILERNAME)", "intel")
+    CHARMCUDABUILDOPTS = icc
+  else ifeq ("$(COMPILERNAME)", "pgi")
+    CHARMCUDABUILDOPTS = pgcc
+  else ifeq ("$(COMPILERNAME)", "gnu")
+    CHARMCUDABUILDOPTS = gcc
+  endif
 endif
 
 
