@@ -36,7 +36,7 @@ endif
 
 NAME           = sdsc-lammps
 VERSION        = $(shell date -d "$(SOURCE_VERSION)" +%Y%m%d)
-RELEASE        = 2
+RELEASE        = 3
 PKGROOT        = /opt/lammps
 
 SRC_SUBDIR     = lammps
