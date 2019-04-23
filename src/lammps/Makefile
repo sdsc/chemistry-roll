@@ -181,7 +181,7 @@ build: $(SRC_DIRS)
 # gpu \
 	  patch $(SOURCE_DIR)/lib/gpu/Makefile.linux patch-files/gpu/Makefile.linux.patch; \
 	  patch $(SOURCE_DIR)/lib/gpu/Makefile.lammps.standard  patch-files/gpu/Makefile.lammps.standard.patch; \
-	  if test -e /usr/lib64/nvidia; then \
+	  if test -e /usr/lib64/nvidia/libnvidia-fatbinaryloader.so; then \
 	    perl -pi -e "s!EXTRACUDALIBS!-lnvidia-fatbinaryloader!g" $(SOURCE_DIR)/lib/gpu/Makefile.lammps.standard; \
 	    perl -pi -e "s!EXTRACUDALIBS!-lnvidia-fatbinaryloader!g" $(SOURCE_DIR)/lib/gpu/Makefile.linux; \
 	    perl -pi -e "s!EXTRACUDAPATH!-L/usr/lib64/nvidia!g" $(SOURCE_DIR)/lib/gpu/Makefile.lammps.standard; \
