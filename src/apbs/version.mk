@@ -10,7 +10,7 @@ MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 NAME                 = sdsc-apbs
 VERSION              = 1.5
-RELEASE              = 2
+RELEASE              = 3
 PKGROOT              = /opt/apbs
 
 SRC_SUBDIR           = apbs
