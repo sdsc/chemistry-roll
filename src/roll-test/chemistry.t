@@ -36,7 +36,7 @@ SKIP: {
 module load apbs
 cd $TESTFILE.dir
 cp -r $packageHome/examples/actin-dimer/* .
-$packageHome/bin/apbs apbs-smol-auto.in
+mpirun -np 1 $packageHome/bin/apbs apbs-smol-auto.in
 END
   close(OUT);
   $output = `/bin/bash $TESTFILE.sh 2>&1`;
@@ -162,13 +162,13 @@ SKIP: {
       if ! -d "$packageHome/$version/tiny";
     `mkdir $TESTFILE.dir`;
     `cp $packageHome/$version/tiny/* $TESTFILE.dir/`;
-    $output = `module load namd/$version;cd $TESTFILE.dir;namd2 tiny.namd 2>&1`;
+    $output = `module load namd/$version;cd $TESTFILE.dir;mpirun -np 1 namd2 tiny.namd 2>&1`;
     like($output, qr#WRITING VELOCITIES#, "namd $version sample run");
     SKIP: {
       skip 'namd $version cuda version not installed', 1 if ! -f "$packageHome/$version/bin/namd2.cuda";
       skip 'CUDA_VISIBLE_DEVICES undef', 1
         if ! defined($ENV{'CUDA_VISIBLE_DEVICES'});
-      $output = `module load namd/$version NAMD_CUDAVER;cd $TESTFILE.dir;namd2.cuda +idlepoll +devices  0 tiny.namd 2>&1`;
+      $output = `module load namd/$version NAMD_CUDAVER;cd $TESTFILE.dir;mpirun -np 1 namd2.cuda +idlepoll +devices  0 tiny.namd 2>&1`;
       like($output, qr#WRITING VELOCITIES#, "namd.cuda $version sample run");
     }
     `rm -rf $TESTFILE*`;
