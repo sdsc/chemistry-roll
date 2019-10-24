@@ -24,7 +24,7 @@ MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 NAME           = sdsc-cp2k
 VERSION        = 6.1
-RELEASE        = 1
+RELEASE        = 2
 PKGROOT        = /opt/cp2k
 
 SRC_SUBDIR     = cp2k
@@ -46,9 +46,15 @@ LIBXC_SUFFIX   = tar.gz
 LIBXC_VERSION  = 4.2.3
 LIBXC_PKG      = $(LIBXC_NAME)-$(LIBXC_VERSION).$(LIBXC_SUFFIX)
 LIBXC_DIR      = $(LIBXC_PKG:%.$(LIBXC_SUFFIX)=%)
+ 
+LIBXSMM_NAME     = libxsmm
+LIBXSMM_SUFFIX   = tar.gz
+LIBXSMM_VERSION  = 1.8.3
+LIBXSMM_PKG      = $(LIBXSMM_NAME)-$(LIBXSMM_VERSION).$(LIBXSMM_SUFFIX)
+LIBXSMM_DIR      = $(LIBXSMM_PKG:%.$(LIBXSMM_SUFFIX)=%)
 
 TAR_BZ2_PKGS   = $(SOURCE_PKG)
-TAR_GZ_PKGS    = $(LIBINT_PKG) $(LIBXC_PKG)
+TAR_GZ_PKGS    = $(LIBINT_PKG) $(LIBXC_PKG) $(LIBXSMM_PKG)
 
 RPM.PREFIX     = $(PKGROOT)
 RPM.EXTRAS     = AutoReq:No\nAutoProv:No

@@ -78,6 +78,8 @@ else
   INTELMPITYPE=openmpi
 endif
 
+MODULE_LOAD_GNU = $(call MODULE_LOAD_COMPILER,gnu,gcc)
+
 ROLLMAKEFILE = Linux-x86-64-$(COMPILERNAME)
 
 COMPILE_FLAGS += -I$(REDHAT.ROOT)/src/cp2k/$(SOURCE_DIR)/obj/$(ROLLMAKEFILE)/popt
@@ -133,7 +135,13 @@ LICENSE: $(SRC_DIRS)
 build: $(SRC_DIRS)
 	cp Linux-x86-64-gnu.popt $(SOURCE_DIR)/arch
 	cp Linux-x86-64-intel.popt $(SOURCE_DIR)/arch
+	patch $(LIBINT_DIR)/src/bin/libderiv/emit_deriv12_managers.c patch-files/emit_deriv12_managers.c.patch
+	patch $(LIBINT_DIR)/src/bin/libderiv/emit_deriv1_managers.c patch-files/emit_deriv1_managers.c.patch
+	patch $(LIBINT_DIR)/src/bin/libr12/emit_gr_order.c patch-files/emit_gr_order.c.patch
+	patch $(LIBINT_DIR)/src/bin/libr12/emit_grt_order.c patch-files/emit_grt_order.c.patch
+	patch $(LIBINT_DIR)/src/bin/libint/emit_order.c patch-files/emit_order.c.patch
 	-( \
+          $(MODULE_LOAD_GNU); \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_MKL); \
 	  $(MODULE_LOAD_MPI); \
@@ -147,34 +155,41 @@ build: $(SRC_DIRS)
 	  perl -pi -e "s!CUDALIBS!!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!NVCCPATH!!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  perl -pi -e "s!LIBXCPATH!$(PWD)/$(SOURCE_DIR)/libxc!g" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
-	  export CC=$(CC); \
-	  export CFLAGS="$(COMPILE_FLAGS)"; \
-	  export FC=$(FC); \
-	  export FCFLAGS="$(COMPILE_FLAGS)"; \
-	  export CXX=$(CXX); \
-	  export CXXFLAGS="$(COMPILE_FLAGS)"; \
-	  export FFLAGS="$(COMPILE_FLAGS)"; \
-          export OMPI_FCFLAGS=$${FCFLAGS}; \
-          export OMPI_CFLAGS=$${CFLAGS}; \
-          export OMPI_CXXFLAGS=$${CXXFLAGS}; \
+	  perl -pi -e "s!LIBXSMMPATH!$(PWD)/$(SOURCE_DIR)/libxsmm!g" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	  cd $(SOURCE_DIR); \
+	  export CC=$(CC); \
+	  export FC=$(FC); \
+	  export CXX=$(CXX); \
+          export CFLAGS=-O0; \
+          export FCLAGS=-O0; \
+          export CXXFLAGS=-O0; \
           mv ../$(LIBINT_DIR) .; \
           cd $(LIBINT_DIR); \
           if test ! -f configure; then \
             aclocal -I lib/autoconf; \
             autoconf; \
           fi; \
-          ./configure --with-cc-optflags="$(COMPILE_FLAGS)" \
-            --with-cxx-optflags="$(COMPILE_FLAGS)" --with-libint-max-am=5 \
-            --with-libderiv-max-am1=4 --prefix=`pwd`/../libint; \
+          ./configure  --with-libint-max-am=7 \
+            --with-libderiv-max-am1=6 --prefix=`pwd`/../libint; \
           $(MAKE) -j 16; \
           $(MAKE) install; \
+	  export CFLAGS="$(COMPILE_FLAGS)"; \
+	  export FCFLAGS="$(COMPILE_FLAGS)"; \
+	  export CXXFLAGS="$(COMPILE_FLAGS)"; \
+	  export FFLAGS="$(COMPILE_FLAGS)"; \
+          export OMPI_FCFLAGS=$${FCFLAGS}; \
+          export OMPI_CFLAGS=$${CFLAGS}; \
+          export OMPI_CXXFLAGS=$${CXXFLAGS}; \
           cd ..; \
           mv ../$(LIBXC_DIR) .; \
           cd $(LIBXC_DIR); \
           ./configure --prefix=`pwd`/../libxc --enable-fortran --enable-shared; \
           make -j 16; \
           make install; \
+          cd ..; \
+          mv ../$(LIBXSMM_DIR) . ; \
+          cd $(LIBXSMM_DIR); \
+          make PREFIX=`pwd`/../libxsmm install; \
           cd ../makefiles; \
           $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt; \
           mv ../exe/Linux-x86-64-$(COMPILERNAME)/*.popt ..; \
@@ -189,8 +204,9 @@ build: $(SRC_DIRS)
               perl -pi -e "s!ROLLFFTW!$${FFTWHOME}!" ../arch/$(ROLLMAKEFILE).popt; \
               perl -pi -e "s!ROLLLIBINT!$(PWD)/$(SOURCE_DIR)/libint/lib!" ../arch/$(ROLLMAKEFILE).popt; \
               perl -pi -e "s!LIBINTPATH!$(PWD)/$(SOURCE_DIR)/libint/lib!" ../arch/$(ROLLMAKEFILE).popt; \
-                  perl -pi -e "s!NVCCPATH!$${NVCCPATH}!" ../arch/$(ROLLMAKEFILE).popt; \
+              perl -pi -e "s!NVCCPATH!$${NVCCPATH}!" ../arch/$(ROLLMAKEFILE).popt; \
               perl -pi -e "s!LIBXCPATH!$(PWD)/$(SOURCE_DIR)/libxc!g" ../arch/$(ROLLMAKEFILE).popt; \
+	      perl -pi -e "s!LIBXSMMPATH!$(PWD)/$(SOURCE_DIR)/libxsmm!g" ../arch/$(ROLLMAKEFILE).popt; \
   	      perl -pi -e "s!CUDADEFS!$${CUDADEFS}!" ../arch/$(ROLLMAKEFILE).popt; \
               perl -pi -e "s!CUDALIBS!$${CUDALIBS}!" ../arch/$(ROLLMAKEFILE).popt; \
               make realclean ARCH=$(ROLLMAKEFILE) VERSION=popt; \
@@ -218,4 +234,4 @@ install::
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SOURCE_DIR) DESCRIPTION LICENSE
+	rm -rf $(SOURCE_DIR) $(LIBINT_DIR) $(LIBXC_DIR) $(LIBSMM_DIR) DESCRIPTION LICENSE

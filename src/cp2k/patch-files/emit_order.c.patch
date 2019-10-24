@@ -1,0 +1,11 @@
+--- libint-release-1-1-6/src/bin/libint/emit_order.c	2014-03-05 10:27:30.000000000 -0800
++++ patch-files/emit_order.c	2019-10-10 13:36:11.207520688 -0700
+@@ -8,7 +8,7 @@
+ #include <libint/mem_man.h>
+ #include <libint/build_libint.h>
+ #include <constants.h>
+-#define MAXNODE 20000
++#define MAXNODE 40000
+ #define NONODE -1000000
+ #define SSSSNODE -1111
+ 
