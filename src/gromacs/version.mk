@@ -24,7 +24,7 @@ MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 NAME           = sdsc-gromacs
 VERSION        = 2018.3
-RELEASE        = 3
+RELEASE        = 4
 PKGROOT        = /opt/gromacs
 
 SRC_SUBDIR     = gromacs

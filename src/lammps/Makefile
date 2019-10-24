@@ -248,6 +248,7 @@ build: $(SRC_DIRS)
 	    rm -rf save; \
 	    cp -r $(SOURCE_DIR) save; \
 	    $(MODULE_LOAD_LAMMPS_CUDA); \
+            export CUDA_PATH=$${CUDAHOME}; \
 	    for capability in `echo $(CUDA_CAPABILITIES) | sed 's/,/ /g'`; do \
 	      rm -rf $(SOURCE_DIR); \
 	      cp -r save $(SOURCE_DIR); \

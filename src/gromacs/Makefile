@@ -126,6 +126,7 @@ build: $(SRC_DIRS)
             cd build; \
             patch ../cmake/gmxManageNvccConfig.cmake ../../patch-files/gmxManageNvccConfig.cmake.patch; \
 	    $(MODULE_LOAD_GROMACS_CUDA); \
+            export CUDA_PATH=$${CUDAHOME}; \
 	    export CUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME}; \
 	    export CUDA_NVCC_EXECUTABLE=$${CUDAHOME}/bin/nvcc; \
 	    export CUDA_INCLUDE_DIRS=$${CUDAHOME}/include; \

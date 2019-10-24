@@ -14,7 +14,9 @@ ifneq ("$(ROLLOPTS)", "$(subst cp2k_othercuda=,,$(ROLLOPTS))")
   CUDAVERSION = $(subst cp2k_othercuda=,,$(filter cp2k_othercuda=%,$(ROLLOPTS)))
 endif
 
-ifndef ROLLMPI
+ifneq ("$(ROLLOPTS)", "$(subst cp2k_othermpi=,,$(ROLLOPTS))")
+  override ROLLMPI = $(subst cp2k_othermpi=,,$(filter cp2k_othermpi=%,$(ROLLOPTS)))
+else ifndef ROLLMPI
   ROLLMPI = rocks-openmpi
 endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
@@ -24,7 +26,7 @@ MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 NAME           = sdsc-cp2k
 VERSION        = 6.1
-RELEASE        = 2
+RELEASE        = 3
 PKGROOT        = /opt/cp2k
 
 SRC_SUBDIR     = cp2k
