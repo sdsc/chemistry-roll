@@ -170,7 +170,7 @@ build: $(SRC_DIRS)
 	 cd Linux-x86_64-$(CC); \
 	 $(MAKE) -j 16; \
          mkdir $(PWD)/bin; \
-         cp {charmrun,flipbinpdb,flipdcd,namd2,psfgen} $(PWD)/bin; \
+         cp {flipbinpdb,flipdcd,namd2,psfgen} $(PWD)/bin; \
 	 if test "$(CUDABUILD)" = "yes"; then \
 	   $(MODULE_LOAD_NAMD_CUDA); \
            CHARMCUDAFILEEXTENSION=`echo $(CHARMCUDABUILDOPTS)| sed 's/ /-/g'`; \
@@ -189,6 +189,7 @@ build: $(SRC_DIRS)
 	   cd Linux-x86_64-cuda-$(CC); \
 	   $(MAKE) -j 16; \
            cp namd2 $(PWD)/bin/namd2.cuda; \
+           cp charmrun $(PWD)/bin; \
           fi \
 	)
 	@echo "::: Package $(NAME) build complete :::"
