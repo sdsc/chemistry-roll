@@ -171,7 +171,7 @@ build: $(SRC_DIRS)
           fi; \
           ./configure  --with-libint-max-am=7 \
             --with-libderiv-max-am1=6 --prefix=`pwd`/../libint; \
-          $(MAKE) -j 16; \
+          $(MAKE) -j `nproc --ignore=2`; \
           $(MAKE) install; \
 	  export CFLAGS="$(COMPILE_FLAGS)"; \
 	  export FCFLAGS="$(COMPILE_FLAGS)"; \
@@ -184,14 +184,14 @@ build: $(SRC_DIRS)
           mv ../$(LIBXC_DIR) .; \
           cd $(LIBXC_DIR); \
           ./configure --prefix=`pwd`/../libxc --enable-fortran --enable-shared; \
-          make -j 16; \
+          make -j `nproc --ignore=2`; \
           make install; \
           cd ..; \
           mv ../$(LIBXSMM_DIR) . ; \
           cd $(LIBXSMM_DIR); \
           make PREFIX=`pwd`/../libxsmm install; \
           cd ../makefiles; \
-          $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt; \
+          $(MAKE) -j `nproc --ignore=2` CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt; \
           mv ../exe/Linux-x86-64-$(COMPILERNAME)/*.popt ..; \
           if test "$(CUDABUILD)" = "yes"; then \
               export CUDAEXTRALIBS="-lcp2kpwcuda -lcusmm -lcp2kacccuda"; \
@@ -210,7 +210,7 @@ build: $(SRC_DIRS)
   	      perl -pi -e "s!CUDADEFS!$${CUDADEFS}!" ../arch/$(ROLLMAKEFILE).popt; \
               perl -pi -e "s!CUDALIBS!$${CUDALIBS}!" ../arch/$(ROLLMAKEFILE).popt; \
               make realclean ARCH=$(ROLLMAKEFILE) VERSION=popt; \
-              $(MAKE) -j 16 CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt; \
+              $(MAKE) -j `nproc --ignores=2` CC=mpicc CXX=mpicxx FC=mpif90 ARCH=$(ROLLMAKEFILE) VERSION=popt; \
               exes=`find ../exe/Linux-x86-64-$(COMPILERNAME) -name \*.popt -print`; \
               for exe in $${exes}; do \
                    name=`basename $${exe}`; \
