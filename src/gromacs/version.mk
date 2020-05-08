@@ -34,7 +34,7 @@ FFTW_SUFFIX    = tar.gz
 FFTW_VERSION   = 3.3.8
 FFTW_PKG       = $(FFTW_NAME)-$(FFTW_VERSION).$(FFTW_SUFFIX)
 FFTW_DIR       = $(FFTW_PKG:%.$(FFTW_SUFFIX)=%)
-FFTW_MD5       = 2edab8c06b24feeb3b82bbb3ebf3e7b3
+FFTW_MD5       = 8aac833c943d8e90d51b697b27d4384d
 
 SOURCE_NAME    = gromacs
 SOURCE_SUFFIX  = tar.gz
