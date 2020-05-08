@@ -12,6 +12,10 @@ else ifndef ROLLMPI
 endif
 
 CUDAVERSION=cuda
+ifneq ("$(ROLLOPTS)", "$(subst cuda=,,$(ROLLOPTS))")
+  CUDAVERSION = $(subst cuda=,,$(filter cuda=%,$(ROLLOPTS)))
+endif
+
 ifneq ("$(ROLLOPTS)", "$(subst gromacs_othercuda=,,$(ROLLOPTS))")
   CUDAVERSION = $(subst gromacs_othercuda=,,$(filter gromacs_othercuda=%,$(ROLLOPTS)))
 endif
@@ -19,15 +23,15 @@ endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 NAME           = sdsc-gromacs
-VERSION        = 2016.3
-RELEASE        = 1
+VERSION        = 2018.3
+RELEASE        = 4
 PKGROOT        = /opt/gromacs
 
 SRC_SUBDIR     = gromacs
 
 FFTW_NAME      = fftw
 FFTW_SUFFIX    = tar.gz
-FFTW_VERSION   = 3.3.4
+FFTW_VERSION   = 3.3.8
 FFTW_PKG       = $(FFTW_NAME)-$(FFTW_VERSION).$(FFTW_SUFFIX)
 FFTW_DIR       = $(FFTW_PKG:%.$(FFTW_SUFFIX)=%)
 FFTW_MD5       = 2edab8c06b24feeb3b82bbb3ebf3e7b3
