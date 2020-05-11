@@ -1,0 +1,16 @@
+#!/bin/bash
+#   if on a gpu node and mdrun is selected, run the "mdrun_mpi" executable directly
+/opt/gromacs/bin/deviceQuery > /dev/null 2>&1
+if test $? -eq 0; then
+    if test $# -gt 0; then
+       if test $1 = 'mdrun'; then
+          /opt/gromacs/bin/mdrun_mpi ${@:2}
+       else
+          /opt/gromacs/bin/gmx_mpi.real $@
+       fi
+    else
+         /opt/gromacs/bin/gmx_mpi.real
+    fi
+else
+    /opt/gromacs/bin/gmx_mpi.real $@
+fi

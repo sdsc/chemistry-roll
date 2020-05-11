@@ -202,6 +202,9 @@ LICENSE: $(SRC_DIRS)
 	echo LGPLv2 > $@
 
 build: $(SRC_DIRS)
+	mkdir  -p $(CACHE_DIR)/gromacs
+	mkdir  -p $(PKGROOT)
+	$(call BIND_MOUNT, $(PKGROOT), $(CACHE_DIR)/gromacs)`
 	( \
           $(call MODULE_LOAD_COMPILER, gnu, gcc); \
 	  $(MODULE_LOAD_CC); \
@@ -209,7 +212,7 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_MPI); \
           cd $(PLUMED_DIR); \
           ./configure --enable-mpi --prefix=$(PWD)/plumed; \
-          make; \
+          make -j `nproc --ignore=all`; \
           make install; \
           cd ../$(SOURCE_DIR); \
           ../plumed/bin/plumed-patch -p -e gromacs-$(VERSION); \
@@ -217,13 +220,6 @@ build: $(SRC_DIRS)
           cd build; \
 	  export CC=mpicc; \
 	  export CXX=mpicxx; \
-          if test "$(CUDABUILD)" = "YES"; then \
-               $(MODULE_LOAD_GROMACS_CUDA); \
-               export CUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME}; \
-               export CUDA_NVCC_EXECUTABLE=$${CUDAHOME}/bin/nvcc; \
-               export CUDA_INCLUDE_DIRS=$${CUDAHOME}/include; \
-               export CUDA_CUDART_LIBRARY=$${CUDAHOME}/lib64/libcudart.so; \
-          fi; \
 	  cmake .. -DGMX_BUILD_OWN_FFTW=ON \
 	           -DGMX_BUILD_OWN_FFTW_URL="../../$(FFTW_PKG)" \
 	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
@@ -231,28 +227,46 @@ build: $(SRC_DIRS)
 	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
                    -DBUILD_SHARED_LIBS=OFF \
                    -DGMX_PREFER_STATIC_LIBS=ON \
+	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) -DGMX_GPU=OFF; \
+	  $(MAKE) -j `nproc --ignore=2`\
+          $(MAKE) prefix=$(PKGROOT) install; \
+          mv $(PKGROOT)/bin/gmx_mpi $(PKGROOT)/bin/gmx_mpi.real; \
+          if test "$(CUDABUILD)" = "YES"; then \
+            cd ..; \
+            rm -rf build; \
+            mkdir build; \
+            cd build; \
+            patch ../cmake/gmxManageNvccConfig.cmake ../../patch-files/gmxManageNvccConfig.cmake.patch; \
+	    $(MODULE_LOAD_GROMACS_CUDA); \
+            export CUDA_PATH=$${CUDAHOME}; \
+	    export CUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME}; \
+	    export CUDA_NVCC_EXECUTABLE=$${CUDAHOME}/bin/nvcc; \
+	    export CUDA_INCLUDE_DIRS=$${CUDAHOME}/include; \
+	    export CUDA_CUDART_LIBRARY=$${CUDAHOME}/lib64/libcudart.so; \
+	    cmake .. -DGMX_BUILD_OWN_FFTW=ON \
+	           -DGMX_BUILD_OWN_FFTW_URL="../../$(FFTW_PKG)" \
+	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
+	           -DGMX_MPI=ON \
+	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
 	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) $(CUDA); \
-	  $(MAKE) \
+	    $(MAKE) -j `nproc --ignore=2`; \
+	    $(MAKE) prefix=$(PKGROOT) install; \
+            cd $(REDHAT.ROOT)/src/gromacs; \
+            cp -r $${CUDAHOME}/samples/1_Utilities/deviceQuery deviceQuery.dir; \
+            patch deviceQuery.dir/Makefile patch-files/Makefile.deviceQuery.patch; \
+            cd deviceQuery.dir; \
+            $(MAKE) clean; \
+            $(MAKE) -j `nproc --ignore=2`; \
+          fi \
 	)
+        $(call BIND_UMOUNT, $(PKGROOT))
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
-	$(PKGROOT_BIND_MOUNT)
-	( \
-          $(call MODULE_LOAD_COMPILER, gnu, gcc); \
-	  $(MODULE_LOAD_CC); \
-	  $(MODULE_LOAD_CMAKE); \
-	  $(MODULE_LOAD_MPI); \
-          if test "$(CUDABUILD)" = "YES"; then \
-               $(MODULE_LOAD_GROMACS_CUDA); \
-          fi; \
-          cp $(PWD)/plumed/lib/* $(ROOT)/$(PKGROOT)/lib64; \
-	  cd $(SOURCE_DIR)/build; \
-	  $(MAKE) prefix=$(PKGROOT) install; \
-          cd $(PKGROOT)/bin; \
-	)
-	$(PKGROOT_BIND_UMOUNT)
+        cp -r $(CACHE_DIR)/gromacs/* $(ROOT)/$(PKGROOT)
+	install -m 0755 -t $(ROOT)/$(PKGROOT)/bin $(REDHAT.ROOT)/src/gromacs/gmx_mpi; \
+	install -m 0755 -t $(ROOT)/$(PKGROOT)/bin $(REDHAT.ROOT)/src/gromacs/deviceQuery; \
 	$(INSTALL_LICENSE_FILES)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)
 	@echo "::: Package $(NAME) install complete :::"
