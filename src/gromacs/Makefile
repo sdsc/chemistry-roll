@@ -123,7 +123,7 @@ build: $(SRC_DIRS)
                    -DBUILD_SHARED_LIBS=OFF \
                    -DGMX_PREFER_STATIC_LIBS=ON \
 	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) -DGMX_GPU=OFF; \
-	  $(MAKE) -j `nproc --ignore=2`\
+	  $(MAKE) -j `nproc --ignore=2`; \
           $(MAKE) prefix=$(PKGROOT) install; \
           mv $(PKGROOT)/bin/gmx_mpi $(PKGROOT)/bin/gmx_mpi.real; \
           if test "$(CUDABUILD)" = "YES"; then \
