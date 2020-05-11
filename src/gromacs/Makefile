@@ -126,6 +126,7 @@ build: $(SRC_DIRS)
 	  $(MAKE) -j `nproc --ignore=2`; \
           $(MAKE) prefix=$(PKGROOT) install; \
           mv $(PKGROOT)/bin/gmx_mpi $(PKGROOT)/bin/gmx_mpi.real; \
+          cp $(PWD)/plumed/lib/* $(PKGROOT)/lib64; \
           if test "$(CUDABUILD)" = "YES"; then \
             cd ..; \
             rm -rf build; \
