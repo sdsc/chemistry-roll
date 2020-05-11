@@ -99,7 +99,7 @@ LICENSE: $(SRC_DIRS)
 build: $(SRC_DIRS)
 	mkdir  -p $(CACHE_DIR)/gromacs
 	mkdir  -p $(PKGROOT)
-	$(call BIND_MOUNT, $(PKGROOT), $(CACHE_DIR)/gromacs)`
+	$(call BIND_MOUNT, $(PKGROOT), $(CACHE_DIR)/gromacs)
 	( \
           $(call MODULE_LOAD_COMPILER, gnu, gcc); \
 	  $(MODULE_LOAD_CC); \
