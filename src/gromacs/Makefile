@@ -99,111 +99,6 @@ LICENSE: $(SRC_DIRS)
 build: $(SRC_DIRS)
 	mkdir  -p $(CACHE_DIR)/gromacs
 	mkdir  -p $(PKGROOT)
-	$(call BIND_MOUNT, $(PKGROOT), $(CACHE_DIR)/gromacs)
-	( \
-	  $(MODULE_LOAD_CC); \
-	  $(MODULE_LOAD_CMAKE); \
-	  $(MODULE_LOAD_MPI); \
-	  cd $(SOURCE_DIR); \
-	  mkdir build; \
-	  cd build; \
-	  export CC=mpicc; \
-	  export CXX=mpicxx; \
-	  cmake .. -DGMX_BUILD_OWN_FFTW=ON \
-	           -DGMX_BUILD_OWN_FFTW_URL="../../$(FFTW_PKG)" \
-	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
-	           -DGMX_MPI=ON \
-	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
-	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) \
-                   -DGMX_GPU=OFF; \
-	 $(MAKE) -j 16; \
-	 $(MAKE) prefix=$(PKGROOT) install; \
-         mv $(PKGROOT)/bin/gmx_mpi $(PKGROOT)/bin/gmx_mpi.real; \
-	 if test "$(CUDABUILD)" = "YES"; then \
-            cd ..; \
-            rm -rf build; \
-            mkdir build; \
-            cd build; \
-            patch ../cmake/gmxManageNvccConfig.cmake ../../patch-files/gmxManageNvccConfig.cmake.patch; \
-	    $(MODULE_LOAD_GROMACS_CUDA); \
-            export CUDA_PATH=$${CUDAHOME}; \
-	    export CUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME}; \
-	    export CUDA_NVCC_EXECUTABLE=$${CUDAHOME}/bin/nvcc; \
-	    export CUDA_INCLUDE_DIRS=$${CUDAHOME}/include; \
-	    export CUDA_CUDART_LIBRARY=$${CUDAHOME}/lib64/libcudart.so; \
-	    cmake .. -DGMX_BUILD_OWN_FFTW=ON \
-	           -DGMX_BUILD_OWN_FFTW_URL="../../$(FFTW_PKG)" \
-	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
-	           -DGMX_MPI=ON \
-	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
-	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) $(CUDA); \
-	    $(MAKE); \
-	    $(MAKE) prefix=$(PKGROOT) install; \
-            cd $(REDHAT.ROOT)/src/gromacs; \
-            cp -r $${CUDAHOME}/samples/1_Utilities/deviceQuery deviceQuery.dir; \
-            patch deviceQuery.dir/Makefile patch-files/Makefile.deviceQuery.patch; \
-            cd deviceQuery.dir; \
-            $(MAKE) clean; \
-            $(MAKE) -j 16; \
-          fi \
-	)
-	$(call BIND_UMOUNT, $(PKGROOT))
-	@echo "::: Package $(NAME) build complete :::"
-
-install::
-	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
-	cp -r $(CACHE_DIR)/gromacs/* $(ROOT)/$(PKGROOT)
-	install -m 0755 -t $(ROOT)/$(PKGROOT)/bin $(REDHAT.ROOT)/src/gromacs/gmx_mpi; \
-	install -m 0755 -t $(ROOT)/$(PKGROOT)/bin $(REDHAT.ROOT)/src/gromacs/deviceQuery; \
-	$(INSTALL_LICENSE_FILES)
-	cp -r gmxtest $(ROOT)/$(PKGROOT)
-	@echo "::: Package $(NAME) install complete :::"
-
-clean::
-	rm -rf $(SRC_DIRS) deviceQuery.dir DESCRIPTION LICENSE
-
-REDHAT.ROOT = $(CURDIR)/../../
-
--include $(ROCKSROOT)/etc/Rules.mk
-include Rules.mk
-include $(SDSCDEVEL)/Pull.mk
-include $(SDSCDEVEL)/Rules.mk
-
-COMPILE_FLAGS = -fPIC -O2 -std=c++11
-ifeq ("$(COMPILERNAME)", "intel")
-  COMPILE_FLAGS = -fPIC -O2 -xHost -std=c++11
-else ifeq ("$(COMPILERNAME)", "pgi")
-  COMPILE_FLAGS = -fPIC -fast --c++11
-endif
-
-CUDA=-DGMX_GPU=OFF
-CUDABUILD=NO
-ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
-  CUDABUILD=YES
-  CUDA = -DGMX_GPU=ON -DCUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME} -DCUDA_HOST_COMPILER=$${MPIHOME}/bin/mpicc
-endif
-
-MODULE_LOAD_GROMACS_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
-DESCRIBE_GROMACS_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSION))
-
-$(NAME).spec: DESCRIPTION LICENSE
-
-DESCRIPTION:
-	$(MODULE_LOAD_CC); \
-	( \
-	  $(DESCRIBE_PKG); \
-	  $(DESCRIBE_CC); \
-	  $(DESCRIBE_MPI); \
- 	  $(DESCRIBE_GROMACS_CUDA) \
-	) > $@
-
-LICENSE: $(SRC_DIRS)
-	$(CHECK_LICENSE_FILES)
-	echo LGPLv2 > $@
-
-build: $(SRC_DIRS)
-	mkdir  -p $(CACHE_DIR)/gromacs
-	mkdir  -p $(PKGROOT)
 	$(call BIND_MOUNT, $(PKGROOT), $(CACHE_DIR)/gromacs)`
 	( \
           $(call MODULE_LOAD_COMPILER, gnu, gcc); \
@@ -259,12 +154,12 @@ build: $(SRC_DIRS)
             $(MAKE) -j `nproc --ignore=2`; \
           fi \
 	)
-        $(call BIND_UMOUNT, $(PKGROOT))
+	$(call BIND_UMOUNT, $(PKGROOT))
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
-        cp -r $(CACHE_DIR)/gromacs/* $(ROOT)/$(PKGROOT)
+	cp -r $(CACHE_DIR)/gromacs/* $(ROOT)/$(PKGROOT)
 	install -m 0755 -t $(ROOT)/$(PKGROOT)/bin $(REDHAT.ROOT)/src/gromacs/gmx_mpi; \
 	install -m 0755 -t $(ROOT)/$(PKGROOT)/bin $(REDHAT.ROOT)/src/gromacs/deviceQuery; \
 	$(INSTALL_LICENSE_FILES)
