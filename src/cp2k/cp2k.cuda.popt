@@ -1,0 +1,18 @@
+#!/bin/bash
+cuda_capability=`PKGROOT/bin/deviceQuery 2>&1 | grep 'CUDA Capability' |uniq |awk  '{print $6}'|sed 's/\.//' 2>/dev/null`
+
+if test ! -z cuda_capability; then
+  if test ${cuda_capability}  -lt 37 -a ${cuda_capability} -ge 35; then
+        PKGROOT/bin/cp2k.cuda.K40.popt $@
+  elif test ${cuda_capability} -ge 37 -a ${cuda_capability} -lt 60; then
+        PKGROOT/bin/cp2k.cuda.K80.popt $@
+  elif test ${cuda_capability}  -ge 60 -a ${cuda_capability} -lt 70; then
+        PKGROOT/bin/cp2k.cuda.P100.popt $@
+  elif test ${cuda_capability}  -ge 70 -a ${cuda_capability} -lt 75; then
+        PKGROOT/bin/cp2k.cuda.V100.popt $@
+  else
+        echo "NO COMPATIBLE CP2K CUDA OPTION FOUND FOR CUDA CAPABILITY ${cuda_capability}"
+  fi
+else
+  echo "POSSIBLY NOT ON A GPU NODE"
+fi

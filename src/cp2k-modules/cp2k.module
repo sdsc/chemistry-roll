@@ -4,4 +4,4 @@ setenv CP2K_DATA_DIR /opt/cp2k/data
 prepend-path PATH /opt/cp2k/bin
 prepend-path LD_LIBRARY_PATH /opt/cp2k/lib
 prepend-path LD_LIBRARY_PATH /usr/lib64/nvidia
-module load ROLLCOMPILER ROLLMPI fftw
+module load ROLLCOMPILER ROLLMPI

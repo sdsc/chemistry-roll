@@ -22,11 +22,15 @@ endif
 MPINAME := $(firstword $(subst /, ,$(ROLLMPI)))
 
 
+CUDA_CAPABILITIES=37
+ifneq ("$(ROLLOPTS)", "$(subst cudacapabilities=,,$(ROLLOPTS))")
+  CUDA_CAPABILITIES = $(subst cudacapabilities=,,$(filter cudacapabilities=%,$(ROLLOPTS)))
+endif
 
 
 NAME           = sdsc-cp2k
-VERSION        = 6.1
-RELEASE        = 5
+VERSION        = 7.1
+RELEASE        = 0
 PKGROOT        = /opt/cp2k
 
 SRC_SUBDIR     = cp2k
@@ -37,10 +41,11 @@ SOURCE_VERSION = $(VERSION)
 SOURCE_PKG     = $(SOURCE_NAME)-$(SOURCE_VERSION).$(SOURCE_SUFFIX)
 SOURCE_DIR     = $(SOURCE_PKG:%.$(SOURCE_SUFFIX)=%)
 
+
 LIBINT_NAME    = libint
-LIBINT_SUFFIX  = tar.gz
-LIBINT_VERSION = 1-1-6
-LIBINT_PKG     = $(LIBINT_NAME)-release-$(LIBINT_VERSION).$(LIBINT_SUFFIX)
+LIBINT_SUFFIX  = tgz
+LIBINT_VERSION = 2.6.0
+LIBINT_PKG     = $(LIBINT_NAME)-v$(LIBINT_VERSION)-cp2k-lmax-7.$(LIBINT_SUFFIX)
 LIBINT_DIR     = $(LIBINT_PKG:%.$(LIBINT_SUFFIX)=%)
 
 LIBXC_NAME     = libxc
@@ -51,12 +56,13 @@ LIBXC_DIR      = $(LIBXC_PKG:%.$(LIBXC_SUFFIX)=%)
  
 LIBXSMM_NAME     = libxsmm
 LIBXSMM_SUFFIX   = tar.gz
-LIBXSMM_VERSION  = 1.8.3
+LIBXSMM_VERSION  = 1.15
 LIBXSMM_PKG      = $(LIBXSMM_NAME)-$(LIBXSMM_VERSION).$(LIBXSMM_SUFFIX)
 LIBXSMM_DIR      = $(LIBXSMM_PKG:%.$(LIBXSMM_SUFFIX)=%)
 
 TAR_BZ2_PKGS   = $(SOURCE_PKG)
-TAR_GZ_PKGS    = $(LIBINT_PKG) $(LIBXC_PKG) $(LIBXSMM_PKG)
+TAR_GZ_PKGS    = $(LIBXC_PKG) $(LIBXSMM_PKG)
+TGZ_PKGS       = $(LIBINT_PKG)
 
 RPM.PREFIX     = $(PKGROOT)
 RPM.EXTRAS     = AutoReq:No\nAutoProv:No
