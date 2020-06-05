@@ -1,39 +1,39 @@
-# by default some intel compilers put temporaries on the stack
-# this might lead to segmentation faults if the stack limit is set to low
-# stack limits can be increased by sysadmins or e.g with ulimit -s 256000
-# Tested on Strasbourg University HPC Mesocenter - Intel Composer ver.12, 13, 14 
-# Note: -O2 produces an executable which is slightly faster than -O3
-# and the compilation time was also much shorter.
-#### Version OpenMPI (without OMP !)
-CC       = mpicc
-CPP      = /lib/cpp
-FC       = mpif90 -FR
-FC_fixed = mpif90 -FI
-LD       = mpif90
-AR       = /usr/bin/ar -r
-#Better with mkl (intel lapack/blas) only
-#DFLAGS   = -D__INTEL -D__FFTSG -D__parallel
-#If you want to use BLACS and SCALAPACK use the flags below
-LIBXC_INC  = LIBXCPATH/include
-LIBXC_LIB  = LIBXCPATH/lib
-LIBXSMM_LIB  = LIBXSMMPATH/lib
-LIBXSMM_INC  = LIBXSMMPATH/include
-DFLAGS = -D__INTEL -D__FFTSG -D__parallel -D__BLACS -D__SCALAPACK -D__FFTW3 -D__LIBINT -D__LIBXC -D__LIBINT_MAX_AM=8 -D__LIBDERIV_MAX_AM1=7 -D__MKL CUDADEFS -D__LIBXSMM
-FFTW_INC = ROLLFFTW/include
-CPPFLAGS = -C $(DFLAGS) -P -traditional -I$(FFTW_INC) -I$(LIBXC_INC) -I$(LIBXSMM_IN)
-FCFLAGS  = $(DFLAGS) -I$(FFTW_INC) -I$(LIBXC_INC) -I$(LIBXSMM_INC) -O2 -xW -heap-arrays -funroll-loops -fpp -free
-INTEL_LIB = MKL_ROOT/lib/intel64
-#verify if the path to the mkl libraries is already defined and/or differs from this
-LDFLAGS  = $(FCFLAGS) -LMKLROOT/lib/intel64
-#If you want to use BLACS and SCALAPACK use the libraries below
+# Author: Alfio Lazzaro (alfio.lazzaro@chem.uzh.ch), UZH, 2018
+# Note: add optimization flags specific for your system (e.g. -xHost).
 
-LIBS     = $(INTEL_LIB)/libmkl_scalapack_lp64.a  -Wl,--start-group $(INTEL_LIB)/libmkl_intel_lp64.a $(INTEL_LIB)/libmkl_sequential.a $(INTEL_LIB)/libmkl_core.a $(INTEL_LIB)/libmkl_blacs_INTELMPITYPE_lp64.a -Wl,--end-group -lpthread  -LROLLFFTW/lib -lfftw3 -LLIBINTPATH -L$(LIBXC_LIB) -L$(LIBXSMM_LIB) -lxcf03 -lxc -lxsmmf -lxsmm -lderiv -lint -lr12 -lstdc++ -ldl CUDALIBS -lm
+LIBXSMM  = LIBXSMMPATH
+LIBXC    = LIBXCPATH
+LIBINT   = LIBINTPATH
+
+CC       = mpicc
+FC       = mpif90
+LD       = mpif90
+AR       = ar -r
+DFLAGS   = -D__INTEL -D__MKL -D__FFTW3 -D__LIBXSMM \
+	   -D__parallel -D__SCALAPACK \
+	   -D__LIBXC \
+	   -D__LIBINT \
+           -D__MAX_CONTR=4 CUDADEFS
+CFLAGS   = -O2 -g -xHost
+CXXFLAGS = -I$(CUDAHOME)/include
+FCFLAGS  = $(CFLAGS) $(DFLAGS)
+FCFLAGS += -IMKL_ROOT/include -IMKL_ROOT/include/fftw
+FCFLAGS += -I$(LIBXSMM)/include
+FCFLAGS += -I$(LIBXC)/include
+FCFLAGS += -I$(LIBINT)/include
+LDFLAGS  = $(FCFLAGS) -static-intel
+LDFLAGS_C = $(FCFLAGS) -static-intel -nofor_main
+MKL_LIB  = MKL_ROOT/lib/intel64
+LIBS     = -L$(LIBXSMM)/lib -lxsmmf -lxsmm
+LIBS    += -L$(LIBXC)/lib -lxcf03 -lxc
+LIBS    += -L$(LIBINT)/lib -lint2
+LIBS    += $(MKL_LIB)/libmkl_scalapack_lp64.a -Wl,--start-group \
+	   $(MKL_LIB)/libmkl_intel_lp64.a ${MKL_LIB}/libmkl_sequential.a \
+	   $(MKL_LIB)/libmkl_core.a \
+           ${MKL_LIB}/libmkl_blacs_INTELMPITYPE_lp64.a -Wl,--end-group \
+           -lpthread -lm
+LIBS    += CUDALIBS -ldl -lstdc++
 
 NVCC = NVCCPATH
-NVFLAGS = -ccbin `which icpc` $(DFLAGS) -O2 -gencode arch=compute_30,code=sm_30 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70
-LDFLAGS_C = $(FCFLAGS) -static-intel -nofor_main
-
-# Required due to memory leak that occurs if high optimisations are used
-mp2_optimize_ri_basis.o: mp2_optimize_ri_basis.F
-	$(FC) -c $(subst O2,O0,$(FCFLAGS)) $<
-
+CUDAFLAGS = -D__ACC -D__DBCSR_ACC -D__PW_CUDA
+NVFLAGS = -ccbin `which icpc`  $(CUDAFLAGS) $(DFLAGS) -O2 -gencode arch=compute_30,code=sm_30 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70
