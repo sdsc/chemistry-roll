@@ -30,7 +30,7 @@ endif
 
 NAME           = sdsc-cp2k
 VERSION        = 7.1
-RELEASE        = 0
+RELEASE        = 1
 PKGROOT        = /opt/cp2k
 
 SRC_SUBDIR     = cp2k
