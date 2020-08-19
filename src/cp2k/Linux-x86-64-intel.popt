@@ -14,7 +14,7 @@ DFLAGS   = -D__INTEL -D__MKL -D__FFTW3 -D__LIBXSMM \
 	   -D__LIBXC \
 	   -D__LIBINT \
            -D__MAX_CONTR=4 CUDADEFS
-CFLAGS   = -O2 -g -xHost
+CFLAGS   = -O2 -xHost
 CXXFLAGS = -I$(CUDAHOME)/include
 FCFLAGS  = $(CFLAGS) $(DFLAGS)
 FCFLAGS += -IMKL_ROOT/include -IMKL_ROOT/include/fftw

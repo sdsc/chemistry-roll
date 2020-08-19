@@ -14,9 +14,9 @@ DFLAGS   = -D__MKL -D__FFTW3 -D__LIBXSMM \
 	   -D__LIBXC \
            -D__LIBINT \
            -D__MAX_CONTR=4 CUDADEFS
-CFLAGS   = -O2 -g -mtune=native
+CFLAGS   = -O2 -mtune=native
 CXXFLAGS = -I$(CUDAHOME)/include
-NVCC_CFLAGS   = -O2 -g
+NVCC_CFLAGS   = -O2
 FCFLAGS  = $(CFLAGS) $(DFLAGS)
 FCFLAGS += -ffree-form -ffree-line-length-none
 FCFLAGS += -ftree-vectorize -funroll-loops -std=f2008
