@@ -13,7 +13,8 @@ DFLAGS   = -D__MKL -D__FFTW3 -D__LIBXSMM \
 	   -D__parallel -D__SCALAPACK \
 	   -D__LIBXC \
            -D__LIBINT \
-           -D__MAX_CONTR=4 CUDADEFS
+           -D__MAX_CONTR=4 CUDADEFS \
+           -D__PLUMED2
 CFLAGS   = -O2 -mtune=native
 CXXFLAGS = -I$(CUDAHOME)/include
 NVCC_CFLAGS   = -O2
@@ -31,13 +32,16 @@ LIBS     = $(LIBXSMM)/lib/libxsmmf.a
 LIBS    += $(LIBXSMM)/lib/libxsmm.a
 LIBS    += $(LIBXC)/lib/libxcf03.a
 LIBS    += $(LIBXC)/lib/libxc.a
-LIBS    += $(LIBINT)/lib/libint2.a -lstdc++
+LIBS    += $(LIBINT)/lib/libint2.a -lz
 LIBS    += $(MKL_LIB)/libmkl_scalapack_lp64.a -Wl,--start-group \
 	   $(MKL_LIB)/libmkl_gf_lp64.a ${MKL_LIB}/libmkl_sequential.a \
 	   $(MKL_LIB)/libmkl_core.a \
            ${MKL_LIB}/libmkl_blacs_INTELMPITYPE_lp64.a -Wl,--end-group \
            -lpthread -lm
 LIBS    += CUDALIBS -ldl -lpthread -lstdc++
+
+include /share/apps/compute/plumed/2.6.1/gnu/7.2.0/intelmpi/2018.1.163/lib/plumed/src/lib/Plumed.inc
+EXTERNAL_OBJECTS=$(PLUMED_STATIC_DEPENDENCIES)
 
 # Required due to memory leak that occurs if high optimisations are used
 mp2_optimize_ri_basis.o: mp2_optimize_ri_basis.F
