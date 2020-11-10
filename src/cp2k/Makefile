@@ -150,8 +150,8 @@ build: $(SRC_DIRS)
 	    cp Linux-x86-64-gnu.popt $(SOURCE_DIR)/arch; \
 	    cp Linux-x86-64-intel.popt $(SOURCE_DIR)/arch; \
             cp configure-get.sh $(LIBINT_DIR); \
-            ln -s `which python3` python; \
-            export PATH=`pwd`:${PATH}; \
+#           ln -s `which python3` python; \
+#           export PATH=`pwd`:${PATH}; \
 	    perl -pi -e "s!MKL_ROOT!$${MKL_ROOT}!g" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	    perl -pi -e "s!INTELMPITYPE!$(INTELMPITYPE)!g" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \
 	    perl -pi -e "s!LIBINTPATH!$(PWD)/$(SOURCE_DIR)/libint!" $(SOURCE_DIR)/arch/$(ROLLMAKEFILE).popt; \

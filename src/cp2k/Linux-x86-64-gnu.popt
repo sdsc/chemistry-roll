@@ -15,7 +15,7 @@ DFLAGS   = -D__MKL -D__FFTW3 -D__LIBXSMM \
            -D__LIBINT \
            -D__MAX_CONTR=4 CUDADEFS \
            -D__PLUMED2
-CFLAGS   = -O2 -mtune=native
+CFLAGS   = -O2 -mtune=native -fopenmp
 CXXFLAGS = -I$(CUDAHOME)/include
 NVCC_CFLAGS   = -O2
 FCFLAGS  = $(CFLAGS) $(DFLAGS)
@@ -33,6 +33,7 @@ LIBS    += $(LIBXSMM)/lib/libxsmm.a
 LIBS    += $(LIBXC)/lib/libxcf03.a
 LIBS    += $(LIBXC)/lib/libxc.a
 LIBS    += $(LIBINT)/lib/libint2.a -lz
+LIBS    += /share/apps/compute/plumed/2.6.1/gnu/7.2.0/intelmpi/2018.1.163/lib/libplumed.a
 LIBS    += $(MKL_LIB)/libmkl_scalapack_lp64.a -Wl,--start-group \
 	   $(MKL_LIB)/libmkl_gf_lp64.a ${MKL_LIB}/libmkl_sequential.a \
 	   $(MKL_LIB)/libmkl_core.a \
