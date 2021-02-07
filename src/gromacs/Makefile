@@ -1,45 +1,45 @@
+#
 # $Id$
 #
 # @Copyright@
-# 
+#
 # 				Rocks(r)
 # 		         www.rocksclusters.org
-# 		         version 5.6 (Emerald Boa)
-# 		         version 6.1 (Emerald Boa)
-# 
-# Copyright (c) 2000 - 2013 The Regents of the University of California.
-# All rights reserved.	
-# 
+# 		         version 7.0 (Manzinita)
+#
+# Copyright (c) 2000 - 2017 The Regents of the University of California.
+# All rights reserved.
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 # 1. Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
-# 
+#
 # 2. Redistributions in binary form must reproduce the above copyright
 # notice unmodified and in its entirety, this list of conditions and the
-# following disclaimer in the documentation and/or other materials provided 
+# following disclaimer in the documentation and/or other materials provided
 # with the distribution.
-# 
+#
 # 3. All advertising and press materials, printed or electronic, mentioning
-# features or use of this software must display the following acknowledgement: 
-# 
+# features or use of this software must display the following acknowledgement:
+#
 # 	"This product includes software developed by the Rocks(r)
 # 	Cluster Group at the San Diego Supercomputer Center at the
 # 	University of California, San Diego and its contributors."
-# 
+#
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
 # authors may be used to endorse or promote products derived from this
 # software without specific prior written permission.  The name of the
 # software includes the following terms, and any derivatives thereof:
-# "Rocks", "Rocks Clusters", and "Avalanche Installer".  For licensing of 
-# the associated name, interested parties should contact Technology 
-# Transfer & Intellectual Property Services, University of California, 
-# San Diego, 9500 Gilman Drive, Mail Code 0910, La Jolla, CA 92093-0910, 
+# "Rocks", "Rocks Clusters", and "Avalanche Installer".  For licensing of
+# the associated name, interested parties should contact Technology
+# Transfer & Intellectual Property Services, University of California,
+# San Diego, 9500 Gilman Drive, Mail Code 0910, La Jolla, CA 92093-0910,
 # Ph: (858) 534-5815, FAX: (858) 534-7345, E-MAIL:invent@ucsd.edu
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 # THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -51,10 +51,9 @@
 # WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-# 
+#
 # @Copyright@
 #
-# $Log$
 
 REDHAT.ROOT = $(CURDIR)/../../
 
@@ -70,15 +69,15 @@ else ifeq ("$(COMPILERNAME)", "pgi")
   COMPILE_FLAGS = -fPIC -fast --c++11
 endif
 
-CUDA=-DGMX_GPU=OFF
 CUDABUILD=NO
 ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
   CUDABUILD=YES
-  CUDA = -DGMX_GPU=ON -DCUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME} -DCUDA_HOST_COMPILER=$${MPIHOME}/bin/mpicc
+  CUDA = -DGMX_GPU=ON -DCUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME} -DCUDA_HOST_COMPILER=$${MPIHOME}/bin/mpicc -DGMX_BUILD_MDRUN_ONLY=on
 endif
 
 MODULE_LOAD_GROMACS_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
 DESCRIBE_GROMACS_CUDA = echo built with cuda $(call GET_MODULE_VERSION, $(CUDAVERSION))
+CACHE_DIR=$(REDHAT.ROOT)/cache
 
 $(NAME).spec: DESCRIPTION LICENSE
 
@@ -88,7 +87,9 @@ DESCRIPTION:
 	  $(DESCRIBE_PKG); \
 	  $(DESCRIBE_CC); \
 	  $(DESCRIBE_MPI); \
- 	  $(DESCRIBE_GROMACS_CUDA) \
+	  if test "$(CUDABUILD)" = "yes"; then \
+	    $(DESCRIBE_GROMACS_CUDA); \
+	  fi \
 	) > $@
 
 LICENSE: $(SRC_DIRS)
@@ -96,6 +97,9 @@ LICENSE: $(SRC_DIRS)
 	echo LGPLv2 > $@
 
 build: $(SRC_DIRS)
+	mkdir  -p $(CACHE_DIR)/gromacs
+	mkdir  -p $(PKGROOT)
+	$(call BIND_MOUNT, $(PKGROOT), $(CACHE_DIR)/gromacs)
 	( \
           $(call MODULE_LOAD_COMPILER, gnu, gcc); \
 	  $(MODULE_LOAD_CC); \
@@ -103,7 +107,7 @@ build: $(SRC_DIRS)
 	  $(MODULE_LOAD_MPI); \
           cd $(PLUMED_DIR); \
           ./configure --enable-mpi --prefix=$(PWD)/plumed; \
-          make; \
+          make -j `nproc --ignore=all`; \
           make install; \
           cd ../$(SOURCE_DIR); \
           ../plumed/bin/plumed-patch -p -e gromacs-$(VERSION); \
@@ -111,13 +115,6 @@ build: $(SRC_DIRS)
           cd build; \
 	  export CC=mpicc; \
 	  export CXX=mpicxx; \
-          if test "$(CUDABUILD)" = "YES"; then \
-               $(MODULE_LOAD_GROMACS_CUDA); \
-               export CUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME}; \
-               export CUDA_NVCC_EXECUTABLE=$${CUDAHOME}/bin/nvcc; \
-               export CUDA_INCLUDE_DIRS=$${CUDAHOME}/include; \
-               export CUDA_CUDART_LIBRARY=$${CUDAHOME}/lib64/libcudart.so; \
-          fi; \
 	  cmake .. -DGMX_BUILD_OWN_FFTW=ON \
 	           -DGMX_BUILD_OWN_FFTW_URL="../../$(FFTW_PKG)" \
 	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
@@ -125,28 +122,47 @@ build: $(SRC_DIRS)
 	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
                    -DBUILD_SHARED_LIBS=OFF \
                    -DGMX_PREFER_STATIC_LIBS=ON \
+	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) -DGMX_GPU=OFF; \
+	  $(MAKE) -j `nproc --ignore=2`; \
+          $(MAKE) prefix=$(PKGROOT) install; \
+          mv $(PKGROOT)/bin/gmx_mpi $(PKGROOT)/bin/gmx_mpi.real; \
+          cp $(PWD)/plumed/lib/* $(PKGROOT)/lib64; \
+          if test "$(CUDABUILD)" = "YES"; then \
+            cd ..; \
+            rm -rf build; \
+            mkdir build; \
+            cd build; \
+            patch ../cmake/gmxManageNvccConfig.cmake ../../patch-files/gmxManageNvccConfig.cmake.patch; \
+	    $(MODULE_LOAD_GROMACS_CUDA); \
+            export CUDA_PATH=$${CUDAHOME}; \
+	    export CUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME}; \
+	    export CUDA_NVCC_EXECUTABLE=$${CUDAHOME}/bin/nvcc; \
+	    export CUDA_INCLUDE_DIRS=$${CUDAHOME}/include; \
+	    export CUDA_CUDART_LIBRARY=$${CUDAHOME}/lib64/libcudart.so; \
+	    cmake .. -DGMX_BUILD_OWN_FFTW=ON \
+	           -DGMX_BUILD_OWN_FFTW_URL="../../$(FFTW_PKG)" \
+	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
+	           -DGMX_MPI=ON \
+	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
 	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) $(CUDA); \
-	  $(MAKE) \
+	    $(MAKE) -j `nproc --ignore=2`; \
+	    $(MAKE) prefix=$(PKGROOT) install; \
+            cd $(REDHAT.ROOT)/src/gromacs; \
+            cp -r $${CUDAHOME}/samples/1_Utilities/deviceQuery deviceQuery.dir; \
+            patch deviceQuery.dir/Makefile patch-files/Makefile.deviceQuery.patch; \
+            cd deviceQuery.dir; \
+            $(MAKE) clean; \
+            $(MAKE) -j `nproc --ignore=2`; \
+          fi \
 	)
+	$(call BIND_UMOUNT, $(PKGROOT))
 	@echo "::: Package $(NAME) build complete :::"
 
 install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
-	$(PKGROOT_BIND_MOUNT)
-	( \
-          $(call MODULE_LOAD_COMPILER, gnu, gcc); \
-	  $(MODULE_LOAD_CC); \
-	  $(MODULE_LOAD_CMAKE); \
-	  $(MODULE_LOAD_MPI); \
-          if test "$(CUDABUILD)" = "YES"; then \
-               $(MODULE_LOAD_GROMACS_CUDA); \
-          fi; \
-          cp $(PWD)/plumed/lib/* $(ROOT)/$(PKGROOT)/lib64; \
-	  cd $(SOURCE_DIR)/build; \
-	  $(MAKE) prefix=$(PKGROOT) install; \
-          cd $(PKGROOT)/bin; \
-	)
-	$(PKGROOT_BIND_UMOUNT)
+	cp -r $(CACHE_DIR)/gromacs/* $(ROOT)/$(PKGROOT)
+	install -m 0755 -t $(ROOT)/$(PKGROOT)/bin $(REDHAT.ROOT)/src/gromacs/gmx_mpi; \
+	install -m 0755 -t $(ROOT)/$(PKGROOT)/bin $(REDHAT.ROOT)/src/gromacs/deviceQuery; \
 	$(INSTALL_LICENSE_FILES)
 	cp -r gmxtest $(ROOT)/$(PKGROOT)
 	@echo "::: Package $(NAME) install complete :::"
