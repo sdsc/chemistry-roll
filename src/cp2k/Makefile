@@ -89,6 +89,10 @@ ROLLMAKEFILE = Linux-x86-64-$(COMPILERNAME)
 
 COMPILE_FLAGS += -I$(REDHAT.ROOT)/src/cp2k/$(SOURCE_DIR)/obj/$(ROLLMAKEFILE)/popt
 
+OMP = ""
+ifeq ("$(COMPILERNAME)", "gnu")
+   OMP = 1
+endif
 ifneq ("$(ROLLOPTS)", "$(subst avx2,,$(ROLLOPTS))")
   ifeq ("$(COMPILERNAME)", "gnu")
     COMPILE_FLAGS += -mavx2
@@ -192,6 +196,7 @@ build: $(SRC_DIRS)
             cd ..; \
             mv ../$(LIBXSMM_DIR) . ; \
             cd $(LIBXSMM_DIR); \
+            export OMP=$(OMP); \
             make PREFIX=`pwd`/../libxsmm install; \
             cd ..; \
             $(MAKE) -j `nproc --ignore=2` CC=`which mpicc` CXX=`which mpicxx` FC=`which mpif90` ARCH=$(ROLLMAKEFILE) VERSION=popt; \

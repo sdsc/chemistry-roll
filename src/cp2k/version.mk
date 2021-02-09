@@ -31,7 +31,7 @@ endif
 NAME           = sdsc-cp2k
 VERSION        = 7.1
 RELEASE        = 1
-PKGROOT        = /opt/cp2k
+PKGROOT        = /share/apps/compute/cp2k/7.1-plumed
 
 SRC_SUBDIR     = cp2k
 

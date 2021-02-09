@@ -16,7 +16,7 @@ DFLAGS   = -D__MKL -D__FFTW3 -D__LIBXSMM \
            -D__MAX_CONTR=4 CUDADEFS \
            -D__PLUMED2
 CFLAGS   = -O2 -mtune=native -fopenmp
-CXXFLAGS = -I$(CUDAHOME)/include
+CXXFLAGS = -I$(CUDAHOME)/include -fopenmp
 NVCC_CFLAGS   = -O2
 FCFLAGS  = $(CFLAGS) $(DFLAGS)
 FCFLAGS += -ffree-form -ffree-line-length-none
@@ -49,4 +49,4 @@ mp2_optimize_ri_basis.o: mp2_optimize_ri_basis.F
 			 $(FC) -c $(subst O2,O0,$(FCFLAGS)) $<
 
 NVCC = NVCCPATH
-NVFLAGS = -ccbin `which g++` $(DFLAGS) $(NVCC_CFLAGS) -gencode arch=compute_30,code=sm_30 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70
+NVFLAGS = -ccbin `which g++` $(DFLAGS) $(NVCC_CFLAGS) --compiler-options -fopenmp -gencode arch=compute_30,code=sm_30 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70
