@@ -72,7 +72,7 @@ endif
 CUDABUILD=NO
 ifneq ("$(ROLLOPTS)", "$(subst cuda,,$(ROLLOPTS))")
   CUDABUILD=YES
-  CUDA = -DGMX_GPU=ON -DCUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME} -DCUDA_HOST_COMPILER=$${MPIHOME}/bin/mpicc -DGMX_BUILD_MDRUN_ONLY=on
+  CUDA = -DGMX_GPU=CUDA -DCUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME} -DCUDA_HOST_COMPILER=$${MPIHOME}/bin/mpicc -DGMX_BUILD_MDRUN_ONLY=on
 endif
 
 MODULE_LOAD_GROMACS_CUDA = $(call MODULE_LOAD_PACKAGE, $(CUDAVERSION), CUDAHOME)
@@ -85,6 +85,7 @@ DESCRIPTION:
 	$(MODULE_LOAD_CC); \
 	( \
 	  $(DESCRIBE_PKG); \
+	  $(DESCRIBE_PYTHON); \
 	  $(DESCRIBE_CC); \
 	  $(DESCRIBE_MPI); \
 	  if test "$(CUDABUILD)" = "yes"; then \
@@ -101,21 +102,25 @@ build: $(SRC_DIRS)
 	mkdir  -p $(PKGROOT)
 	$(call BIND_MOUNT, $(PKGROOT), $(CACHE_DIR)/gromacs)
 	( \
+	  $(MODULE_LOAD_PYTHON); \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_CMAKE); \
 	  $(MODULE_LOAD_MPI); \
 	  cd $(SOURCE_DIR); \
 	  mkdir build; \
 	  cd build; \
+          cp ../../$(FFTW_PKG) .; \
 	  export CC=mpicc; \
 	  export CXX=mpicxx; \
 	  cmake .. -DGMX_BUILD_OWN_FFTW=ON \
-	           -DGMX_BUILD_OWN_FFTW_URL="../../$(FFTW_PKG)" \
+	           -DGMX_BUILD_OWN_FFTW_URL="$${PWD}/$(FFTW_PKG)" \
 	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
 	           -DGMX_MPI=ON \
 	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
 	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) \
-                   -DGMX_GPU=OFF; \
+                   -DGMX_GPU=OFF \
+                   -DPython3_EXECUTABLE=$${PYTHONROOT}/bin/python3 \
+                   -DGMX_EXTERNAL_BLAS=off; \
 	 $(MAKE) -j 16; \
 	 $(MAKE) prefix=$(PKGROOT) install; \
          mv $(PKGROOT)/bin/gmx_mpi $(PKGROOT)/bin/gmx_mpi.real; \
@@ -124,7 +129,7 @@ build: $(SRC_DIRS)
             rm -rf build; \
             mkdir build; \
             cd build; \
-            patch ../cmake/gmxManageNvccConfig.cmake ../../patch-files/gmxManageNvccConfig.cmake.patch; \
+            cp ../../$(FFTW_PKG) .; \
 	    $(MODULE_LOAD_GROMACS_CUDA); \
             export CUDA_PATH=$${CUDAHOME}; \
 	    export CUDA_TOOLKIT_ROOT_DIR=$${CUDAHOME}; \
@@ -132,11 +137,13 @@ build: $(SRC_DIRS)
 	    export CUDA_INCLUDE_DIRS=$${CUDAHOME}/include; \
 	    export CUDA_CUDART_LIBRARY=$${CUDAHOME}/lib64/libcudart.so; \
 	    cmake .. -DGMX_BUILD_OWN_FFTW=ON \
-	           -DGMX_BUILD_OWN_FFTW_URL="../../$(FFTW_PKG)" \
+	           -DGMX_BUILD_OWN_FFTW_URL="$${PWD}/$(FFTW_PKG)" \
 	           -DGMX_BUILD_OWN_FFTW_MD5=$(FFTW_MD5) \
 	           -DGMX_MPI=ON \
 	           -DEXTRA_C_FLAGS="$(COMPILE_FLAGS)" \
-	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) $(CUDA); \
+	           -DCMAKE_INSTALL_PREFIX=$(PKGROOT) $(CUDA)  \
+                   -DPython3_EXECUTABLE=$${PYTHONROOT}/bin/python3 \
+                   -DGMX_EXTERNAL_BLAS=off; \
 	    $(MAKE); \
 	    $(MAKE) prefix=$(PKGROOT) install; \
             cd $(REDHAT.ROOT)/src/gromacs; \
