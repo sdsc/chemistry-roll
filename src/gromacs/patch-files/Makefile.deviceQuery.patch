@@ -1,21 +1,23 @@
---- deviceQuery.dir/Makefile	2018-09-27 12:53:33.241009800 -0700
-+++ patch-files/Makefile.deviceQuery	2018-09-27 12:53:17.484005264 -0700
-@@ -242,7 +242,7 @@
+--- /opt/cuda/11.2.0/samples/1_Utilities/deviceQuery/Makefile	2020-12-21 13:52:25.000000000 -0800
++++ Makefile	2021-04-15 12:57:50.214798877 -0700
+@@ -272,7 +272,7 @@
  ALL_LDFLAGS += $(addprefix -Xlinker ,$(EXTRA_LDFLAGS))
  
  # Common includes and paths for CUDA
 -INCLUDES  := -I../../common/inc
-+INCLUDES  := -I$(CUDAHOME)/samples/common/inc
++INCLUDES  := -I$(CUDA_PATH)/samples/common/inc
  LIBRARIES :=
  
  ################################################################################
-@@ -289,8 +289,7 @@
+@@ -321,9 +321,8 @@
  
  deviceQuery: deviceQuery.o
  	$(EXEC) $(NVCC) $(ALL_LDFLAGS) $(GENCODE_FLAGS) -o $@ $+ $(LIBRARIES)
 -	$(EXEC) mkdir -p ../../bin/$(TARGET_ARCH)/$(TARGET_OS)/$(BUILD_TYPE)
 -	$(EXEC) cp $@ ../../bin/$(TARGET_ARCH)/$(TARGET_OS)/$(BUILD_TYPE)
+-
 +	$(EXEC) cp $@ ..
- 
++ 
  run: build
  	$(EXEC) ./deviceQuery
+ 
