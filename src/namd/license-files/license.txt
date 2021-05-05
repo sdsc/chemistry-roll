@@ -95,10 +95,14 @@ follows:
 
 Any published work which utilizes NAMD shall include the following reference:
 
-"James C. Phillips, Rosemary Braun, Wei Wang, James Gumbart,
- Emad Tajkhorshid, Elizabeth Villa, Christophe Chipot, Robert D. Skeel,
- Laxmikant Kale, and Klaus Schulten. Scalable molecular dynamics with NAMD.
- Journal of Computational Chemistry, 26:1781-1802, 2005."
+"James C. Phillips, David J. Hardy, Julio D. C. Maia, John E. Stone,
+ Joao V. Ribeiro, Rafael C. Bernardi, Ronak Buch, Giacomo Fiorin,
+ Jerome Henin, Wei Jiang, Ryan McGreevy, Marcelo C. R. Melo,
+ Brian K. Radak, Robert D. Skeel, Abhishek Singharoy, Yi Wang, Benoit Roux,
+ Aleksei Aksimentiev, Zaida Luthey-Schulten, Laxmikant V. Kale,
+ Klaus Schulten, Christophe Chipot, and Emad Tajkhorshid.
+ Scalable molecular dynamics on CPU and GPU architectures with NAMD.
+ Journal of Chemical Physics, 153:044130, 2020. doi:10.1063/5.0014475"
 
 Electronic documents will include a direct link to the official NAMD page  
 at http://www.ks.uiuc.edu/Research/namd/

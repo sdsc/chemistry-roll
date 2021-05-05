@@ -198,7 +198,7 @@ build: $(SRC_DIRS)
               $(MODULE_LOAD_CP2K_CUDA); \
               $(CUDAVARS); \
               declare -A gpus; \
-              gpus+=( ["K40"]="no" ["K80"]="no" ["P100"]="no" ["V100"] = "no" ); \
+              gpus+=( ["K40"]="no" ["K80"]="no" ["P100"]="no" ["V100"]="no" ); \
 	      for capability in `echo $(CUDA_CAPABILITIES) | sed 's/,/ /g'`; do \
                 if test $${capability} -lt 37 -a $${capability} -ge 35; then \
                     if test "$${gpus["K40"]}" = "yes"; then \
@@ -221,7 +221,7 @@ build: $(SRC_DIRS)
                        export GPUVER=P100; \
                        gpus["P100"]="yes"; \
                     fi; \
-                elif test $${capability}  -ge 70 -a $${capability} -lt 75; then \
+                elif test $${capability}  -ge 70 -a $${capability} -lt 90; then \
                     if test "$${gpus["V100"]}" = "yes"; then \
                        continue; \
                     else \
@@ -257,7 +257,7 @@ build: $(SRC_DIRS)
                patch deviceQuery.dir/Makefile patch-files/Makefile.deviceQuery.patch; \
                cd deviceQuery.dir; \
                make clean; \
-               make INCLUDES=-I$${CUDAHOME}/samples/common/inc; \
+               make NVCC=$${NVCCPATH} INCLUDES=-I$${CUDAHOME}/samples/common/inc; \
              fi; \
              cd $(PWD); \
              mkdir -p $(CACHE_DIR)/cp2k/bin; \
