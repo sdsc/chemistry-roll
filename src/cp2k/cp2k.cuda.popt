@@ -8,7 +8,7 @@ if test ! -z cuda_capability; then
         PKGROOT/bin/cp2k.cuda.K80.popt $@
   elif test ${cuda_capability}  -ge 60 -a ${cuda_capability} -lt 70; then
         PKGROOT/bin/cp2k.cuda.P100.popt $@
-  elif test ${cuda_capability}  -ge 70 -a ${cuda_capability} -lt 75; then
+  elif test ${cuda_capability}  -ge 70 -a ${cuda_capability} -lt 90; then
         PKGROOT/bin/cp2k.cuda.V100.popt $@
   else
         echo "NO COMPATIBLE CP2K CUDA OPTION FOUND FOR CUDA CAPABILITY ${cuda_capability}"

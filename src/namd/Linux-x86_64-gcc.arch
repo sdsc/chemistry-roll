@@ -3,4 +3,4 @@ FLOATOPTS = COMPILE_FLAGS
 CXX = mpicxx -fPIC -std=c++0x
 CXXOPTS = $(FLOATOPTS)
 CC = mpicc -fPIC -m64 -O3
-COPTS = -fexpensive-optimizations -ffast-math $(FLOATOPTS)
+COPTS = -ffast-math $(FLOATOPTS)

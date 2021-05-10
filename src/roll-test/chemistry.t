@@ -91,7 +91,7 @@ module load gromacs \$2
 export OMP_NUM_THREADS=1
 cd $TESTFILE.dir
 rm -f md.log
-output=`mpirun $packageHome/bin/gmx_mpi grompp 2>&1 `
+output=`mpirun -np 1 $packageHome/bin/gmx_mpi grompp 2>&1 `
 if [[ "\$output" =~ "run-as-root" ]]; then
   # Recent openmpi requires special option for root user
   output=`mpirun -np 1 --allow-run-as-root  $packageHome/bin/gmx_mpi grompp 2>&1`
