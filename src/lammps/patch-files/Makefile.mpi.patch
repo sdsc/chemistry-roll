@@ -1,39 +1,39 @@
---- lammps-22Aug18/src/MAKE/Makefile.mpi	2016-05-12 06:54:17.000000000 -0700
-+++ patch-files/Makefile.mpi	2018-08-28 13:41:02.469958543 -0700
+--- lammps-29Oct20/src/MAKE/Makefile.mpi	2020-10-29 16:16:31.000000000 -0700
++++ patch-files/Makefile.mpi	2021-05-26 17:06:45.744836088 -0700
 @@ -7,13 +7,13 @@
  # specify flags and libraries needed for your compiler
  
  CC =		mpicxx
--CCFLAGS =	-g -O3 
-+CCFLAGS =	-O2 -restrict PHIOFFLOAD  ROLLAVX
+-CCFLAGS =	-g -O3
++CCFLAGS =	-O2 -restrict PHIOFFLOAD ROLLAVX
  SHFLAGS =	-fPIC
  DEPFLAGS =	-M
  
  LINK =		mpicxx
--LINKFLAGS =	-g -O
+-LINKFLAGS =	-g -O3
 -LIB = 
 +LINKFLAGS =	-O2
-+LIB =           -lstdc++ -LMKLLIB -L$(MKLHOME)/../tbb/lib/intel64/gcc4.4 -lmkl_FORTRANTYPE_ilp64 -lmkl_COMPILERTYPE_thread -lmkl_core -lpthread -lgomp GNULIBS -lrt INTELLIB
++LIB =   -lstdc++ -LMKLLIB -L$(MKLHOME)/../tbb/lib/intel64/gcc4.4 -lmkl_FORTRANTYPE_ilp64 -lmkl_COMPILERTYPE_thread -lmkl_core -lpthread -lgomp GNULIBS -lrt INTELLIB
  SIZE =		size
  
  ARCHIVE =	ar
 @@ -28,7 +28,7 @@
  # LAMMPS ifdef settings
- # see possible settings in Section 2.2 (step 4) of manual
+ # see possible settings in Section 3.5 of the manual
  
--LMP_INC =	-DLAMMPS_GZIP -DLAMMPS_MEMALIGN=64
+-LMP_INC =	-DLAMMPS_GZIP -DLAMMPS_MEMALIGN=64  # -DLAMMPS_CXX98
 +LMP_INC =	-DLAMMPS_GZIP -DLAMMPS_MEMALIGN=64 -DLAMMPS_FFMPEG
  
  # MPI library
- # see discussion in Section 2.2 (step 5) of manual
+ # see discussion in Section 3.4 of the manual
 @@ -72,8 +72,8 @@
- include	Makefile.package.settings
- include	Makefile.package
+ include Makefile.package.settings
+ include Makefile.package
  
 -EXTRA_INC = $(LMP_INC) $(PKG_INC) $(MPI_INC) $(FFT_INC) $(JPG_INC) $(PKG_SYSINC)
 -EXTRA_PATH = $(PKG_PATH) $(MPI_PATH) $(FFT_PATH) $(JPG_PATH) $(PKG_SYSPATH)
-+EXTRA_INC = $(LMP_INC) $(PKG_INC) $(MPI_INC) $(FFT_INC) $(JPG_INC) $(PKG_SYSINC) -I$(MKLHOME)/../tbb/include
-+EXTRA_PATH = $(PKG_PATH) $(MPI_PATH) $(FFT_PATH) $(JPG_PATH) $(PKG_SYSPATH) -L$(MKLHOME)/../tbb/lib
++EXTRA_INC =  $(LMP_INC) $(PKG_INC) $(MPI_INC) $(FFT_INC) $(JPG_INC) $(PKG_SYSINC) -I$(MKLHOME)/../tbb/include
++EXTRA_PATH =  $(PKG_PATH) $(MPI_PATH) $(FFT_PATH) $(JPG_PATH) $(PKG_SYSPATH) -L$(MKLHOME)/../tbb/lib
  EXTRA_LIB = $(PKG_LIB) $(MPI_LIB) $(FFT_LIB) $(JPG_LIB) $(PKG_SYSLIB)
  EXTRA_CPP_DEPENDS = $(PKG_CPP_DEPENDS)
  EXTRA_LINK_DEPENDS = $(PKG_LINK_DEPENDS)

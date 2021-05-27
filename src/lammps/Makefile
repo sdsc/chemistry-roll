@@ -152,13 +152,8 @@ build: $(SRC_DIRS)
           fi; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
           perl -pi -e "s!INTELLIB!$(INTELLIBS2)!" $(SOURCE_DIR)/src/MAKE/Makefile.mpi; \
-# meam \
-          patch -o $(SOURCE_DIR)/lib/meam/Makefile.meam $(SOURCE_DIR)/lib/meam/Makefile.ifort patch-files/meam/Makefile.ifort.patch; \
-          perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/meam/Makefile.meam; \
-          patch $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort patch-files/meam/Makefile.lammps.ifort.patch; \
-          perl -pi -e "s!INTELLIBS!$(INTELLIBS)!" $(SOURCE_DIR)/lib/meam/Makefile.lammps.ifort; \
 # atc \
-          patch -o  $(SOURCE_DIR)/lib/atc/Makefile.atc $(SOURCE_DIR)/lib/atc/Makefile.mpic++ patch-files/atc/Makefile.mpic++.patch; \
+          patch -o  $(SOURCE_DIR)/lib/atc/Makefile.atc $(SOURCE_DIR)/lib/atc/Makefile.mpi patch-files/atc/Makefile.mpi.patch; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/atc/Makefile.atc; \
 #awpmd \
           patch -o  $(SOURCE_DIR)/lib/awpmd/Makefile.awpmd $(SOURCE_DIR)/lib/awpmd/Makefile.mpicc patch-files/awpmd/Makefile.mpicc.patch; \
@@ -167,14 +162,6 @@ build: $(SRC_DIRS)
           patch -o $(SOURCE_DIR)/lib/poems/Makefile.poems $(SOURCE_DIR)/lib/poems/Makefile.icc patch-files/poems/Makefile.icc.patch; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/poems/Makefile.poems; \
           perl -pi -e "s!ROLLWARNINGS!$(ROLLWARNINGS)!" $(SOURCE_DIR)/lib/poems/Makefile.poems; \
-# reax \
-          patch -o $(SOURCE_DIR)/lib/reax/Makefile.reax $(SOURCE_DIR)/lib/reax/Makefile.ifort patch-files/reax/Makefile.ifort.patch; \
-          perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/reax/Makefile.reax; \
-          perl -pi -e "s!ROLLCOMPILER!$(FC)!" $(SOURCE_DIR)/lib/reax/Makefile.reax; \
-          patch -o $(SOURCE_DIR)/lib/reax/Makefile.lammps $(SOURCE_DIR)/lib/reax/Makefile.lammps.ifort patch-files/reax/Makefile.lammps.ifort.patch; \
-          perl -pi -e "s!INTELLIBS!$(INTELLLIBS)!" $(SOURCE_DIR)/lib/reax/Makefile.lammps; \
-          patch $(SOURCE_DIR)/lib/reax/reax_defs.h patch-files/reax/reax_defs.h.patch; \
-          patch $(SOURCE_DIR)/src/USER-REAXC/reaxc_defs.h patch-files/reax/reaxc_defs.h.patch; \
 # colvars \
           patch -o $(SOURCE_DIR)/lib/colvars/Makefile.colvars $(SOURCE_DIR)/lib/colvars/Makefile.g++ patch-files/colvars/Makefile.g++.patch; \
           perl -pi -e "s!ROLLAVX!$(AVX_FLAG)!" $(SOURCE_DIR)/lib/colvars/Makefile.colvars; \
@@ -206,7 +193,7 @@ build: $(SRC_DIRS)
 	  $(MAKE) yes-kokkos; \
 	  $(MAKE) yes-manybody; \
 	  $(MAKE) yes-mc; \
-	  $(MAKE) yes-meam; \
+	  $(MAKE) yes-user-meamc; \
 	  $(MAKE) yes-user-atc; \
 	  $(MAKE) yes-user-colvars; \
 	  $(MAKE) yes-user-misc; \

@@ -1,14 +1,5 @@
---- lammps-22Aug18/lib/awpmd/Makefile.mpicc	2017-08-08 16:27:34.000000000 -0700
-+++ patch-files/awpmd/Makefile.mpicc	2018-08-28 17:13:45.242984553 -0700
-@@ -2,7 +2,7 @@
- 
- # which file will be copied to Makefile.lammps
- 
--EXTRAMAKE = Makefile.lammps.installed
-+EXTRAMAKE = Makefile.lammps.empty
- 
- # ------ FILES ------
- 
+--- lammps-29Oct20/lib/awpmd/Makefile.mpicc	2020-10-29 16:16:31.000000000 -0700
++++ patch-files/awpmd/Makefile.mpicc	2021-05-26 16:41:34.515716772 -0700
 @@ -38,7 +38,7 @@
  
  CC =	    mpicxx

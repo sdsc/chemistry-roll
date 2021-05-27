@@ -1,11 +1,11 @@
---- lammps-22Aug18/lib/gpu/Makefile.lammps.standard	2016-06-17 16:07:24.000000000 -0700
-+++ patch-files/gpu/Makefile.lammps.standard	2018-08-28 17:17:30.713878660 -0700
+--- lammps-29Oct20/lib/gpu/Makefile.lammps.standard	2020-10-29 16:16:31.000000000 -0700
++++ patch-files/gpu/Makefile.lammps.standard	2021-05-26 16:51:09.472596070 -0700
 @@ -6,6 +6,6 @@
  endif
  
  gpu_SYSINC =
 -gpu_SYSLIB =  -lcudart -lcuda
--gpu_SYSPATH = -L$(CUDA_HOME)/lib64
+-gpu_SYSPATH = -L$(CUDA_HOME)/lib64 -L$(CUDA_HOME)/lib64/stubs
 +gpu_SYSLIB =  -lcudart -lcuda EXTRACUDALIBS
 +gpu_SYSPATH = -L$(CUDA_HOME)/lib64 EXTRACUDAPATH
  
