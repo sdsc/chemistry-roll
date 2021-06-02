@@ -36,18 +36,18 @@ endif
 
 NAME           = sdsc-lammps
 VERSION        = $(shell date -d "$(SOURCE_VERSION)" +%Y%m%d)
-RELEASE        = 4
+RELEASE        = 0
 PKGROOT        = /opt/lammps
 
 SRC_SUBDIR     = lammps
 
 SOURCE_NAME    = lammps
 SOURCE_SUFFIX  = tar.gz
-SOURCE_VERSION := 22Aug18
+SOURCE_VERSION := 29Oct20
 SOURCE_PKG     = $(SOURCE_NAME)-$(SOURCE_VERSION).$(SOURCE_SUFFIX)
 SOURCE_DIR     = $(SOURCE_PKG:%.$(SOURCE_SUFFIX)=%)
 
 TAR_GZ_PKGS    = $(SOURCE_PKG)
 
 RPM.PREFIX     = $(PKGROOT)
-RPM.EXTRAS     = AutoReq:No\nAutoProv:No
+RPM.EXTRAS     = AutoReq:No\nAutoProv:No\n%global _python_bytecompile_errors_terminate_build 0

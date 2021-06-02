@@ -1,5 +1,5 @@
---- lammps-22Aug18/lib/atc/Makefile.mpic++	2018-05-10 15:50:12.000000000 -0700
-+++ patch-files/atc/Makefile.mpic++	2018-08-28 13:43:16.883937976 -0700
+--- lammps-29Oct20/lib/atc/Makefile.mpi	2020-10-29 16:16:31.000000000 -0700
++++ patch-files/atc/Makefile.mpi	2021-05-26 16:37:28.843640507 -0700
 @@ -2,7 +2,7 @@
  SHELL = /bin/sh
  

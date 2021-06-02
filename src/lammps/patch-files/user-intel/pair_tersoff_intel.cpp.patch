@@ -1,12 +1,13 @@
---- lammps-22Aug18/src/USER-INTEL/pair_tersoff_intel.cpp	2018-06-27 15:59:18.000000000 -0700
-+++ patch-files/user-intel/pair_tersoff_intel.cpp	2018-08-28 17:41:24.635560089 -0700
-@@ -28,6 +28,9 @@
- #include "comm.h"
+--- lammps-29Oct20/src/USER-INTEL/pair_tersoff_intel.cpp	2020-10-29 16:16:31.000000000 -0700
++++ patch-files/user-intel/pair_tersoff_intel.cpp	2021-05-26 17:41:25.256842366 -0700
+@@ -29,6 +29,10 @@
  #include "memory.h"
  #include "error.h"
+ 
 +#ifdef __INTEL_COMPILER
 +#include <mathimf.h>
 +#endif
- 
++
  // Currently Intel compiler is required for this pair style.
  // For convenience, base class routines are called if not using Intel compiler.
+ #ifndef __INTEL_COMPILER

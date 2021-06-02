@@ -1,13 +1,13 @@
---- lammps-22Aug18/lib/colvars/Makefile.g++	2017-07-20 13:56:24.000000000 -0700
-+++ patch-files/colvars/Makefile.g++	2018-08-28 17:15:11.883980855 -0700
+--- lammps-29Oct20/lib/colvars/Makefile.g++	2020-10-29 16:16:31.000000000 -0700
++++ patch-files/colvars/Makefile.g++	2021-05-26 16:45:55.006100781 -0700
 @@ -5,8 +5,8 @@
  COLVARS_LIB = libcolvars.a
  COLVARS_OBJ_DIR =
  
 -CXX =		g++
--CXXFLAGS =	-O2 -g -Wall -fPIC -funroll-loops
+-CXXFLAGS =	-std=c++11 -O2 -g -Wall -fPIC -funroll-loops
 +CXX =		mpicxx
-+CXXFLAGS =	-O2 -Wall -fPIC -funroll-loops ROLLAVX
++CXXFLAGS =	-std=c++11 -O2 -Wall -fPIC -funroll-loops ROLLAVX
  AR =		ar
  ARFLAGS =	-rscv
  SHELL =		/bin/sh
